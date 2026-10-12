@@ -1,0 +1,106 @@
+# Reference draft only; not a frozen Insta Bay brand or affiliation claim.
+version: 1
+positioning: 'Reference campaign for Reethi Faru Resort, Maldives: the visible coast
+  and architecture, without affiliation, current-condition or booking claims.'
+voice:
+  en:
+    do:
+    - short sentences
+    - sensory detail
+    dont:
+    - hard sell
+    - ALL CAPS
+    examples:
+    - Follow the jetty into blue.
+    - Waterfront, from three perspectives.
+  ar:
+    do:
+    - جمل قصيرة
+    - تفاصيل حسية
+    dont:
+    - لهجة ثقيلة
+    - وعود غير موثقة
+    examples:
+    - رصيف يمتد إلى لون البحر.
+    - أي إطلالة تختار؟
+    register: light_msa
+pillars:
+- id: underwater
+  description: Visible coastal water colors and clarity; no underwater or wildlife
+    claims without media.
+  min_share: 0.1
+  max_share: 0.4
+- id: spa
+  description: Relaxation and slower moments, without facility claims
+  min_share: 0.1
+  max_share: 0.4
+- id: guests
+  description: Guests imagining their next escape
+  min_share: 0.1
+  max_share: 0.4
+- id: local
+  description: The photographed Maldives reference setting, never labeled Hurghada
+    or the Red Sea.
+  min_share: 0.1
+  max_share: 0.4
+- id: offers
+  description: Travel planning; actual offers require verified sources
+  min_share: 0.1
+  max_share: 0.3
+hashtags:
+  branded:
+  - '#ReethiFaru'
+  - '#ريثي_فارو'
+  place:
+  - '#Maldives'
+  - '#المالديف'
+  niche:
+  - '#OceanViews'
+  - '#BeachArchitecture'
+  broad:
+  - '#CoastalTravel'
+  - '#TropicalBeach'
+  - '#سفر'
+  - '#شاطئ'
+cadence:
+  posts_per_week: 7
+  min_reels: 2
+  min_photos: 3
+  min_carousels: 2
+  windows_cairo:
+    morning_08_10: 08:30
+    noon_12_14: '12:30'
+    evening_19_21: '19:30'
+    late_21_23: '21:30'
+visual:
+  palette_hex:
+  - '#0D8C91'
+  - '#D39B76'
+  - '#E8D9BB'
+  photo_direction: Verified real-photo references, modest motion, no identifiable
+    faces
+  banned:
+  - invented facilities
+  - alcohol imagery
+  - nightlife
+claims_policy:
+  no_invented_facilities: true
+  verified_facilities: []
+  facility_terms:
+  - house reef
+  - private beach
+  - infinity pool
+  - private pool
+  - rooftop bar
+  - أمام غرفتك
+  - شاطئ خاص
+  - مسبح خاص
+  - شعابنا
+  allowed_offers: {}
+  banned_terms:
+  - cheap
+  - buy now
+  - احجز فوراً
+  - أرخص
+  emoji_budget: 2
+judge_threshold: 4.0

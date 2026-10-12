@@ -72,7 +72,7 @@ def strongest_window(file: Path, seconds: float) -> MotionWindow:
 class CreativeReport(Boundary):
     """FR-08: observable film checks; retention, beauty and property fidelity require labels."""
 
-    first_visual_change_s: float
+    first_cut_s: float
     shot_count: int
     distinct_subjects: int
     unique_source_photos: int
@@ -84,6 +84,8 @@ class CreativeReport(Boundary):
     flags: list[str] = Field(default_factory=list)
     human_appeal_review: str = "pending"
     engagement_lift: float | None = None
+    footage_fraction: float
+    edit_style: str
 
 
 def creative_report(board: VideoBoard, recipe: RenderRecipe, root: Path) -> CreativeReport:
@@ -124,7 +126,7 @@ def creative_report(board: VideoBoard, recipe: RenderRecipe, root: Path) -> Crea
         if s.overlay.en or s.overlay.ar
     )
     return CreativeReport(
-        first_visual_change_s=shots[0].seconds,
+        first_cut_s=shots[0].seconds,
         shot_count=len(shots),
         distinct_subjects=len({b.object_id for b in board.plan.beats}),
         unique_source_photos=len(
@@ -136,4 +138,6 @@ def creative_report(board: VideoBoard, recipe: RenderRecipe, root: Path) -> Crea
         has_audio=audio,
         motion=motion,
         flags=flags,
+        footage_fraction=sum(s.seconds for s in shots if s.source_clip) / recipe.shots.duration_s,
+        edit_style=board.plan.edit_style,
     )

@@ -120,11 +120,16 @@ class Cadence(Boundary):
 
     posts_per_week: int = Field(default=7, ge=1, le=7)
     min_reels: int = Field(default=1, ge=1)
+    min_photos: int = Field(default=0, ge=0, exclude_if=lambda value: value == 0)
+    min_carousels: int = Field(default=0, ge=0, exclude_if=lambda value: value == 0)
     windows_cairo: dict[TimeBucket, str]
 
     @model_validator(mode="after")
     def valid_windows(self) -> Self:
-        if self.min_reels > self.posts_per_week or not self.windows_cairo:
+        if (
+            self.min_reels + self.min_photos + self.min_carousels > self.posts_per_week
+            or not self.windows_cairo
+        ):
             raise ValueError("Reel count and windows must fit the cadence")
         for text in self.windows_cairo.values():
             try:
@@ -402,6 +407,60 @@ class RenderAttachment(Boundary):
         return self
 
 
+class LocalPhotoPreview(Boundary):
+    """FR-05, NFR-03: generated file identity for a mechanical edit of a real photograph."""
+
+    file: str
+    file_sha256: Hash
+    width: Literal[1080] = 1080
+    height: Literal[1350] = 1350
+
+
+class PhotoRenderAttachment(Boundary):
+    """FR-05, FR-09: ordered photo/carousel evidence participates in the approval hash."""
+
+    recipe_hash: Hash
+    render_recipe: dict[str, JsonValue]
+    files: list[LocalPhotoPreview] = Field(min_length=1, max_length=5)
+    generated: Literal[False] = False
+    reference_only: bool = True
+    qa_status: Literal["needs_review"] = "needs_review"
+
+    @model_validator(mode="after")
+    def provenance(self) -> Self:
+        from instabay.content.photos import PhotoRecipe
+
+        recipe = PhotoRecipe.model_validate(self.render_recipe)
+        if len(recipe.sources) != len(self.files) or self.reference_only != any(
+            s.reference_only for s in recipe.sources
+        ):
+            raise ValueError("Photo attachment scope and count must match the source recipe")
+        if canonical_hash(dict(self.render_recipe)) != self.recipe_hash:
+            raise ValueError("Photo attachment must bind its stored recipe")
+        if len({f.file_sha256 for f in self.files}) != len(self.files):
+            raise ValueError("A multi-photo preview needs different image bytes")
+        return self
+
+
+class EvidenceAttachment(Boundary):
+    """FR-04, FR-09: selected scene evidence participates in the approval hash."""
+
+    context: dict[str, JsonValue]
+    context_hash: Hash
+    reference_only: bool = True
+
+    @model_validator(mode="after")
+    def bound(self) -> Self:
+        from instabay.content.evidence import EvidenceCopyContext
+
+        context = EvidenceCopyContext.model_validate(self.context)
+        if context.reference_only != self.reference_only:
+            raise ValueError("Evidence scope must match the source context")
+        if canonical_hash(dict(self.context)) != self.context_hash:
+            raise ValueError("Source context must match its stored hash")
+        return self
+
+
 class Post(Boundary):
     """FR-04 to FR-10: immutable content snapshot; approval binds its exact hash."""
 
@@ -421,15 +480,33 @@ class Post(Boundary):
     media_status: Literal["reference", "concept_only", "rendered", "ready"] = "reference"
     media_manifest: MediaManifest | None = Field(default=None, exclude_if=lambda v: v is None)
     render_artifact: RenderAttachment | None = Field(default=None, exclude_if=lambda v: v is None)
+    photo_artifact: PhotoRenderAttachment | None = Field(
+        default=None, exclude_if=lambda v: v is None
+    )
+    evidence: EvidenceAttachment | None = Field(default=None, exclude_if=lambda v: v is None)
 
     @model_validator(mode="after")
     def local_render(self) -> Self:
+        if self.evidence:
+            from instabay.content.evidence import EvidenceCopyContext
+
+            context = EvidenceCopyContext.model_validate(self.evidence.context)
+            if context.selection.brief != self.brief:
+                raise ValueError("Post captions and visual evidence must belong to the same brief")
         if self.render_artifact is not None and (
             self.format != "reel"
             or self.media_path != self.render_artifact.file
             or self.ai_disclosure != self.render_artifact.generated
         ):
             raise ValueError("Rendered reel must bind its preview and generated-footage disclosure")
+        if self.photo_artifact and (
+            self.format == "reel"
+            or self.media_path != self.photo_artifact.files[0].file
+            or (self.format == "photo" and len(self.photo_artifact.files) != 1)
+            or (self.format == "carousel" and len(self.photo_artifact.files) < 2)
+            or self.ai_disclosure
+        ):
+            raise ValueError("A photo/carousel must bind its ordered photographic preview")
         return self
 
     @property
@@ -513,13 +590,15 @@ class Review(Boundary):
     content_hash: Hash
     rules: RuleResult
     judge: JudgeResult | None
-    check_path: Literal["judge", "system1"] = "judge"
+    check_path: Literal["judge", "system1", "human_pending"] = "judge"
     decision_trace: dict[str, JsonValue] | None = None
     flagged: bool
     flags: list[str]
 
     @model_validator(mode="after")
     def honest_scores(self) -> Self:
+        if self.check_path == "human_pending" and (self.judge is not None or not self.flagged):
+            raise ValueError("Human-pending reviews cannot invent a score or clear the review flag")
         if self.check_path == "judge" and self.judge is None:
             raise ValueError("Judge path requires real stored judge samples")
         if self.check_path == "system1" and (

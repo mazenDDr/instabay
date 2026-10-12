@@ -1,0 +1,32 @@
+{
+  "template_name": "visual_brief",
+  "slot_id": "reference-w42-thu-1",
+  "response": {
+    "brief": {
+      "angle": "The coastline sets the frame.",
+      "hook": "Open with a specific scene-led thought",
+      "key_message": "White sand, palms and the ocean horizon: a daylight reference view from Reethi Faru, Maldives.",
+      "visual_description": "Complete source scenes with water, shore and architecture visible together.",
+      "photo_uri": "assets/photos/reethi_faru/shoreline.jpg",
+      "cta": "Which part of this view would you photograph?",
+      "must_not": [
+        "invented facilities",
+        "prices",
+        "unverified present conditions",
+        "wrong geography"
+      ],
+      "reel_concept": null
+    },
+    "media_ids": [
+      "shoreline"
+    ],
+    "fact_ids": [
+      "shoreline-fact-1"
+    ],
+    "pillar_intent": "The photographed Maldives reference setting, never labeled Hurghada or the Red Sea.",
+    "sequence_reason": "Move through distinct views of the same named property, preserving context.",
+    "cta_kind": "comment"
+  },
+  "input_tokens": 350,
+  "output_tokens": 450
+}

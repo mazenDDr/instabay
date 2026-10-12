@@ -35,8 +35,13 @@ class NativeLLMClient:
             raise ValueError("Native model must include its exact revision")
         self.model, self.confirm_external = model, confirm_external
         self.last_completion: Completion | None = None
+        self.failure_stage: str | None = None
         self.client = httpx.Client(
-            base_url=origin, timeout=180, transport=transport, trust_env=False
+            base_url=origin,
+            timeout=180,
+            transport=transport,
+            trust_env=False,
+            limits=httpx.Limits(max_keepalive_connections=0),
         )
 
     def close(self) -> None:
@@ -50,18 +55,24 @@ class NativeLLMClient:
         if request.model != self.model:
             raise ValueError("Request/cache model differs from the native model")
         try:
+            self.failure_stage = "transport"
             response = self.client.post(
                 "/generate",
                 json=request.model_dump(
                     mode="json", exclude={"template_name", "slot_id", "prompt_hash"}
                 ),
             )
+            self.failure_stage = f"http_{response.status_code}"
             response.raise_for_status()
+            self.failure_stage = "response_schema"
             raw = response.json()
             result = Completion.model_validate({k: raw[k] for k in Completion.model_fields})
             if result.model != self.model:
                 raise ValueError("Returned model identity differs")
             self.last_completion = result
+            self.failure_stage = None
             return result
         except Exception:
-            raise RuntimeError("Native generation failed; no fixture fallback was used") from None
+            raise RuntimeError(
+                f"Native generation failed at {self.failure_stage}; no fixture fallback was used"
+            ) from None

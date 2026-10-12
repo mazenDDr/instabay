@@ -66,8 +66,8 @@ class Repository:
     def _migrate_graph_columns(self) -> None:
         """FR-10: additive nullable migration preserves legacy hashes and approvals."""
         additions = {
-            "post": ("media_json", "render_json"),
-            "review": ("cascade_json",),
+            "post": ("media_json", "render_json", "photo_json", "evidence_json"),
+            "review": ("cascade_json", "pending_json"),
             "publication": (
                 "media_id",
                 "container_id",
@@ -376,6 +376,8 @@ class Repository:
             media_status=post.media_status,
             media_json=post.media_manifest.model_dump_json() if post.media_manifest else None,
             render_json=post.render_artifact.model_dump_json() if post.render_artifact else None,
+            photo_json=post.photo_artifact.model_dump_json() if post.photo_artifact else None,
+            evidence_json=post.evidence.model_dump_json() if post.evidence else None,
             idempotency_key=post.idempotency_key,
         )
         session.merge(row)
@@ -423,6 +425,8 @@ class Repository:
                 "media_status": row.media_status,
                 "media_manifest": json.loads(row.media_json) if row.media_json else None,
                 "render_artifact": json.loads(row.render_json) if row.render_json else None,
+                "photo_artifact": json.loads(row.photo_json) if row.photo_json else None,
+                "evidence": json.loads(row.evidence_json) if row.evidence_json else None,
             }
         )
 
@@ -446,7 +450,7 @@ class Repository:
         with Session(self.engine) as session:
             if self._post(session, review.post_id).content_hash != review.content_hash:
                 raise ValueError("Review does not match the current post")
-            if review.decision_trace is not None:
+            if review.decision_trace is not None and review.check_path != "human_pending":
                 from instabay.decisions.cascade import DecisionTrace
 
                 trace = DecisionTrace.model_validate(review.decision_trace)
@@ -499,7 +503,10 @@ class Repository:
                     arabic_ratio=review.rules.arabic_ratio,
                     flags_json=json.dumps(review.flags),
                     cascade_json=json.dumps(review.decision_trace)
-                    if review.decision_trace
+                    if review.decision_trace and review.check_path != "human_pending"
+                    else None,
+                    pending_json=review.model_dump_json()
+                    if review.check_path == "human_pending"
                     else None,
                 )
             )
@@ -512,6 +519,14 @@ class Repository:
             post = self._post(session, post_id)
             if row is None or row.content_hash != post.content_hash:
                 raise ValueError("Post needs current checks before human approval")
+            if row.pending_json:
+                pending = Review.model_validate_json(row.pending_json)
+                if (
+                    pending.content_hash != post.content_hash
+                    or pending.check_path != "human_pending"
+                ):
+                    raise ValueError("Pending source review belongs to a different snapshot")
+                return pending
             if row.cascade_json:
                 from instabay.decisions.cascade import DecisionTrace
 

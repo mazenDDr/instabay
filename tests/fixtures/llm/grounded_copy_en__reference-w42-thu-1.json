@@ -1,0 +1,13 @@
+{
+  "template_name": "grounded_copy_en",
+  "slot_id": "reference-w42-thu-1",
+  "response": {
+    "opening": "The coastline sets the frame.",
+    "detail": "White sand, palms and the ocean horizon: a daylight reference view from Reethi Faru, Maldives.",
+    "action": "Which part of this view would you photograph?",
+    "alt_text": "Reference photographs: shoreline.",
+    "fact_id": "shoreline-fact-1"
+  },
+  "input_tokens": 350,
+  "output_tokens": 450
+}

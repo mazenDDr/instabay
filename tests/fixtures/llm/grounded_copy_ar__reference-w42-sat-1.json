@@ -1,0 +1,13 @@
+{
+  "template_name": "grounded_copy_ar",
+  "slot_id": "reference-w42-sat-1",
+  "response": {
+    "opening": "أي إطلالة تختار لقائمة رحلاتك؟",
+    "detail": "قارن مشهد الشاطئ بالفلل من أعلى والرصيف الممتد بجوار النخيل.",
+    "action": "احفظ الإطلالات التي تود استكشافها.",
+    "alt_text": "صور مرجعية للمياه الفيروزية والشاطئ والفلل في المالديف.",
+    "fact_id": "shoreline-fact-1"
+  },
+  "input_tokens": 350,
+  "output_tokens": 450
+}

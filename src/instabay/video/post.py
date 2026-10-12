@@ -195,6 +195,12 @@ def post_process(recipe: RenderRecipe, root: Path, files: list[Path], directory:
             "scale=1080:1920:force_original_aspect_ratio=increase:out_range=tv,"
             "crop=1080:1920,fps=30,setsar=1,setparams=range=limited"
         )
+        if recipe.post.frame_interpolation == "motion" and shot.source_clip:
+            # Interpolate at the native source size before scaling; retain the actual source tail.
+            filters = (
+                "minterpolate=fps=30:mi_mode=mci:mc_mode=aobmc:me_mode=bidir:vsbmc=1,"
+                "tpad=stop_mode=clone:stop_duration=0.2,"
+            ) + filters
         if recipe.post.style == "editorial":
             # Resampled 12fps footage can lose its last frame at a fractional cut.
             # Pad only the tail, then trim to the deterministic editor's exact frame count.

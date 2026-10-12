@@ -1,0 +1,36 @@
+{
+  "template_name": "visual_brief",
+  "slot_id": "reference-w42-tue-1",
+  "response": {
+    "brief": {
+      "angle": "Find a pause along the waterline.",
+      "hook": "Open with a specific scene-led thought",
+      "key_message": "Start with the white shoreline, follow the palm shadows, then look across the lagoon from above.",
+      "visual_description": "Complete source scenes with water, shore and architecture visible together.",
+      "photo_uri": "assets/photos/reethi_faru/shoreline.jpg",
+      "cta": "Swipe through and choose the view you would linger on.",
+      "must_not": [
+        "invented facilities",
+        "prices",
+        "unverified present conditions",
+        "wrong geography"
+      ],
+      "reel_concept": null
+    },
+    "media_ids": [
+      "shoreline",
+      "palm-jetty",
+      "lagoon-villas"
+    ],
+    "fact_ids": [
+      "shoreline-fact-1",
+      "palm-jetty-fact-1",
+      "lagoon-villas-fact-1"
+    ],
+    "pillar_intent": "Relaxation and slower moments, without facility claims",
+    "sequence_reason": "Move through distinct views of the same named property, preserving context.",
+    "cta_kind": "swipe"
+  },
+  "input_tokens": 350,
+  "output_tokens": 450
+}

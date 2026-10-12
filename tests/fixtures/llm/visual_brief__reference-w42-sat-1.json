@@ -1,0 +1,48 @@
+{
+  "template_name": "visual_brief",
+  "slot_id": "reference-w42-sat-1",
+  "response": {
+    "brief": {
+      "angle": "Which waterfront view belongs on your shortlist?",
+      "hook": "Open with a specific scene-led thought",
+      "key_message": "Compare the beach-level shoreline with the villas seen from above and the palm-lined jetty.",
+      "visual_description": "Complete source scenes with water, shore and architecture visible together.",
+      "photo_uri": "assets/photos/reethi_faru/shoreline.jpg",
+      "cta": "Save the views you would like to explore further.",
+      "must_not": [
+        "invented facilities",
+        "prices",
+        "unverified present conditions",
+        "wrong geography"
+      ],
+      "reel_concept": {
+        "hook": "Which waterfront view belongs on your shortlist?",
+        "shots": [
+          "Show the complete shoreline scene.",
+          "Show the complete lagoon-villas scene.",
+          "Show the complete palm-jetty scene."
+        ],
+        "overlay_en": "",
+        "overlay_ar": "",
+        "audio": "Original quiet ambient score",
+        "cta": "Save the views you would like to explore further.",
+        "cover": "assets/photos/reethi_faru/shoreline.jpg"
+      }
+    },
+    "media_ids": [
+      "shoreline",
+      "lagoon-villas",
+      "palm-jetty"
+    ],
+    "fact_ids": [
+      "shoreline-fact-1",
+      "lagoon-villas-fact-1",
+      "palm-jetty-fact-1"
+    ],
+    "pillar_intent": "Travel planning; actual offers require verified sources",
+    "sequence_reason": "Move through distinct views of the same named property, preserving context.",
+    "cta_kind": "save"
+  },
+  "input_tokens": 350,
+  "output_tokens": 450
+}

@@ -1,0 +1,32 @@
+{
+  "template_name": "visual_brief",
+  "slot_id": "reference-w42-mon-1",
+  "response": {
+    "brief": {
+      "angle": "How many shades of blue can one view hold?",
+      "hook": "Open with a specific scene-led thought",
+      "key_message": "Clear shallows frame the villas and their connecting jetty.",
+      "visual_description": "Complete source scenes with water, shore and architecture visible together.",
+      "photo_uri": "assets/photos/reethi_faru/lagoon-villas.jpg",
+      "cta": "Save this palette for your travel moodboard.",
+      "must_not": [
+        "invented facilities",
+        "prices",
+        "unverified present conditions",
+        "wrong geography"
+      ],
+      "reel_concept": null
+    },
+    "media_ids": [
+      "lagoon-villas"
+    ],
+    "fact_ids": [
+      "lagoon-villas-fact-1"
+    ],
+    "pillar_intent": "Visible coastal water colors and clarity; no underwater or wildlife claims without media.",
+    "sequence_reason": "Move through distinct views of the same named property, preserving context.",
+    "cta_kind": "save"
+  },
+  "input_tokens": 350,
+  "output_tokens": 450
+}

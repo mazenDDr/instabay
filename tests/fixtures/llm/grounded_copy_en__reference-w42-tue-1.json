@@ -1,0 +1,13 @@
+{
+  "template_name": "grounded_copy_en",
+  "slot_id": "reference-w42-tue-1",
+  "response": {
+    "opening": "Find a pause along the waterline.",
+    "detail": "Start with the white shoreline, follow the palm shadows, then look across the lagoon from above.",
+    "action": "Swipe through and choose the view you would linger on.",
+    "alt_text": "Reference photographs: shoreline, palm-jetty, lagoon-villas.",
+    "fact_id": "shoreline-fact-1"
+  },
+  "input_tokens": 350,
+  "output_tokens": 450
+}

@@ -49,6 +49,9 @@ def editorial_recipe(
     data["post"].update(
         style="editorial",
         language=language,
+        frame_interpolation="motion"
+        if board.plan.edit_style == "scenic" and not animatic
+        else "repeat",
         font={
             "uri": "assets/fonts/NotoSansArabic.ttf",
             "sha256": digest(root / "assets/fonts/NotoSansArabic.ttf"),
@@ -149,7 +152,7 @@ def register_direction_commands(app: typer.Typer) -> None:
                             + "\nObserved evidence: "
                             + item.observed
                         )
-                        if beat.action in {"water_ripples", "plant_sway"}
+                        if beat.action in {"water_ripples", "plant_sway", "scenic_motion"}
                         else beat.action_prompt,
                         "needed_seconds": beat.frames / 30,
                     }

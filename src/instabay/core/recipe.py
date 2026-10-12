@@ -95,6 +95,9 @@ class PostSpec(Boundary):
     style: Literal["legacy", "editorial"] = "legacy"
     language: Literal["bilingual", "en", "ar"] = "bilingual"
     latin_font: FileRef | None = None
+    frame_interpolation: Literal["repeat", "motion"] = Field(
+        default="repeat", exclude_if=lambda v: v == "repeat"
+    )
 
 
 class RenderRecipe(Boundary):

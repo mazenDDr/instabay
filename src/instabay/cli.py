@@ -11,6 +11,7 @@ from rich.console import Console
 
 from instabay.adapters.fake_llm import FakeLLM
 from instabay.approval import approval_queue, show_post
+from instabay.content.commands import register_content_commands
 from instabay.core.fixture_schemas import CopyFixture
 from instabay.core.schemas import BrandConstitution, BrandInput, WorkflowInput
 from instabay.cycle import CycleInput, CycleRunner
@@ -33,6 +34,7 @@ register_decision_commands(app)
 register_generation_commands(app)
 register_video_commands(app)
 register_direction_commands(app)
+register_content_commands(app)
 console = Console()
 DEFAULT_DB = Path(os.environ.get("INSTABAY_DB_PATH", "outputs/demo.sqlite3"))
 DEFAULT_CHECKPOINTS = Path(

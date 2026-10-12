@@ -9,6 +9,11 @@ from instabay.core.schemas import Boundary, Brief, Hash, Identifier, canonical_h
 from instabay.video.files import command, digest, local_file
 from instabay.video.shotlist import FileRef, Keyframe, Overlay, Shot, ShotList, SourceClip
 
+EditStyle = Literal["detail_reveal", "scenic"]
+SceneAction = Literal[
+    "photo_camera", "water_ripples", "plant_sway", "recorded_footage", "scenic_motion"
+]
+
 
 class CropBox(Boundary):
     """NFR-04: observed pixels, not a requested invented view of the property."""
@@ -38,9 +43,20 @@ class ResortObject(Boundary):
     reference_only: bool = True
     source: Literal["photo", "synthetic"] = "photo"
     clip: SourceClip | None = None
-    allowed_actions: tuple[
-        Literal["photo_camera", "water_ripples", "plant_sway", "recorded_footage"], ...
-    ] = ("photo_camera",)
+    allowed_actions: tuple[SceneAction, ...] = ("photo_camera",)
+    property_name: str | None = Field(default=None, exclude_if=lambda v: v is None)
+    approval_scope: Literal["crop", "preview_source_use"] = Field(
+        default="crop", exclude_if=lambda v: v == "crop"
+    )
+    must_include: list[CropBox] = Field(default_factory=list, exclude_if=lambda v: not v)
+
+    @model_validator(mode="after")
+    def preview_scope(self) -> Self:
+        if (
+            self.approval_scope == "preview_source_use" or self.source == "synthetic"
+        ) and not self.reference_only:
+            raise ValueError("Preview source use cannot certify production property imagery")
+        return self
 
 
 class ObjectCatalog(Boundary):
@@ -48,11 +64,16 @@ class ObjectCatalog(Boundary):
 
     resort: str
     objects: list[ResortObject] = Field(min_length=1)
+    edit_style: EditStyle = Field(
+        default="detail_reveal", exclude_if=lambda v: v == "detail_reveal"
+    )
 
     @model_validator(mode="after")
     def unique(self) -> Self:
         if len({o.id for o in self.objects}) != len(self.objects):
             raise ValueError("Object IDs must be unique")
+        if any(o.property_name and o.property_name != self.resort for o in self.objects):
+            raise ValueError("A property film cannot silently combine different resorts")
         return self
 
     def get(self, object_id: str) -> ResortObject:
@@ -68,11 +89,11 @@ class StoryBeat(Boundary):
     id: Identifier
     object_id: Identifier
     role: Literal["hook", "detail", "reveal", "payoff", "cta"]
-    frames: int = Field(ge=20, le=120)
+    frames: int = Field(ge=20, le=210)
     purpose: str = Field(min_length=1, max_length=300)
     brief_anchor: Literal["hook", "angle", "key_message", "visual_description", "cta"]
     camera: Literal["push_in", "pull_out", "pan_left", "pan_right", "static"]
-    action: Literal["photo_camera", "water_ripples", "plant_sway", "recorded_footage"]
+    action: SceneAction
     action_prompt: str = Field(min_length=1, max_length=800)
     overlay: Overlay
     text_position: Literal["upper", "lower"] = "lower"
@@ -88,7 +109,7 @@ class BeatIntent(Boundary):
     purpose: str = Field(min_length=1, max_length=300)
     brief_anchor: Literal["hook", "angle", "key_message", "visual_description", "cta"]
     camera: Literal["push_in", "pull_out", "pan_left", "pan_right", "static"]
-    action: Literal["photo_camera", "water_ripples", "plant_sway", "recorded_footage"]
+    action: SceneAction
     action_prompt: str = Field(min_length=1, max_length=800)
     overlay: Overlay
     text_position: Literal["upper", "lower"] = "lower"
@@ -103,7 +124,10 @@ class CreativeIntent(Boundary):
     hook_mechanism: str = Field(min_length=1, max_length=300)
     bpm: int = Field(default=90, ge=60, le=140)
     missing_visuals: list[str] = Field(default_factory=list)
-    beats: list[BeatIntent] = Field(min_length=6, max_length=10)
+    beats: list[BeatIntent] = Field(min_length=3, max_length=10)
+    edit_style: EditStyle = Field(
+        default="detail_reveal", exclude_if=lambda v: v == "detail_reveal"
+    )
 
 
 class CreativePlan(Boundary):
@@ -115,7 +139,10 @@ class CreativePlan(Boundary):
     hook_mechanism: str = Field(min_length=1, max_length=300)
     bpm: int = Field(default=90, ge=60, le=140)
     missing_visuals: list[str] = Field(default_factory=list)
-    beats: list[StoryBeat] = Field(min_length=6, max_length=10)
+    beats: list[StoryBeat] = Field(min_length=3, max_length=10)
+    edit_style: EditStyle = Field(
+        default="detail_reveal", exclude_if=lambda v: v == "detail_reveal"
+    )
 
     @model_validator(mode="after")
     def narrative(self) -> Self:
@@ -126,7 +153,15 @@ class CreativePlan(Boundary):
             raise ValueError("The edit must last a whole 15-30 seconds at 30fps")
         if len({b.id for b in self.beats}) != len(self.beats):
             raise ValueError("Beat IDs must be unique")
-        if self.beats[0].frames > 60:
+        if self.edit_style == "scenic" and (
+            not 3 <= len(self.beats) <= 5 or any(b.frames < 120 for b in self.beats)
+        ):
+            raise ValueError(
+                "Scenic films need three to five scene shots held for at least four seconds"
+            )
+        if self.edit_style == "detail_reveal" and len(self.beats) < 6:
+            raise ValueError("Detail-led edits need six or more beats")
+        if self.edit_style == "detail_reveal" and self.beats[0].frames > 60:
             raise ValueError("The opening visual must change within two seconds")
         if len({b.object_id for b in self.beats}) < 3:
             raise ValueError("The film needs at least three observed subjects")
@@ -143,6 +178,27 @@ class CreativePlan(Boundary):
                 raise ValueError("On-screen copy must be a short thought, not a caption paragraph")
             if bool(beat.overlay.en) != bool(beat.overlay.ar):
                 raise ValueError("Each text beat needs independently written EN and AR versions")
+        if self.edit_style == "scenic" and any(
+            b.overlay.en or b.overlay.ar for b in self.beats[:-1]
+        ):
+            raise ValueError(
+                "Scenic footage carries the story; text is reserved for the closing action"
+            )
+        return self
+
+
+class ScenicIntent(CreativeIntent):
+    """FR-06: native validation feedback enforces a scenic, all-motion story at generation."""
+
+    edit_style: Literal["scenic"]
+    beats: list[BeatIntent] = Field(min_length=3, max_length=5)
+
+    @model_validator(mode="after")
+    def scene_motion(self) -> Self:
+        if any(b.action not in {"scenic_motion", "recorded_footage"} for b in self.beats):
+            raise ValueError("Scenic shots require scenic_motion or recorded_footage")
+        if any(b.overlay.en or b.overlay.ar for b in self.beats[:-1]):
+            raise ValueError("Opening and body scenic shots need empty overlays")
         return self
 
 
@@ -160,6 +216,8 @@ class VideoBoard(Boundary):
             raise ValueError("The storyboard does not belong to this brief")
         if self.plan.missing_visuals:
             raise ValueError("Obtain the missing real media before rendering this concept")
+        if self.plan.edit_style != self.catalog.edit_style:
+            raise ValueError("The edit style must match the supplied visual policy")
         for beat in self.plan.beats:
             item = self.catalog.get(beat.object_id)
             if beat.action not in item.allowed_actions:
@@ -167,20 +225,37 @@ class VideoBoard(Boundary):
         active = {b.object_id for b in self.plan.beats if b.action != "photo_camera"}
         if self.plan.beats[0].action == "photo_camera" or len(active) < 2:
             raise ValueError("Open with physical movement and stage two distinct active subjects")
-        if "question" in self.brief.hook.lower() and not (
-            self.plan.beats[0].overlay.en.endswith("?")
-            and self.plan.beats[0].overlay.ar.endswith(("؟", "?"))
+        if self.plan.edit_style == "scenic" and any(
+            b.action == "photo_camera" for b in self.plan.beats
+        ):
+            raise ValueError("Finished scenic reels require actual motion for every scene")
+        if (
+            self.plan.edit_style == "detail_reveal"
+            and "question" in self.brief.hook.lower()
+            and not (
+                self.plan.beats[0].overlay.en.endswith("?")
+                and self.plan.beats[0].overlay.ar.endswith(("؟", "?"))
+            )
         ):
             raise ValueError("The directed hook must preserve the brief's question style")
         return self
 
 
-def schedule_intent(intent: CreativeIntent, duration_s: int = 18) -> CreativePlan:
+def schedule_intent(intent: CreativeIntent, duration_s: int | None = None) -> CreativePlan:
     """FR-06: frame-accurate constrained allocation; creative words never determine timing math."""
+    duration_s = duration_s or (len(intent.beats) * 5 if intent.edit_style == "scenic" else 18)
     target = duration_s * 30
     if not 450 <= target <= 900:
         raise ValueError("Edit duration must be 15-30 seconds")
     n = len(intent.beats)
+    if intent.edit_style == "scenic":
+        base, remainder = divmod(target, n)
+        data = intent.model_dump(exclude={"beats"})
+        data["beats"] = [
+            b.model_dump(exclude={"pace"}) | {"frames": base + (i < remainder)}
+            for i, b in enumerate(intent.beats)
+        ]
+        return CreativePlan.model_validate(data)
     frames = [40] + [20] * (n - 1)
     weights = [{"quick": 40, "steady": 80, "linger": 100}[b.pace] for b in intent.beats[1:]]
     desired = [40.0] + [(target - 40) * w / sum(weights) for w in weights]
@@ -206,6 +281,19 @@ def resolve_object(item: ResortObject, root: Path, directory: Path) -> Keyframe:
     if not directory.is_relative_to(root):
         raise ValueError("Resolved media must stay under the recipe root")
     source = local_file(root, item.photo)
+    c = item.crop
+    if "scenic_motion" in item.allowed_actions and (c.width < 1080 or c.height < 1920):
+        raise ValueError(
+            "Scenic conditioning needs a full-resolution scene, not an enlarged detail crop"
+        )
+    if any(
+        box.x < c.x
+        or box.y < c.y
+        or box.x + box.width > c.x + c.width
+        or box.y + box.height > c.y + c.height
+        for box in item.must_include
+    ):
+        raise ValueError("The selected composition cuts away required place context")
     with Image.open(source) as image:
         if (
             item.crop.x + item.crop.width > image.width
@@ -243,6 +331,7 @@ def resolve_object(item: ResortObject, root: Path, directory: Path) -> Keyframe:
         faces_checked=True,
         attribution=item.attribution,
         reference_only=item.reference_only,
+        approval_scope=item.approval_scope,
     )
 
 

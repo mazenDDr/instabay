@@ -1,0 +1,48 @@
+{
+  "template_name": "visual_brief",
+  "slot_id": "reference-w42-wed-1",
+  "response": {
+    "brief": {
+      "angle": "The approach is part of the view.",
+      "hook": "Open with a specific scene-led thought",
+      "key_message": "Thatched roofs follow a wooden walkway into turquoise water, while the shoreline opens into sand and palms.",
+      "visual_description": "Complete source scenes with water, shore and architecture visible together.",
+      "photo_uri": "assets/photos/reethi_faru/lagoon-villas.jpg",
+      "cta": "Save this setting for your travel shortlist.",
+      "must_not": [
+        "invented facilities",
+        "prices",
+        "unverified present conditions",
+        "wrong geography"
+      ],
+      "reel_concept": {
+        "hook": "The approach is part of the view.",
+        "shots": [
+          "Show the complete lagoon-villas scene.",
+          "Show the complete shoreline scene.",
+          "Show the complete palm-jetty scene."
+        ],
+        "overlay_en": "",
+        "overlay_ar": "",
+        "audio": "Original quiet ambient score",
+        "cta": "Save this setting for your travel shortlist.",
+        "cover": "assets/photos/reethi_faru/lagoon-villas.jpg"
+      }
+    },
+    "media_ids": [
+      "lagoon-villas",
+      "shoreline",
+      "palm-jetty"
+    ],
+    "fact_ids": [
+      "lagoon-villas-fact-1",
+      "shoreline-fact-1",
+      "palm-jetty-fact-1"
+    ],
+    "pillar_intent": "Guests imagining their next escape",
+    "sequence_reason": "Move through distinct views of the same named property, preserving context.",
+    "cta_kind": "save"
+  },
+  "input_tokens": 350,
+  "output_tokens": 450
+}

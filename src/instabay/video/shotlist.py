@@ -32,6 +32,9 @@ class Keyframe(FileRef):
     scene: Literal["mood", "facility"] = "mood"
     approved_by: str = Field(min_length=1)
     approval_id: str = Field(min_length=1)
+    approval_scope: Literal["crop", "preview_source_use"] = Field(
+        default="crop", exclude_if=lambda v: v == "crop"
+    )
     reference_only: bool = True
     faces_checked: Literal[True]
     attribution: str = Field(min_length=1)
@@ -46,6 +49,10 @@ class Keyframe(FileRef):
             raise ValueError("Generated stills need their prompt and seed")
         if self.source == "synthetic" and not self.reference_only:
             raise ValueError("Synthetic fixtures are reference-only")
+        if self.approval_scope == "preview_source_use" and not self.reference_only:
+            raise ValueError(
+                "Source-selection authorization cannot approve production property media"
+            )
         return self
 
 
@@ -89,7 +96,7 @@ class Shot(Boundary):
     camera: Literal[
         "static", "push_in", "pull_out", "pan_left", "pan_right", "orbit", "tilt_up", "tilt_down"
     ]
-    seconds: float = Field(ge=0.5, le=5)
+    seconds: float = Field(ge=0.5, le=7)
     overlay: Overlay
     motion_strength: float = Field(default=0.06, ge=0, le=0.25)
     source_clip: SourceClip | None = None

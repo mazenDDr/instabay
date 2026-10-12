@@ -1,0 +1,13 @@
+{
+  "template_name": "grounded_copy_en",
+  "slot_id": "reference-w42-sun-1",
+  "response": {
+    "opening": "Start your moodboard with a place.",
+    "detail": "White sand, palm shade and an open horizon can help you define the kind of view you are looking for.",
+    "action": "Save this reference for your travel moodboard.",
+    "alt_text": "Reference photographs: palm-jetty.",
+    "fact_id": "palm-jetty-fact-1"
+  },
+  "input_tokens": 350,
+  "output_tokens": 450
+}

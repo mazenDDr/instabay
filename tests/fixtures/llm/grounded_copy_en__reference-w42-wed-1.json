@@ -1,0 +1,13 @@
+{
+  "template_name": "grounded_copy_en",
+  "slot_id": "reference-w42-wed-1",
+  "response": {
+    "opening": "The approach is part of the view.",
+    "detail": "Thatched roofs follow a wooden walkway into turquoise water, while the shoreline opens into sand and palms.",
+    "action": "Save this setting for your travel shortlist.",
+    "alt_text": "Reference photographs: lagoon-villas, shoreline, palm-jetty.",
+    "fact_id": "lagoon-villas-fact-1"
+  },
+  "input_tokens": 350,
+  "output_tokens": 450
+}
