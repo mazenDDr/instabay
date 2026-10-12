@@ -1,0 +1,24 @@
+name: Offline quality gates
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.13.0"
+          enable-cache: false
+      - name: Install locked Python and dependencies
+        run: make setup
+      - name: Lint and test without network, keys, or GPU
+        run: make lint test
+        env:
+          UV_OFFLINE: "1"
+          INSTABAY_MODE: dry_run
+      - name: Scan tracked files and verify hooks
+        run: uv run --offline --no-sync pre-commit run --all-files

@@ -1,0 +1,5 @@
+# FakeLLM is the only implemented provider in Phase 1.
+generator: {provider: fake, model: fake-fixture-v1}
+judge: {provider: fake, model: fake-fixture-v1}
+# HUMAN: verify real model IDs, quotas, licenses and paid list prices in Phase 0.
+# SPEC model names marked [verify] are intentionally not asserted here.
