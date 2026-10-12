@@ -29,7 +29,7 @@ bench:
 	$(UV) run --offline --no-sync instabay bench --readme README.md
 
 record:
-	@echo '# HUMAN: recording real LLM cassettes is implemented in a later phase.'
+	@echo '# HUMAN: real cassette recording is not implemented; see docs/BACKLOG.md.'
 	@exit 2
 
 render:
