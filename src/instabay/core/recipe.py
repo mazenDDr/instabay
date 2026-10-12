@@ -24,6 +24,7 @@ class RuntimeIdentity(Boundary):
     cuda: str | None = None
     driver: str | None = None
     gpu: str | None = None
+    native_packages: dict[str, str] = Field(default_factory=dict)
 
 
 class ModelIdentity(Boundary):
@@ -43,6 +44,16 @@ class ModelIdentity(Boundary):
     supports_flf: bool = False
     workflow: FileRef | None = None
     custom_nodes: dict[str, str] = Field(default_factory=dict)
+
+    @model_validator(mode="after")
+    def pinned_nodes(self) -> Self:
+        import re
+
+        if any(
+            not re.fullmatch(r"[0-9a-f]{40}", revision) for revision in self.custom_nodes.values()
+        ):
+            raise ValueError("Every custom node requires its exact commit")
+        return self
 
 
 class MotionSpec(Boundary):

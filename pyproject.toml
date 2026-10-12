@@ -57,7 +57,7 @@ known-first-party = ["instabay", "sim", "tests"]
 [tool.mypy]
 python_version = "3.12"
 strict = true
-files = ["src", "config", "sim"]
+files = ["src", "config", "sim", "gpu_worker"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

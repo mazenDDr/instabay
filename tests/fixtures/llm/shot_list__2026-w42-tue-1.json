@@ -1,0 +1,97 @@
+{
+  "template_name": "shot_list",
+  "slot_id": "2026-w42-tue-1",
+  "response": {
+    "reel_id": "2026-w42-tue-1",
+    "duration_s": 15,
+    "aspect": "9:16",
+    "shots": [
+      {
+        "id": "s0",
+        "role": "hook",
+        "keyframe": {
+          "uri": "assets/keyframes/synthetic_mood.ppm",
+          "sha256": "1782ee2fe3d51a37a1280a8138f90778da45dbc2dbd2c010ae25ba81161e5a4f",
+          "source": "synthetic",
+          "scene": "mood",
+          "approved_by": "synthetic-fixture",
+          "approval_id": "synthetic-fixture-v1",
+          "reference_only": true,
+          "faces_checked": true,
+          "attribution": "Abstract offline test pattern; no property depicted",
+          "prompt": null,
+          "seed": null
+        },
+        "end_keyframe": null,
+        "motion_prompt": "Modest motion in abstract light, no facilities or people",
+        "negative_prompt": "facilities, rooms, faces, text, logos",
+        "camera": "push_in",
+        "seconds": 5,
+        "overlay": {
+          "en": "A moment of calm.",
+          "ar": "لحظة هدوء."
+        }
+      },
+      {
+        "id": "s1",
+        "role": "body",
+        "keyframe": {
+          "uri": "assets/keyframes/synthetic_mood.ppm",
+          "sha256": "1782ee2fe3d51a37a1280a8138f90778da45dbc2dbd2c010ae25ba81161e5a4f",
+          "source": "synthetic",
+          "scene": "mood",
+          "approved_by": "synthetic-fixture",
+          "approval_id": "synthetic-fixture-v1",
+          "reference_only": true,
+          "faces_checked": true,
+          "attribution": "Abstract offline test pattern; no property depicted",
+          "prompt": null,
+          "seed": null
+        },
+        "end_keyframe": null,
+        "motion_prompt": "Modest motion in abstract light, no facilities or people",
+        "negative_prompt": "facilities, rooms, faces, text, logos",
+        "camera": "push_in",
+        "seconds": 5,
+        "overlay": {
+          "en": "A moment of calm.",
+          "ar": "لحظة هدوء."
+        }
+      },
+      {
+        "id": "s2",
+        "role": "cta",
+        "keyframe": {
+          "uri": "assets/keyframes/synthetic_mood.ppm",
+          "sha256": "1782ee2fe3d51a37a1280a8138f90778da45dbc2dbd2c010ae25ba81161e5a4f",
+          "source": "synthetic",
+          "scene": "mood",
+          "approved_by": "synthetic-fixture",
+          "approval_id": "synthetic-fixture-v1",
+          "reference_only": true,
+          "faces_checked": true,
+          "attribution": "Abstract offline test pattern; no property depicted",
+          "prompt": null,
+          "seed": null
+        },
+        "end_keyframe": null,
+        "motion_prompt": "Modest motion in abstract light, no facilities or people",
+        "negative_prompt": "facilities, rooms, faces, text, logos",
+        "camera": "push_in",
+        "seconds": 5,
+        "overlay": {
+          "en": "A moment of calm.",
+          "ar": "لحظة هدوء."
+        }
+      }
+    ],
+    "audio": {
+      "music": null,
+      "music_credit": null,
+      "voiceover": null,
+      "voiceover_lang": null
+    }
+  },
+  "input_tokens": 400,
+  "output_tokens": 700
+}

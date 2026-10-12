@@ -13,6 +13,8 @@ def offline_environment(monkeypatch: pytest.MonkeyPatch) -> None:
         "GH_TOKEN",
         "INSTABAY_SYSTEMONE_API_KEY",
         "INSTABAY_DECISIONS_ENABLED",
+        "INSTABAY_VIDEO_ENABLED",
+        "INSTABAY_WORKER_TOKEN",
     ):
         monkeypatch.delenv(key, raising=False)
     monkeypatch.setenv("INSTABAY_MODE", "dry_run")

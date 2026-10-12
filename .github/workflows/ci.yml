@@ -14,7 +14,10 @@ jobs:
           version: "0.13.0"
           enable-cache: false
       - name: Install locked Python and dependencies
-        run: make setup
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
+          make setup
       - name: Lint and test without network, keys, or GPU
         run: make lint test
         env:

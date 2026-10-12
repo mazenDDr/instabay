@@ -36,10 +36,10 @@ def binary(name: str) -> Path:
     return Path(path).resolve()
 
 
-def command(args: list[str], timeout: int = 180) -> bytes:
+def command(args: list[str], timeout: int = 180, cwd: Path | None = None) -> bytes:
     """NFR-04: no shell; bounded output and no raw provider errors in logs."""
     try:
-        result = subprocess.run(args, capture_output=True, timeout=timeout, check=True)
+        result = subprocess.run(args, capture_output=True, timeout=timeout, check=True, cwd=cwd)
     except (OSError, subprocess.SubprocessError):
         raise RenderError("Media subprocess failed; no artifact is ready") from None
     return result.stdout

@@ -21,10 +21,14 @@ from instabay.graph_commands import register_graph_commands
 from instabay.llm import LLMService
 from instabay.repository import Repository
 from instabay.settings import Settings
+from instabay.video.commands import register_video_commands
+from instabay.video.shotlist import ShotList
+from instabay.video.studio import VideoStudio
 
 app = typer.Typer(no_args_is_help=True, pretty_exceptions_show_locals=False)
 register_graph_commands(app)
 register_decision_commands(app)
+register_video_commands(app)
 console = Console()
 DEFAULT_DB = Path(os.environ.get("INSTABAY_DB_PATH", "outputs/demo.sqlite3"))
 DEFAULT_CHECKPOINTS = Path(
@@ -82,11 +86,30 @@ def demo(
     brand_inputs: Annotated[Path, typer.Option()] = DEFAULT_INPUTS,
     run_id: Annotated[str, typer.Option()] = "2026-w42",
     week_start: Annotated[str, typer.Option()] = "2026-10-12",
+    render_reels: Annotated[bool, typer.Option()] = False,
+    renders: Annotated[Path, typer.Option()] = Path("renders"),
 ) -> None:
     """FR-09: generate one fixture week and stop at a persistent approval interrupt."""
     _offline_only()
     request = WorkflowInput(run_id=run_id, week_start=date.fromisoformat(week_start))
-    with WeekRunner(db, checkpoints, outbox, _brand_input(brand_inputs)) as runner:
+    stills = (
+        [
+            ShotList.model_validate_json(Path("config/recipes/stub.shotlist.json").read_bytes())
+            .shots[0]
+            .keyframe
+        ]
+        if render_reels
+        else []
+    )
+    studio = VideoStudio(db, Path("."), renders) if render_reels else None
+    with WeekRunner(
+        db,
+        checkpoints,
+        outbox,
+        _brand_input(brand_inputs),
+        video_studio=studio,
+        approved_stills=stills,
+    ) as runner:
         result = runner.start(request)
         typer.echo("Offline demo: unfrozen fixture brand; judge scores are illustrative.")
         typer.echo(f"Run {result.run_id}: {result.status}; {len(result.post_ids)} posts")
@@ -214,14 +237,6 @@ def bench(
     )
     for item in result.human_pending:
         typer.echo(f"# {item}")
-
-
-@app.command()
-def render(
-    recipe: Annotated[Path, typer.Option()], backend: Annotated[str, typer.Option()] = "stub"
-) -> None:
-    """FR-06: video recipes and backends arrive in Phase 7."""
-    _pending(7, "Video rendering")
 
 
 @app.command()

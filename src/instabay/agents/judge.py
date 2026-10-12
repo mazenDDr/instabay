@@ -18,6 +18,7 @@ from instabay.core.schemas import (
     Slot,
 )
 from instabay.llm import LLMService
+from instabay.video.review import media_flags
 
 
 def write_bilingual(
@@ -118,8 +119,7 @@ class Judge:
             initial_flags = list(rules.violations)
             if not result.passed:
                 initial_flags.append("Judge score below brand threshold before revision")
-            if post.media_status == "concept_only":
-                initial_flags.append("Reel concept only: no video has been rendered")
+            initial_flags.extend(media_flags(post))
             record_initial(
                 Review(
                     post_id=post.id,
@@ -152,8 +152,7 @@ class Judge:
         flags = list(rules.violations)
         if not result.passed:
             flags.append("Judge score below brand threshold after one revision")
-        if post.media_status == "concept_only":
-            flags.append("Reel concept only: no video has been rendered")
+        flags.extend(media_flags(post))
         return post, Review(
             post_id=post.id,
             content_hash=post.content_hash,

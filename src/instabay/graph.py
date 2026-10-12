@@ -20,10 +20,12 @@ from instabay.agents.common import prompt_hashes
 from instabay.agents.judge import Judge, write_bilingual
 from instabay.core.hashtags import select_hashtags
 from instabay.core.planner import plan_week
+from instabay.core.recipe import RenderRecipe
 from instabay.core.schemas import (
     BrandInput,
     PlanningPreferences,
     Post,
+    RenderAttachment,
     WorkflowInput,
     WorkflowResult,
 )
@@ -33,6 +35,9 @@ from instabay.decisions.cascade import CheckCascade
 from instabay.decisions.engine import DecisionEngine
 from instabay.llm import LLMService, RunUsage
 from instabay.repository import Repository
+from instabay.video.keyframes import stub_recipe
+from instabay.video.remote import RenderService
+from instabay.video.shotlist import Keyframe
 
 
 class ApprovalPendingError(PermissionError):
@@ -76,6 +81,9 @@ class WeekRunner:
         decision_engine: DecisionEngine | None = None,
         calibration: CalibrationProfile | None = None,
         allow_synthetic_decisions: bool = False,
+        video_studio: RenderService | None = None,
+        approved_stills: list[Keyframe] | None = None,
+        render_recipes: dict[str, RenderRecipe] | None = None,
     ) -> None:
         self._stack = ExitStack()
         self.repository = Repository(db)
@@ -87,6 +95,8 @@ class WeekRunner:
         self.preferences = preferences
         self.decision_engine, self.calibration = decision_engine, calibration
         self.allow_synthetic_decisions = allow_synthetic_decisions
+        self.video_studio, self.approved_stills = video_studio, approved_stills or []
+        self.render_recipes = render_recipes or {}
         checkpoints.parent.mkdir(parents=True, exist_ok=True)
         saver = self._stack.enter_context(SqliteSaver.from_conn_string(str(checkpoints)))
         self.publisher = DryRunPublisher(self.repository, outbox)
@@ -94,6 +104,7 @@ class WeekRunner:
         builder.add_node("brand", self._brand)
         builder.add_node("plan", self._plan)
         builder.add_node("draft", self._draft)
+        builder.add_node("render_reel", self._render_reel)
         builder.add_node("checks", self._checks)
         builder.add_node("human_approval", self._human_approval)
         builder.add_node("publish", self._publish)
@@ -101,7 +112,8 @@ class WeekRunner:
             (START, "brand"),
             ("brand", "plan"),
             ("plan", "draft"),
-            ("draft", "checks"),
+            ("draft", "render_reel"),
+            ("render_reel", "checks"),
             ("checks", "human_approval"),
             ("human_approval", "publish"),
             ("publish", END),
@@ -172,6 +184,56 @@ class WeekRunner:
                 self.repository.save_post(post)
             ids.append(post.id)
         return {"post_ids": ids, "status": "drafted"}
+
+    def _render_reel(self, state: WeekState) -> dict[str, str]:
+        """FR-06: opt-in offline rendering before checks; never creates approvals."""
+        if self.video_studio is None:
+            return {"status": "drafted"}
+        brand = self.repository.brand(state["brand_hash"])
+        for slot in self.repository.slots(state["run_id"]):
+            post = self.repository.post(slot.id)
+            if post.format != "reel" or post.render_artifact is not None:
+                continue
+            recipe = self.render_recipes.get(slot.id)
+            if recipe is None:
+                if not state["demo"] or self.video_studio.backend.name != "stub":
+                    raise ValueError(
+                        "HUMAN: supply an exact approved native recipe before GPU work"
+                    )
+                shots = BriefWriter(self.service).shot_list(
+                    slot, brand, post.brief, self.approved_stills
+                )
+                recipe = stub_recipe(shots, self.video_studio.root)
+            elif recipe.shots.reel_id != slot.id:
+                raise ValueError("Recipe belongs to a different reel slot")
+            result = self.video_studio.render(recipe)
+            attachment = RenderAttachment.model_validate(
+                {
+                    "recipe_hash": result.recipe_hash,
+                    "render_recipe": recipe.model_dump(mode="json"),
+                    "file": result.file,
+                    "file_sha256": result.file_sha256,
+                    "contact_sheet": result.contact_sheet,
+                    "contact_sha256": result.contact_sha256,
+                    "qa_status": result.qa.status,
+                    "generated": result.ai_disclosure,
+                    "reference_only": result.reference_only,
+                }
+            )
+            self.repository.save_post(
+                Post.model_validate(
+                    post.model_dump()
+                    | {
+                        "media_path": result.file,
+                        "media_status": "rendered",
+                        "render_artifact": attachment,
+                        "ai_disclosure": result.ai_disclosure,
+                        "prompt_hashes": post.prompt_hashes
+                        | prompt_hashes(self.service, ["shot_list"]),
+                    }
+                )
+            )
+        return {"status": "drafted"}
 
     def _checks(self, state: WeekState) -> dict[str, str]:
         brand = self.repository.brand(state["brand_hash"])

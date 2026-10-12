@@ -40,6 +40,14 @@ def show_post(repository: Repository, post_id: str, console: Console) -> None:
         )
     if post.media_manifest is None:
         console.print(f"Media preview: {post.media_path or 'concept only; no rendered video'}")
+        if post.render_artifact:
+            console.print(Text(f"Contact sheet: {post.render_artifact.contact_sheet}"))
+            console.print(
+                Text(
+                    f"Recipe: {post.render_artifact.recipe_hash}; "
+                    f"video QA: {post.render_artifact.qa_status}"
+                )
+            )
         console.print("Reference property: The Grand Resort Hurghada; fictional Insta Bay demo.")
     else:
         manifest = post.media_manifest
