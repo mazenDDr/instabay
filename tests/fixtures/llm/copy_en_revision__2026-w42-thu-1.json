@@ -1,0 +1,10 @@
+{
+  "template_name": "copy_en_revision",
+  "slot_id": "2026-w42-thu-1",
+  "response": {
+    "caption": "Which colors remind you of Hurghada?\nWarm walls, green palms, blue water.\nSave a little Red Sea inspiration.",
+    "alt_text": "Terracotta arches frame palms and a courtyard in a reference photo of The Grand Resort Hurghada."
+  },
+  "input_tokens": 180,
+  "output_tokens": 75
+}

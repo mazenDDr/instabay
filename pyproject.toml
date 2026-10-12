@@ -9,7 +9,11 @@ description = "An approval-first bilingual Instagram marketing system"
 readme = "README.md"
 requires-python = ">=3.12,<3.13"
 dependencies = [
+  "langgraph>=1,<2",
+  "langgraph-checkpoint-sqlite>=3,<4",
   "pydantic>=2.12,<3",
+  "pyyaml>=6,<7",
+  "sqlmodel>=0.0.27,<0.1",
   "typer>=0.20,<1",
 ]
 
@@ -25,6 +29,7 @@ dev = [
   "pytest>=8.4,<9",
   "pytest-socket>=0.7,<1",
   "ruff>=0.14,<1",
+  "types-pyyaml>=6,<7",
 ]
 
 [tool.hatch.build.targets.wheel]
@@ -38,6 +43,10 @@ extend-exclude = [".tools", ".uv-cache", ".uv-python", ".pre-commit-cache"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "B", "UP", "SIM", "RUF"]
+allowed-confusables = ["ا", "ه"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["instabay", "tests"]
 
 [tool.mypy]
 python_version = "3.12"

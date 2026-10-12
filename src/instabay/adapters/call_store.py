@@ -25,6 +25,7 @@ class CallRecord(BaseModel):
     output_tokens: int = Field(default=0, ge=0)
     cost_usd: float = Field(default=0, ge=0, allow_inf_nan=False)
     error_type: Literal["schema_validation", "provider_failure"] | None = None
+    run_id: str | None = None
 
     @field_validator("created_at")
     @classmethod

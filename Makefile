@@ -22,10 +22,10 @@ check: lint test
 smoke:
 	$(UV) run --offline --no-sync instabay smoke
 
-# These entry points deliberately fail until their specified phase is implemented.
 demo:
 	$(UV) run --offline --no-sync instabay demo
 
+# These entry points deliberately fail until their specified phase is implemented.
 bench:
 	$(UV) run --offline --no-sync instabay bench
 

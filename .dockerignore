@@ -10,7 +10,6 @@
 outputs
 data
 renders
-assets
 AGENTS.md
 docs/TASKS.md
 docs/HANDOFF_LOG.md

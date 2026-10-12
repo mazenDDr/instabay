@@ -5,6 +5,7 @@ import json
 import re
 from datetime import UTC, datetime
 from pathlib import Path
+from threading import RLock
 from time import perf_counter
 from typing import Literal
 from uuid import uuid4
@@ -63,6 +64,8 @@ class LLMService:
         self.prompt_dir = prompt_dir or Path(__file__).parent / "prompts"
         self.budget = budget or RunBudget()
         self.usage = RunUsage()
+        self.run_id: str | None = None
+        self._usage_lock = RLock()
 
     def generate[Output: BaseModel](
         self,
@@ -106,9 +109,10 @@ class LLMService:
                 return result
 
         for attempt in (1, 2):
-            self._check_budget(before_call=True)
+            with self._usage_lock:
+                self._check_budget(before_call=True)
+                self.usage.calls += 1
             started = perf_counter()
-            self.usage.calls += 1
             try:
                 completion = self.client.complete(request)
             except Exception as error:
@@ -126,8 +130,9 @@ class LLMService:
                     "LLM provider failed; inspect sanitized call records"
                 ) from None
             elapsed_ms = (perf_counter() - started) * 1000
-            self.usage.tokens += completion.input_tokens + completion.output_tokens
-            self.usage.cost_usd += completion.cost_usd
+            with self._usage_lock:
+                self.usage.tokens += completion.input_tokens + completion.output_tokens
+                self.usage.cost_usd += completion.cost_usd
             try:
                 result = output_type.model_validate_json(completion.output_json)
             except ValidationError as error:
@@ -206,5 +211,6 @@ class LLMService:
                 output_tokens=completion.output_tokens if completion else 0,
                 cost_usd=completion.cost_usd if completion else 0,
                 error_type=error_type,
+                run_id=self.run_id,
             )
         )

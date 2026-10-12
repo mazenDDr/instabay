@@ -25,7 +25,7 @@ def test_smoke_and_replay_use_no_live_provider(tmp_path: Path) -> None:
         assert [row.status for row in store.calls()] == ["success", "success", "cached", "cached"]
 
 
-@pytest.mark.parametrize("command", ["demo", "bench", "cycle"])
+@pytest.mark.parametrize("command", ["bench", "cycle"])
 def test_later_phase_commands_do_not_claim_success(command: str) -> None:
     result = CliRunner().invoke(app, [command])
     assert result.exit_code == 2

@@ -2,6 +2,7 @@
 
 import sqlite3
 from pathlib import Path
+from threading import RLock
 
 from instabay.adapters.call_store import CallRecord
 
@@ -11,7 +12,8 @@ class SQLiteCallStore:
 
     def __init__(self, path: Path) -> None:
         path.parent.mkdir(parents=True, exist_ok=True)
-        self._connection = sqlite3.connect(path)
+        self._lock = RLock()
+        self._connection = sqlite3.connect(path, check_same_thread=False)
         self._connection.row_factory = sqlite3.Row
         self._connection.executescript(
             """
@@ -33,16 +35,22 @@ class SQLiteCallStore:
                 input_tokens INTEGER NOT NULL,
                 output_tokens INTEGER NOT NULL,
                 cost_usd REAL NOT NULL,
-                error_type TEXT
+                error_type TEXT,
+                run_id TEXT
             );
             """
         )
+        columns = {row["name"] for row in self._connection.execute("PRAGMA table_info(llm_call)")}
+        if "run_id" not in columns:
+            self._connection.execute("ALTER TABLE llm_call ADD COLUMN run_id TEXT")
+            self._connection.commit()
 
     def get_cached(self, cache_key: str) -> str | None:
         """NFR-03: return the stored schema-valid output, if any."""
-        row = self._connection.execute(
-            "SELECT output_json FROM llm_cache WHERE cache_key = ?", (cache_key,)
-        ).fetchone()
+        with self._lock:
+            row = self._connection.execute(
+                "SELECT output_json FROM llm_cache WHERE cache_key = ?", (cache_key,)
+            ).fetchone()
         if row is None:
             return None
         value: object = row["output_json"]
@@ -52,7 +60,7 @@ class SQLiteCallStore:
 
     def put_cached(self, cache_key: str, output_json: str) -> None:
         """NFR-03: persist successful output atomically."""
-        with self._connection:
+        with self._lock, self._connection:
             self._connection.execute(
                 "INSERT OR REPLACE INTO llm_cache (cache_key, output_json) VALUES (?, ?)",
                 (cache_key, output_json),
@@ -60,18 +68,18 @@ class SQLiteCallStore:
 
     def delete_cached(self, cache_key: str) -> None:
         """NFR-03: evict corrupt cache entries before replaying the provider."""
-        with self._connection:
+        with self._lock, self._connection:
             self._connection.execute("DELETE FROM llm_cache WHERE cache_key = ?", (cache_key,))
 
     def log_call(self, record: CallRecord) -> None:
         """NFR-06: append a Pydantic-validated call row using bound parameters."""
-        with self._connection:
+        with self._lock, self._connection:
             self._connection.execute(
                 """
                 INSERT INTO llm_call VALUES (
                     :id, :created_at, :template_name, :slot_id, :model, :prompt_hash,
                     :cache_key, :status, :attempt, :latency_ms, :input_tokens,
-                    :output_tokens, :cost_usd, :error_type
+                    :output_tokens, :cost_usd, :error_type, :run_id
                 )
                 """,
                 record.model_dump(mode="json"),
@@ -79,12 +87,14 @@ class SQLiteCallStore:
 
     def calls(self) -> list[CallRecord]:
         """NFR-06: read call rows through their validated boundary model."""
-        rows = self._connection.execute("SELECT * FROM llm_call ORDER BY rowid").fetchall()
+        with self._lock:
+            rows = self._connection.execute("SELECT * FROM llm_call ORDER BY rowid").fetchall()
         return [CallRecord.model_validate(dict(row)) for row in rows]
 
     def close(self) -> None:
         """NFR-06: explicitly release the database connection."""
-        self._connection.close()
+        with self._lock:
+            self._connection.close()
 
     def __enter__(self) -> "SQLiteCallStore":
         return self
