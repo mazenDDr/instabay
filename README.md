@@ -6,27 +6,23 @@ The intended weekly loop is brand → plan → native EN/AR content → checks �
 
 ## Current status
 
-Phase 7 adds an offline Video Studio: complete recipe/hash cache, Ken Burns previews,
-Arabic overlays, actual MP4 spec checks, contact sheets and the approval-queue render node.
-Private-worker/Wan/ComfyUI code is opt-in; native GPU quality, FLF and semantic QA remain
-HUMAN spike work. [Video usage and limits](docs/VIDEO.md), [Phase 7 gate](docs/PHASE7_REPORT.md).
-Phase 6 adds typed decision adapters, grouped calibration and an approval-safe check cascade.
-Real gold labels and GPU/hosted-model validation remain HUMAN work; default checks stay judge-only.
-Phase 5 adds guarded native Instagram publishing, durable retry state and parent-media
-insights, verified with synthetic offline contracts. No live post has been verified.
-Phase 4 implements the five-metric benchmark harness, constrained policy baselines,
-paired seed intervals, human-rating packets and the generated results table.
-Phase 3 adds a frozen seeded audience, factored Thompson sampling, long-format metrics,
-transactional content-bound learning and a multi-week cycle. Phase 2 supplies the offline
-weekly content loop: typed brand and post schemas,
-SQLModel/SQLite storage, a constrained code planner, shared briefs, parallel native EN/AR
-writers, tiered hashtags, deterministic rules, three judge samples, one revision,
-a timed human approval CLI, guarded dry-run exports, and persistent LangGraph pause/resume.
-The Phase 1 LLM cache, budgets, provenance, lint/type checks, hooks and CI remain in place.
-Production provider validation, real calibration evidence and native GPU measurements remain
-HUMAN work under the [specification](docs/SPEC.md). Optimization results describe a synthetic
-audience; quality scores are canned fixtures until human calibration. `make render` supports
-the offline stub; native adapters require explicit human setup and opt-in.
+The offline prototype includes a resumable weekly content loop, mandatory exact-content human
+approval, constrained Thompson sampling, a frozen simulator, five-metric benchmark harness,
+guarded Instagram adapters, scoped decision calibration and a recipe-cached Video Studio.
+**252 offline tests** cover the software boundaries. A synthetic 15-second CPU reel renders at
+1080×1920/30 fps; uncached replay matches all 450 decoded frames on its tested runtime.
+
+Default generation uses canned `FakeLLM` responses and judge samples. Production LLM/recording
+integration, real bilingual calibration/ratings, approved resort crops, native GPU quality and
+end-to-end live publishing/learning remain pending. No real model accuracy, Instagram uplift,
+paid savings or GPU fit is claimed. Build-phase completion is not go-live authorization.
+
+Phase 8 provides the documentation and reproducible fresh-clone Docker gate. Read
+[architecture](docs/ARCHITECTURE.md), [research](docs/RESEARCH.md), [go-live prerequisites](docs/GO_LIVE.md),
+[remaining work](docs/BACKLOG.md), [decision details](docs/DECISIONS.md), [video usage](docs/VIDEO.md),
+[ADRs](docs/adr/README.md) and [Phase 8 evidence](docs/PHASE8_REPORT.md).
+This prototype exceeds the original 5–6 hour guideline; an audited total effort was not recorded.
+The implementation/evidence boundaries are stated so the take-home can be assessed honestly.
 
 ## Run locally
 
@@ -40,6 +36,7 @@ uv run --offline --no-sync instabay approve --run-id 2026-w42 --actor YOUR_NAME
 uv run --offline --no-sync instabay resume --run-id 2026-w42
 ```
 
+Install ffmpeg/ffprobe for the video tests (the Docker images and CI include them).
 Setup downloads the locked runtime and dependencies. Tests and lint use `uv --offline
 --no-sync`; pytest blocks network sockets. No API keys, GPU or paid services are required.
 Local hooks use the project's `.venv`, so they do not clone additional hook repositories.
@@ -102,12 +99,12 @@ Thompson sampling starts each factor level at Beta(1,1), and updates all four le
 20 × engagement rate successes and 20 × (1 − rate) failures. The constrained planner keeps
 pillar shares, at least one reel, posting windows and an exploration slot.
 
-Learning requires content-bound fidelity evidence. This phase uses **synthetic fixture D1
+Learning requires content-bound fidelity evidence. The offline cycle uses **synthetic fixture D1
 labels for exact canned brief/copy replay**; it does not run or calibrate a decision engine.
 Changed content remains unverified and is excluded from learning. Known arm leakage is also
 excluded. Unverified edits receive clearly synthetic metrics assuming the planned arm, with
-`arm_assumed=true`. Judge averages never authorize learning. Real D1 calibration waits for
-Phase 6. Metrics, evidence and posterior updates are one SQLite transaction; interrupted
+`arm_assumed=true`. Judge averages never authorize learning. Real D1 calibration requires
+recorded labels and human audits. Metrics, evidence and posterior updates are one SQLite transaction; interrupted
 analysis and concurrent retries cannot update a post twice.
 
 Beliefs are scoped by brand and audience seed/configuration. Cycle seed, dates, length,
@@ -209,18 +206,35 @@ The draft command writes `outputs/brand.draft.yaml` and refuses the reserved hum
 Only the explicit freeze command records a human actor and the constitution hash. The demo
 does not create, edit or freeze `config/brand.yaml`. Non-demo storage runs require a frozen brand.
 
+## Fresh-clone gate
+
+```sh
+# HUMAN: confirm gh reports mazenDDr before accessing this private repository.
+gh api user --jq .login
+gh repo clone mazenDDr/instabay-agent instabay-clean
+cd instabay-clean
+make verify-clone
+```
+
+The validation image prepares locked dependencies from that checkout, retains its Git metadata
+for hooks, and runs `make setup demo test lint` as UID 10001 with networking disabled. It verifies
+seven normal-demo drafts, a persistent approval stop, zero approvals/publications/metrics/beliefs
+and no outbox. Tests use disposable synthetic approvals only. Evidence is generated inside the
+container at `outputs/clone-evidence.json`. The validation image contains dev tools; the normal
+runtime image below remains separate. Personal caches, state, `.env` and ratings are excluded.
+
 ## Container demo
 
 ```sh
-docker build -t instabay:phase7 .
-docker run --rm --network none -v instabay-demo:/state instabay:phase7
-docker run -it --rm --network none -v instabay-demo:/state instabay:phase7 approve --actor YOUR_NAME
-docker run --rm --network none -v instabay-demo:/state instabay:phase7 resume
+docker build -t instabay:phase8 .
+docker run --rm --network none -v instabay-demo:/state instabay:phase8
+docker run -it --rm --network none -v instabay-demo:/state instabay:phase8 approve --actor YOUR_NAME
+docker run --rm --network none -v instabay-demo:/state instabay:phase8 resume
 # Use a separate named volume for the multi-week cycle.
-docker run --rm --network none -v instabay-cycle:/state instabay:phase7 cycle --weeks 3
-docker run -it --rm --network none -v instabay-cycle:/state instabay:phase7 approve --run-id cycle-w01 --actor YOUR_NAME
-docker run --rm --network none -v instabay-cycle:/state instabay:phase7 cycle --weeks 3
-docker run --rm --network none -v instabay-bench:/state instabay:phase7 bench
+docker run --rm --network none -v instabay-cycle:/state instabay:phase8 cycle --weeks 3
+docker run -it --rm --network none -v instabay-cycle:/state instabay:phase8 approve --run-id cycle-w01 --actor YOUR_NAME
+docker run --rm --network none -v instabay-cycle:/state instabay:phase8 cycle --weeks 3
+docker run --rm --network none -v instabay-bench:/state instabay:phase8 bench
 ```
 
 The image runs as UID 10001. Its `/state` volume preserves the queue, approval rows,
@@ -237,9 +251,10 @@ the offline video gate uses a synthetic still. Human crop/rights/fidelity review
 
 ## Human follow-up
 
-- # HUMAN: run Phase 0 GPU/model spikes and record `docs/adr/0000-spikes.md`.
-- # HUMAN: create provider keys and Meta tokens; record real LLM cassettes.
-- # HUMAN: edit and freeze the brand constitution in Phase 2.
-- # HUMAN: supply benchmark ratings in Phase 4.
+- # HUMAN: record actual GPU/Laya/FLF/runtime spikes in `docs/adr/0000-spikes.md`.
+- # HUMAN: create provider/Meta keys, freeze verified brand facts and approve photo crops.
+- # HUMAN: provide independent benchmark/calibration labels and native video QA.
+- # HUMAN: real cassette recording awaits the missing recorder; `make record` currently refuses.
+- # HUMAN: approve the next backlog/deployment scope; no native job or live publish starts automatically.
 
 The simulator was committed separately in `29fed9c` before optimizer code in `98c9202`.
