@@ -8,7 +8,12 @@ import yaml
 
 from instabay.adapters.graph_http import HttpxGraphTransport, HttpxMediaVerifier
 from instabay.adapters.graph_insights import GraphInsights
-from instabay.adapters.graph_models import GraphConfig, GraphCredentials
+from instabay.adapters.graph_models import (
+    GraphAPIError,
+    GraphConfig,
+    GraphCredentials,
+    GraphRateLimitError,
+)
 from instabay.adapters.graph_publisher import GraphPublisher
 from instabay.repository import Repository
 
@@ -70,6 +75,15 @@ def _run(post_id: str, db: Path, config_path: Path, confirm_live: bool, *, insig
                 verifier=verifier,
             ).publish(post_id)
             typer.echo(f"Stored live receipt: post={receipt.post_id}, media={receipt.media_id}")
+    except GraphAPIError as error:
+        typer.echo(
+            f"Graph command stopped: {type(error).__name__}; code={error.code}, "
+            f"subcode={error.subcode}.",
+            err=True,
+        )
+        if isinstance(error, GraphRateLimitError) and error.retry_after_s is not None:
+            typer.echo(f"Retry after at least {error.retry_after_s:g} seconds.", err=True)
+        raise typer.Exit(2) from None
     except (ValueError, KeyError, PermissionError, ConnectionError, RuntimeError, OSError) as error:
         # Do not echo arbitrary YAML/validation/provider errors: they may contain private input.
         typer.echo(

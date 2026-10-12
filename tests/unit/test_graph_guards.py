@@ -323,3 +323,36 @@ def test_concurrent_publishers_never_duplicate_posts(
         assert len(transport.creates) == (3 if format == "carousel" else 1)
     finally:
         repository.close()
+
+
+def test_native_cli_exposes_numeric_rate_hint_without_provider_text(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from instabay.adapters.graph_http import HttpxGraphTransport
+
+    monkeypatch.setenv("INSTABAY_MODE", "live")
+    path = tmp_path / "state.sqlite"
+    repository = Repository(path)
+    post = live_post(repository)
+    engine, transport = publisher(repository, "finished")
+    engine.publish(post.id)
+    transport.assert_consumed()
+    repository.close()
+    monkeypatch.setenv("INSTAGRAM_USER_ID", "1000")
+    monkeypatch.setenv("INSTAGRAM_ACCESS_TOKEN", "synthetic-header-sentinel")
+    monkeypatch.setattr(
+        HttpxGraphTransport,
+        "request",
+        lambda *args: GraphResponse(
+            status_code=429,
+            body={"error": {"code": 4, "message": "synthetic-header-sentinel"}},
+            retry_after_s=45,
+        ),
+    )
+    result = CliRunner().invoke(
+        app, ["graph-insights", "--db", str(path), "--post-id", post.id, "--confirm-live"]
+    )
+    assert result.exit_code == 2
+    assert "GraphRateLimitError; code=4" in result.output
+    assert "at least 45 seconds" in result.output
+    assert "sentinel" not in result.output
