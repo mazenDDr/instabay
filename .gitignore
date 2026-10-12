@@ -1,0 +1,28 @@
+# Secrets and local state
+.env
+.env.*
+!.env.example
+.venv/
+.tools/
+.uv-cache/
+.uv-python/
+.pre-commit-cache/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+.coverage
+htmlcov/
+.DS_Store
+outputs/
+outbox/
+data/
+renders/
+*.sqlite*
+
+# Private working notes
+AGENTS.md
+docs/TASKS.md
+docs/HANDOFF_LOG.md
