@@ -6,6 +6,8 @@ The intended weekly loop is brand → plan → native EN/AR content → checks �
 
 ## Current status
 
+Phase 4 implements the five-metric benchmark harness, constrained policy baselines,
+paired seed intervals, human-rating packets and the generated results table.
 Phase 3 adds a frozen seeded audience, factored Thompson sampling, long-format metrics,
 transactional content-bound learning and a multi-week cycle. Phase 2 supplies the offline
 weekly content loop: typed brand and post schemas,
@@ -13,9 +15,9 @@ SQLModel/SQLite storage, a constrained code planner, shared briefs, parallel nat
 writers, tiered hashtags, deterministic rules, three judge samples, one revision,
 a timed human approval CLI, guarded dry-run exports, and persistent LangGraph pause/resume.
 The Phase 1 LLM cache, budgets, provenance, lint/type checks, hooks and CI remain in place.
-Benchmarks, real publishing, System-1 engines and video rendering remain in their later
-[specified phases](docs/SPEC.md). `make bench` and `make render` still exit with clear
-phase-specific messages. No optimization uplift or model accuracy is claimed yet.
+Real publishing, System-1 engines and video rendering remain in their later
+[specified phases](docs/SPEC.md). Optimization results describe a synthetic audience;
+quality scores are canned fixtures until human calibration. `make render` remains pending.
 
 ## Run locally
 
@@ -97,7 +99,41 @@ reads canned JSON. Use separate SQLite/checkpoint/outbox paths for independent e
 
 See [the learning ADR](docs/adr/0003-phase3-learning-evidence.md) for synthetic assumptions
 and [the phase report](docs/PHASE3_REPORT.md) for gate evidence. The 12-week, 20-seed baseline,
-regret and confidence interval protocol belongs to Phase 4.
+regret and confidence interval protocol is implemented in the benchmark harness below.
+
+## Benchmarks
+
+Run `make bench` for all five metric rows, policy comparisons and the generated results
+table. The offline command writes `bench/results.json`, intermediate evidence and blinded
+rating templates under `outputs/bench/`. It never approves or publishes drafts. Human
+ratings, actual model quality, real provider prices and operational autonomy remain
+pending when evidence is missing. The results below are from canned quality fixtures
+and the unchanged synthetic audience.
+
+<!-- BENCHMARK:START -->
+| Metric | Result (95% interval where shown) | Evidence / limitation |
+|---|---|---|
+| Brand consistency | 4.60 [4.60, 4.60] / 5; hard rules 100.00% [100.00, 100.00] | Canned judge, κ pending human labels; (0/20 posts); control 2.20 [2.20, 2.20] / 5 |
+| Arabic quality | Human native: Pending human ratings; MT: pending; native win: pending | Canned judge 4.67 [4.67, 4.67] / 5; 0/20 human pairs; interval alpha undefined/pending; authored MT fixtures; no real-model quality claim |
+| Optimization uplift | 68.20% [37.77, 114.14] | Synthetic Thompson vs fixed week-1; weeks 9-12; 20 paired seeds |
+| Efficiency | feed: 1080 in/490 out tokens; local p50/p95 6.79/7.33 ms; actual $0.0000/post; paid pending; reel_concept: 1080 in/490 out tokens; local p50/p95 6.87/7.71 ms; actual $0.0000/post; paid pending | Fixture tokens/local timing; 0 video renders |
+| Autonomy | Pending human timing; configured automation 87.5%; first-pass approval pending | Topology only; full pipeline measurement pending approval; bench never publishes |
+
+Policy comparison (synthetic audience; seed-cluster intervals):
+
+| Policy | Weeks 9-12 engagement rate | Cumulative expected regret | Leaked / learned posts |
+|---|---|---|---|
+| fixed | 4.85% [3.63, 6.19] | 4.69 [3.72, 5.81] | 0 / 0 |
+| uniform | 4.92% [4.26, 5.64] | 4.53 [3.70, 5.42] | 0 / 0 |
+| thompson | 8.15% [7.06, 9.23] | 2.66 [2.22, 3.17] | 0 / 1680 |
+| oracle | 10.43% [9.20, 11.75] | 0.00 [0.00, 0.00] | 0 / 0 |
+| leak_unguarded | 7.83% [6.69, 8.92] | 2.87 [2.40, 3.41] | 301 / 1680 |
+| leak_guarded | 7.78% [6.66, 8.87] | 2.95 [2.45, 3.53] | 301 / 1379 |
+
+Synthetic D1-on minus D1-off regret: 0.08 [-0.04, 0.21]. Negative favors the guard; an interval crossing zero does not establish a difference.
+
+Generated from [bench/results.json](bench/results.json). [Protocol, rubric and HUMAN steps](bench/README.md). Canned rubric/control scores test the harness; they do not establish real judge accuracy.
+<!-- BENCHMARK:END -->
 
 ## Reproducibility and safety
 
@@ -135,14 +171,15 @@ does not create, edit or freeze `config/brand.yaml`. Non-demo storage runs requi
 ## Container demo
 
 ```sh
-docker build -t instabay:phase3 .
-docker run --rm --network none -v instabay-demo:/state instabay:phase3
-docker run -it --rm --network none -v instabay-demo:/state instabay:phase3 approve --actor YOUR_NAME
-docker run --rm --network none -v instabay-demo:/state instabay:phase3 resume
+docker build -t instabay:phase4 .
+docker run --rm --network none -v instabay-demo:/state instabay:phase4
+docker run -it --rm --network none -v instabay-demo:/state instabay:phase4 approve --actor YOUR_NAME
+docker run --rm --network none -v instabay-demo:/state instabay:phase4 resume
 # Use a separate named volume for the multi-week cycle.
-docker run --rm --network none -v instabay-cycle:/state instabay:phase3 cycle --weeks 3
-docker run -it --rm --network none -v instabay-cycle:/state instabay:phase3 approve --run-id cycle-w01 --actor YOUR_NAME
-docker run --rm --network none -v instabay-cycle:/state instabay:phase3 cycle --weeks 3
+docker run --rm --network none -v instabay-cycle:/state instabay:phase4 cycle --weeks 3
+docker run -it --rm --network none -v instabay-cycle:/state instabay:phase4 approve --run-id cycle-w01 --actor YOUR_NAME
+docker run --rm --network none -v instabay-cycle:/state instabay:phase4 cycle --weeks 3
+docker run --rm --network none -v instabay-bench:/state instabay:phase4 bench
 ```
 
 The image runs as UID 10001. Its `/state` volume preserves the queue, approval rows,
@@ -163,4 +200,4 @@ using the photos or derivative footage. Video rendering and shot approval arrive
 - # HUMAN: edit and freeze the brand constitution in Phase 2.
 - # HUMAN: supply benchmark ratings in Phase 4.
 
-The simulator must be committed separately **before** optimizer code is introduced.
+The simulator was committed separately in `29fed9c` before optimizer code in `98c9202`.

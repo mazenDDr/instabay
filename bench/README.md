@@ -68,7 +68,9 @@ null unless model-specific price cards are supplied. Cached responses are not ch
 
 Autonomy lists eight configured weekly stages: brand, plan, draft, checks, human approval,
 publish, metrics, learn. Seven are configured automatic (87.5% topology share). This
-content-only benchmark completes four automatic stages and stops before approval.
+content-only benchmark drafts the brand, loads the frozen calendar, drafts content and
+checks it, then stops before approval. Calendar loading is counted as the reused plan
+stage; it does not rerun a planner for the fixed quality corpus.
 Operational autonomy stays null; topology is not a measured full-loop success rate.
 Returned first-pass feedback yields human minutes per week, approval rate and every
 touchpoint/reason. Feedback never grants application publishing authorization.
