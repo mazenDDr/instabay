@@ -1,0 +1,24 @@
+{
+  "en": {
+    "caption": "Terracotta arches stretch beneath warm wooden beams. Palm leaves sway gently. A turquoise glimpse of water slips through the arcade. Daylight settles in quiet stillness.",
+    "alt_text": "Terracotta arches and warm wooden ceiling with palm leaves and a turquoise glimpse of water through the arcade in daylight."
+  },
+  "ar": {
+    "caption": "أقواس من الطين تتوسّع تحت أعمدة خشبية دافئة. أوراق النخيل ترتجف برفق. ملمس من الماء الأزرق يمر عبر الممر. النهار ينام في هدوء.",
+    "alt_text": "أقواس طينية وسقف خشبي، أوراق نخيل، ملمس من الماء الأزرق."
+  },
+  "overlays": [
+    {
+      "en": "Arches hold the light.",
+      "ar": "الأقواس تُحمل الضوء."
+    },
+    {
+      "en": "Palm leaves move with the wind.",
+      "ar": "أوراق النخيل تتحرك مع الرياح."
+    },
+    {
+      "en": "Daylight remains still.",
+      "ar": "الضوء يبقى هادئاً."
+    }
+  ]
+}

@@ -20,6 +20,7 @@ CREDIT = "Photo: Ercan.G / CC BY 3.0 - cropped and animated"
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--motion", type=Path)
+    parser.add_argument("--repeat-single-clip", action="store_true")
     args = parser.parse_args()
     original = Path("assets/photos/grand_resort_day.jpg")
     manifest = json.loads(Path("assets/photos/manifest.json").read_text())["assets"][0]
@@ -100,11 +101,14 @@ def main() -> None:
         motion_recipe = json.loads((args.motion / "recipe.json").read_text())
         if digest(args.motion / "recipe.json") != native["recipe_file_sha256"]:
             raise ValueError("Native recipe bytes differ")
-        if motion_recipe["spec"]["image_sha256"] != digest(crop) or len(native["clips"]) != 3:
+        references = native["clips"]
+        if len(references) == 1 and args.repeat_single_clip:
+            references = references * 3
+        if motion_recipe["spec"]["image_sha256"] != digest(crop) or len(references) != 3:
             raise ValueError(
-                "Native motion must condition on this approved crop and supply three clips"
+                "Supply three conditioned clips, or explicitly --repeat-single-clip for a sample"
             )
-        for ref in native["clips"]:
+        for ref in references:
             file = args.motion / Path(ref["file"]).name
             if digest(file) != ref["sha256"]:
                 raise ValueError("Native clip bytes differ")
@@ -128,7 +132,7 @@ def main() -> None:
                 keyframe=key,
                 motion_prompt="Gentle motion through the approved historical resort crop.",
                 negative_prompt="No people, buildings, facilities or signs added.",
-                camera=["push_in", "pan_right", "pull_out"][index],
+                camera="static" if native else ["push_in", "pan_right", "pull_out"][index],
                 seconds=5,
                 overlay=overlay,
             )
@@ -186,6 +190,8 @@ def main() -> None:
         "post_approved": False,
         "recipe_hash": recipe.recipe_hash,
         "copy_editorially_corrected": True,
+        "unique_motion_clips": len(native["clips"]) if native else 0,
+        "source_clip_reused": bool(native and len(native["clips"]) == 1),
     }
     (BASE / f"{name}-captions.json").write_text(
         json.dumps(captions, ensure_ascii=False, indent=2) + "\n"

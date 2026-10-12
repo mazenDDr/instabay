@@ -1,0 +1,30 @@
+{
+  "scope": "User-approved crops for unpublished resort previews only",
+  "approved_by": "mazenDDr",
+  "approval_id": "crop-approval-2026-10-12",
+  "user_instruction": "the photo crops are approved",
+  "parent": {
+    "uri": "assets/photos/grand_resort_day.jpg",
+    "sha256": "dc08f600f159b2bd2f51a0bef96a7b91bebe28e33f7d3aec01e5ee4392a8cde8"
+  },
+  "crop": {
+    "uri": "outputs/resort-preview/keyframes/day-arch.jpg",
+    "sha256": "8042034d0a5b4c0b319c3d04b8ac613632fa6de93711f95aa649ae2465c7fe36",
+    "xywh": [
+      1440,
+      0,
+      1296,
+      2304
+    ],
+    "resize": [
+      576,
+      1024
+    ]
+  },
+  "source_page": "https://commons.wikimedia.org/wiki/File:Hotel_Grand_Resort_-_panoramio.jpg",
+  "license_url": "https://creativecommons.org/licenses/by/3.0/",
+  "attribution": "Photo: Ercan.G / CC BY 3.0 - cropped and animated",
+  "faces_checked": true,
+  "reference_only": true,
+  "property_claims_approved": false
+}

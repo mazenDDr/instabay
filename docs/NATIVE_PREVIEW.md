@@ -73,6 +73,10 @@ rsync -av gpu-box:instabay-native/outputs/wan-motion/ outputs/resort-preview/wan
 python scripts/build_resort_preview.py --motion outputs/resort-preview/wan-motion/RECIPE_HASH
 ```
 
+For a one-clip experiment, add `--repeat-single-clip`: the same five-second generated clip is
+used in three text variants to make a 15-second layout preview. Captions explicitly record
+`unique_motion_clips=1` and `source_clip_reused=true`; this is not three independent renders.
+
 The motion recipe is written **before inference**. It includes image hash, pinned model weights,
 I2V pipeline identity, expanded timestep conditioning, scheduler, seeds, resolution, frame count,
 steps, guidance, actual runtime packages and worker hash. The worker refuses to overwrite an
@@ -88,3 +92,39 @@ caption disclosure lines are retained. Generated video is never marked human-app
 crop approval. Final QA checks real H.264/yuv420p/1080x1920/30fps/AAC48kHz/15s/faststart output.
 Uncalibrated semantic, continuity and property-fidelity review remains pending; distorted trials
 must not be used for marketing. Exact observed results are recorded separately after review.
+
+## Observed output, 2026-10-12
+
+[Download the actual 15-second MP4](samples/resort-ai-motion.mp4), compare the
+[approved crop](samples/resort-approved-crop.jpg), and inspect the
+[raw model copy](samples/resort-copy.raw.json), [edited copy](samples/resort-copy.edited.json)
+and [captions/disclosures](samples/resort-ai-motion-captions.json).
+
+![One frame per second from the actual generated preview](samples/resort-ai-motion-contact.jpg)
+
+| Measurement | Observed result |
+|---|---|
+| Real Qwen generations | 4 successful calls, 3,242 total successful-call tokens |
+| Working Wan settings | 576x1024, 61 frames at 12fps, 40 steps, CFG 5, shift 3, seed 1701 |
+| Native generation time | 442.38 seconds including setup after checkpoint verification |
+| Peak allocated CUDA memory | 14,767,928,320 bytes (13.75 GiB) |
+| Final encoded video | 1080x1920, 30fps, 15 seconds, 450 decoded frames, 2,889,153 bytes |
+| Source clip reuse | One five-second native clip repeated across three text variants |
+| Automatic spec gate | Passed; semantic/continuity/property QA remains pending |
+| Offline tests | 268 passed; strict types on 88 files; all hooks passed |
+| API fees | $0 locally; electricity/hardware costs were not measured |
+
+The first 288x512/20-step trial rendered but showed neon colours and distorted arches. A
+576x1024 trial then ran out of memory: calling the encoder outside inference mode retained its
+autograd graph. After fixing that, the same larger settings completed. Opening/middle/final
+frames showed natural colours and recognisable source geometry; this limited visual inspection
+does not establish full fidelity. Motion is very subtle, so the preview chiefly demonstrates
+conditioning, copy, disclosure and layout. It is not a finished varied-shot campaign or a new
+calibrated benchmark result. There is no post approval or publication.
+
+The [machine-written evidence](samples/native-preview-evidence.json) links actual call records,
+timings, QA, artifact hashes and earlier failures. The
+[native recipe](samples/wan-motion-recipe.json), [native result](samples/wan-motion-result.json)
+and [CPU post recipe](samples/resort-post-recipe.json) preserve provenance. Their paths describe
+the measured local run; reconstruct equivalent files under those relative paths before cache
+replay. Crop/source/license and editorial changes are retained in the accompanying JSON files.

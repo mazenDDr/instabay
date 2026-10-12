@@ -1,0 +1,194 @@
+{
+  "version": 1,
+  "backend": "stub",
+  "shots": {
+    "reel_id": "resort-preview",
+    "duration_s": 15,
+    "aspect": "9:16",
+    "shots": [
+      {
+        "id": "resort-0",
+        "role": "hook",
+        "keyframe": {
+          "uri": "outputs/resort-preview/keyframes/day-arch.jpg",
+          "sha256": "8042034d0a5b4c0b319c3d04b8ac613632fa6de93711f95aa649ae2465c7fe36",
+          "source": "photo",
+          "scene": "mood",
+          "approved_by": "mazenDDr",
+          "approval_id": "crop-approval-2026-10-12",
+          "reference_only": true,
+          "faces_checked": true,
+          "attribution": "Photo: Ercan.G / CC BY 3.0 - cropped and animated",
+          "prompt": null,
+          "seed": null
+        },
+        "end_keyframe": null,
+        "motion_prompt": "Gentle motion through the approved historical resort crop.",
+        "negative_prompt": "No people, buildings, facilities or signs added.",
+        "camera": "static",
+        "seconds": 5,
+        "overlay": {
+          "en": "Arches hold the light.",
+          "ar": "أقواس وضوء نهار"
+        }
+      },
+      {
+        "id": "resort-1",
+        "role": "body",
+        "keyframe": {
+          "uri": "outputs/resort-preview/keyframes/day-arch.jpg",
+          "sha256": "8042034d0a5b4c0b319c3d04b8ac613632fa6de93711f95aa649ae2465c7fe36",
+          "source": "photo",
+          "scene": "mood",
+          "approved_by": "mazenDDr",
+          "approval_id": "crop-approval-2026-10-12",
+          "reference_only": true,
+          "faces_checked": true,
+          "attribution": "Photo: Ercan.G / CC BY 3.0 - cropped and animated",
+          "prompt": null,
+          "seed": null
+        },
+        "end_keyframe": null,
+        "motion_prompt": "Gentle motion through the approved historical resort crop.",
+        "negative_prompt": "No people, buildings, facilities or signs added.",
+        "camera": "static",
+        "seconds": 5,
+        "overlay": {
+          "en": "Palm leaves move with the wind.",
+          "ar": "أوراق نخيل ولمحة ماء"
+        }
+      },
+      {
+        "id": "resort-2",
+        "role": "cta",
+        "keyframe": {
+          "uri": "outputs/resort-preview/keyframes/day-arch.jpg",
+          "sha256": "8042034d0a5b4c0b319c3d04b8ac613632fa6de93711f95aa649ae2465c7fe36",
+          "source": "photo",
+          "scene": "mood",
+          "approved_by": "mazenDDr",
+          "approval_id": "crop-approval-2026-10-12",
+          "reference_only": true,
+          "faces_checked": true,
+          "attribution": "Photo: Ercan.G / CC BY 3.0 - cropped and animated",
+          "prompt": null,
+          "seed": null
+        },
+        "end_keyframe": null,
+        "motion_prompt": "Gentle motion through the approved historical resort crop.",
+        "negative_prompt": "No people, buildings, facilities or signs added.",
+        "camera": "static",
+        "seconds": 5,
+        "overlay": {
+          "en": "Daylight remains still.",
+          "ar": "لحظة هدوء"
+        }
+      }
+    ],
+    "audio": {
+      "music": null,
+      "music_credit": null,
+      "voiceover": null,
+      "voiceover_lang": null
+    }
+  },
+  "model": {
+    "repo": "instabay/stub-kenburns",
+    "revision": "0000000000000000000000000000000000000000",
+    "weights": [],
+    "loras": [],
+    "pipeline_class": "StubVideoBackend",
+    "scheduler": "frame-index",
+    "scheduler_config": {
+      "stage": "CPU post-processing of recorded motion",
+      "native_recipe_hash": "c7e8210a0d93ea232518eb25f14c4a79e138929842011da86ad8896e4c8c64ba",
+      "input_clips": [
+        {
+          "file": "outputs/wan-motion/c7e8210a0d93ea232518eb25f14c4a79e138929842011da86ad8896e4c8c64ba/shot-0.mp4",
+          "sha256": "c6c9b9f837178b7426b91ff1465ef8f395c1818ddf18160e14f1a92ce2f56bfa",
+          "seed": 1701,
+          "seconds": 410.4525046850031
+        }
+      ]
+    },
+    "steps": 1,
+    "cfg": 1.0,
+    "shift": 1.0,
+    "supports_flf": false,
+    "workflow": {
+      "uri": "outputs/resort-preview/wan-motion/c7e8210a0d93ea232518eb25f14c4a79e138929842011da86ad8896e4c8c64ba/recipe.json",
+      "sha256": "be5ed76c34068814a8cb6f3ff56cc1b86e5bbca40a1b315dc8c4ec2563d1c127"
+    },
+    "custom_nodes": {}
+  },
+  "motion": {
+    "width": 360,
+    "height": 640,
+    "fps": 30,
+    "frames": [
+      150,
+      150,
+      150
+    ],
+    "seeds": [
+      7,
+      7,
+      7
+    ]
+  },
+  "post": {
+    "font": {
+      "uri": "assets/fonts/NotoNaskhArabic.ttf",
+      "sha256": "67b5a525a661b607971fbd3f96a81b89d3a768e74534fca84f18ac97e6fab72f"
+    },
+    "lut": null,
+    "grain_strength": 0,
+    "preset": "fast",
+    "crf": 23,
+    "max_bytes": 300000000,
+    "continuity_threshold": 0.9,
+    "flicker_threshold": 0.08,
+    "palette": [],
+    "preview_label": "AI motion - historical resort photo",
+    "credit": "Photo: Ercan.G / CC BY 3.0 - cropped and animated",
+    "recorded_motion": {
+      "backend": "wan",
+      "recipe": {
+        "uri": "outputs/resort-preview/wan-motion/c7e8210a0d93ea232518eb25f14c4a79e138929842011da86ad8896e4c8c64ba/recipe.json",
+        "sha256": "be5ed76c34068814a8cb6f3ff56cc1b86e5bbca40a1b315dc8c4ec2563d1c127"
+      },
+      "recipe_hash": "c7e8210a0d93ea232518eb25f14c4a79e138929842011da86ad8896e4c8c64ba",
+      "conditioning_sha256": "8042034d0a5b4c0b319c3d04b8ac613632fa6de93711f95aa649ae2465c7fe36",
+      "clips": [
+        {
+          "uri": "outputs/resort-preview/wan-motion/c7e8210a0d93ea232518eb25f14c4a79e138929842011da86ad8896e4c8c64ba/shot-0.mp4",
+          "sha256": "c6c9b9f837178b7426b91ff1465ef8f395c1818ddf18160e14f1a92ce2f56bfa"
+        },
+        {
+          "uri": "outputs/resort-preview/wan-motion/c7e8210a0d93ea232518eb25f14c4a79e138929842011da86ad8896e4c8c64ba/shot-0.mp4",
+          "sha256": "c6c9b9f837178b7426b91ff1465ef8f395c1818ddf18160e14f1a92ce2f56bfa"
+        },
+        {
+          "uri": "outputs/resort-preview/wan-motion/c7e8210a0d93ea232518eb25f14c4a79e138929842011da86ad8896e4c8c64ba/shot-0.mp4",
+          "sha256": "c6c9b9f837178b7426b91ff1465ef8f395c1818ddf18160e14f1a92ce2f56bfa"
+        }
+      ]
+    }
+  },
+  "runtime": {
+    "docker_image_digest": null,
+    "python": "3.12.15",
+    "platform": "macOS-27.0-arm64-arm-64bit",
+    "ffmpeg_sha256": "c8173e9755795978bce8e104f8d7044fabe7d6d84044aba37d3648c6f4e4e1a8",
+    "ffprobe_sha256": "56559c234422b0e3722c54b2bd99bbd8cd83d3732a13a6d207589982a6b7085e",
+    "implementation_sha256": "a06879c375b2f8345b5c31848d3bbbee5252de8b06a884673898060f6236d0a4",
+    "pillow": "12.3.0",
+    "reshaper": "3.0.1",
+    "bidi": "0.6.11",
+    "torch": null,
+    "cuda": null,
+    "driver": null,
+    "gpu": null,
+    "native_packages": {}
+  }
+}
