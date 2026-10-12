@@ -6,6 +6,8 @@ The intended weekly loop is brand → plan → native EN/AR content → checks �
 
 ## Current status
 
+Phase 6 adds typed decision adapters, grouped calibration and an approval-safe check cascade.
+Real gold labels and GPU/hosted-model validation remain HUMAN work; default checks stay judge-only.
 Phase 5 adds guarded native Instagram publishing, durable retry state and parent-media
 insights, verified with synthetic offline contracts. No live post has been verified.
 Phase 4 implements the five-metric benchmark harness, constrained policy baselines,
@@ -17,7 +19,7 @@ SQLModel/SQLite storage, a constrained code planner, shared briefs, parallel nat
 writers, tiered hashtags, deterministic rules, three judge samples, one revision,
 a timed human approval CLI, guarded dry-run exports, and persistent LangGraph pause/resume.
 The Phase 1 LLM cache, budgets, provenance, lint/type checks, hooks and CI remain in place.
-Production agent wiring, calibrated System-1 engines and video rendering remain in their later
+Production agent/provider wiring, real calibration evidence and video rendering remain in their later
 [specified phases](docs/SPEC.md). Optimization results describe a synthetic audience;
 quality scores are canned fixtures until human calibration. `make render` remains pending.
 
@@ -158,8 +160,16 @@ across the guard, artifact write and receipt, so edits cannot race an export. In
 edits are rejected. A graph resume payload cannot create approvals. The demo/resume/cycle
 commands reject live mode. Explicit native Graph commands require live mode, environment
 credentials, `--confirm-live`, a frozen brand, approved ready media and a matching stored
-approval. [Behavior, retry limits and HUMAN steps](docs/INSTAGRAM.md). System-1 is deferred to
-Phase 6, so every post currently goes through rules and the fixture judge.
+approval. [Behavior, retry limits and HUMAN steps](docs/INSTAGRAM.md). [Phase 6 decision checks](docs/DECISIONS.md) support opt-in scoped calibration; the default
+continues through rules and the fixture judge until real evidence exists.
+
+## Decision checks
+
+Typed HTTP/local engines, per-language calibration, selective escalation context, reproducible
+10% audits and content-bound D1 evidence are available. System-1-only reviews have no invented
+rubric scores. Engine outages, uncalibrated/mismatched profiles and adverse answers fall back
+to the judge; human approval always remains. [Usage and HUMAN data requirements](docs/DECISIONS.md),
+[Phase 6 evidence](docs/PHASE6_REPORT.md). No real model accuracy or savings are claimed.
 
 ## Instagram adapters
 
@@ -185,15 +195,15 @@ does not create, edit or freeze `config/brand.yaml`. Non-demo storage runs requi
 ## Container demo
 
 ```sh
-docker build -t instabay:phase5 .
-docker run --rm --network none -v instabay-demo:/state instabay:phase5
-docker run -it --rm --network none -v instabay-demo:/state instabay:phase5 approve --actor YOUR_NAME
-docker run --rm --network none -v instabay-demo:/state instabay:phase5 resume
+docker build -t instabay:phase6 .
+docker run --rm --network none -v instabay-demo:/state instabay:phase6
+docker run -it --rm --network none -v instabay-demo:/state instabay:phase6 approve --actor YOUR_NAME
+docker run --rm --network none -v instabay-demo:/state instabay:phase6 resume
 # Use a separate named volume for the multi-week cycle.
-docker run --rm --network none -v instabay-cycle:/state instabay:phase5 cycle --weeks 3
-docker run -it --rm --network none -v instabay-cycle:/state instabay:phase5 approve --run-id cycle-w01 --actor YOUR_NAME
-docker run --rm --network none -v instabay-cycle:/state instabay:phase5 cycle --weeks 3
-docker run --rm --network none -v instabay-bench:/state instabay:phase5 bench
+docker run --rm --network none -v instabay-cycle:/state instabay:phase6 cycle --weeks 3
+docker run -it --rm --network none -v instabay-cycle:/state instabay:phase6 approve --run-id cycle-w01 --actor YOUR_NAME
+docker run --rm --network none -v instabay-cycle:/state instabay:phase6 cycle --weeks 3
+docker run --rm --network none -v instabay-bench:/state instabay:phase6 bench
 ```
 
 The image runs as UID 10001. Its `/state` volume preserves the queue, approval rows,
