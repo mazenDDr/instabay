@@ -56,10 +56,14 @@ class VisualBriefWriter:
         def grounded(result: EvidenceBrief) -> EvidenceBrief:
             if any(i not in allowed for i in result.media_ids):
                 raise ValueError("Choose an available scene; single photos must vary before reuse")
-            # Facts are source metadata, not a bookkeeping task for the model.
+            # Facts and the lead photo path are source metadata, not a bookkeeping task for the
+            # model: Qwen3-8B chose valid carousel photos but copied another photo's path.
             result = result.model_copy(
                 update={
-                    "fact_ids": [f.id for f in evidence.facts if f.scene_id in result.media_ids]
+                    "fact_ids": [f.id for f in evidence.facts if f.scene_id in result.media_ids],
+                    "brief": result.brief.model_copy(
+                        update={"photo_uri": catalog.get(result.media_ids[0]).photo.uri}
+                    ),
                 }
             )
             result.validate_selection(slot, evidence, catalog)

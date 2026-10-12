@@ -10,6 +10,7 @@ from instabay.core.schemas import Boundary, BrandConstitution, Cadence, PostForm
 
 NEEDED: dict[PostFormat, tuple[int, int]] = {"photo": (1, 1), "carousel": (2, 3), "reel": (3, 4)}
 CADENCE_KEY = "cadence"
+MAX_IMAGES = 5
 
 
 class OwnerCadence(Boundary):
@@ -106,7 +107,9 @@ def suggest_assets(slots: list[Slot], assets: list[Asset]) -> dict[str, Suggesti
         ranked = sorted(candidates, key=rank)
         matching = sum(a.pillar == pillar for a in ranked)
         primary = [a.id for a in ranked[:wanted]]
-        pool = [a.id for a in ranked[: wanted + 2]]
+        # Never offer more images than the format allows: offering 6 to a 5-image reel made
+        # Qwen3-8B select all 6 and fail validation twice (2026-10-13 real run).
+        pool = [a.id for a in ranked[: min(wanted + 2, MAX_IMAGES)]]
         shortfall = matching < minimum
         for asset_id in primary:
             used[asset_id] += 1

@@ -39,6 +39,9 @@ def register_dashboard_commands(app: typer.Typer) -> None:
         views: Annotated[str, typer.Option(help="none, stub or gpu")] = "none",
         confirm_gpu: Annotated[bool, typer.Option()] = False,
         judge: Annotated[str, typer.Option(help="none or vlm")] = "none",
+        generate: Annotated[
+            bool, typer.Option(help="Enable the Generate week button (gpu-box caption model)")
+        ] = False,
     ) -> None:
         """FR-02, FR-04: photos, weekly mix, plan and results at http://127.0.0.1:PORT."""
         import uvicorn
@@ -70,6 +73,25 @@ def register_dashboard_commands(app: typer.Typer) -> None:
                 judge=decider,
             )
 
+        generator = None
+        if generate:
+            import os
+
+            from instabay.adapters.native_llm import NativeLLMClient
+            from instabay.dashboard.jobs import CAPTION_MODEL, Generator, SSHGpuControl
+
+            if os.environ.get("INSTABAY_LLM_ENABLED") != "1":
+                raise typer.BadParameter("--generate needs INSTABAY_LLM_ENABLED=1")
+            generator = Generator(
+                root=Path.cwd().resolve(),
+                runs=runs.resolve(),
+                workspace=workspace.resolve(),
+                brand=load_brand(brand),
+                gpu=SSHGpuControl(),
+                client_factory=lambda origin: NativeLLMClient(
+                    origin, CAPTION_MODEL, confirm_external=True
+                ),
+            )
         application = create_app(
             workspace=workspace,
             brand=load_brand(brand),
@@ -78,6 +100,7 @@ def register_dashboard_commands(app: typer.Typer) -> None:
             judge=pillar_judge(judge, vision_origin, confirm_external),
             variants=render if backend else None,
             presets={k: v[0] for k, v in PRESETS.items()},
+            generator=generator,
         )
         typer.echo(f"Dashboard: http://127.0.0.1:{port}  (loopback only; Ctrl+C to stop)")
         uvicorn.run(application, host="127.0.0.1", port=port, log_level="warning")

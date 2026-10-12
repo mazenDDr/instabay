@@ -60,6 +60,6 @@ vision-down:
 
 studio:
 	mkdir -p "$(RUNS)"
-	INSTABAY_DECISIONS_ENABLED=1 INSTABAY_GPU_ENABLED=1 $(UV) run --offline --no-sync instabay dashboard \
+	INSTABAY_DECISIONS_ENABLED=1 INSTABAY_GPU_ENABLED=1 INSTABAY_LLM_ENABLED=1 $(UV) run --offline --no-sync instabay dashboard \
 	  --brand "$(BRAND)" --workspace "$(WORKSPACE)" --runs "$(RUNS)" --engine d3 --judge vlm --views gpu \
-	  --confirm-external --confirm-gpu
+	  --confirm-external --confirm-gpu --generate

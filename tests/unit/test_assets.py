@@ -223,6 +223,7 @@ def test_suggestions_prefer_pillar_photos_never_repeat_singles_and_flag_shortfal
     for slot in slots:
         s = suggestions[slot.id]
         assert by_id[s.primary[0]].pillar == slot.arm.pillar
+        assert len(s.pool) <= 5
         if s.format == "reel":
             assert len(s.primary) == 4 and s.shortfall
     library.review(unapproved.id, approved=True)

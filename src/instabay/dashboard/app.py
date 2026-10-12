@@ -25,6 +25,7 @@ from instabay.assets.plan import OwnerCadence, load_cadence, save_cadence, sugge
 from instabay.core.planner import plan_week
 from instabay.core.schemas import ApprovalRequest, Boundary, BrandConstitution, canonical_hash
 from instabay.dashboard import data
+from instabay.dashboard.jobs import Generator, next_monday
 from instabay.decisions.vision import VisionDecisionEngine
 
 PAGE = Path(__file__).with_name("index.html")
@@ -67,6 +68,12 @@ class Decision(Boundary):
     seconds_spent: float = Field(default=0, ge=0, le=86400)
 
 
+class GenerateRequest(Boundary):
+    actor: str = Field(min_length=1, max_length=80)
+    week_start: str | None = None
+    freeze_confirmed: bool
+
+
 class PropertyUpdate(Boundary):
     name: str = Field(min_length=1, max_length=120)
 
@@ -104,6 +111,7 @@ def create_app(
     judge: PillarJudge | None = None,
     variants: Callable[[AssetLibrary, Asset, str, int], Asset] | None = None,
     presets: dict[str, str] | None = None,
+    generator: Generator | None = None,
 ) -> FastAPI:
     """FR-04: one library connection per request keeps SQLite writes serialized."""
     root = (root or Path.cwd()).resolve()
@@ -281,6 +289,29 @@ def create_app(
                 for s in slots
             ],
         }
+
+    @app.get("/api/generate")
+    def generation() -> dict[str, JsonValue]:
+        status = generator.current() if generator else None
+        return {
+            "enabled": generator is not None,
+            "next_week": next_monday().isoformat(),
+            "job": status.model_dump(mode="json") if status else None,
+        }
+
+    @app.post("/api/generate")
+    def generate(item: GenerateRequest) -> dict[str, JsonValue]:
+        """FR-01, FR-09: the owner's tick freezes the brand; the run stops at approval."""
+        if generator is None:
+            raise HTTPException(409, "Start the studio with --generate (make studio)")
+        if not item.freeze_confirmed:
+            raise HTTPException(422, "Confirm the brand before generating")
+        try:
+            week = date.fromisoformat(item.week_start) if item.week_start else next_monday()
+            status = generator.start(item.actor.strip(), week)
+        except ValueError as error:
+            raise HTTPException(422, str(error)) from None
+        return status.model_dump(mode="json")
 
     @app.get("/api/runs")
     def list_runs() -> list[dict[str, JsonValue]]:

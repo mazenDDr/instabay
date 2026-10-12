@@ -310,6 +310,7 @@ const currentRun = () => S.runs.find((r) => r.key === S.runKey) || S.runs[0];
 function renderTop(tab) {
   const right = $("#topright");
   right.replaceChildren();
+  if (["home", "content", "planner"].includes(tab)) right.append(h("button", { class: "btn primary", type: "button", onclick: generateDrawer }, "Generate week"));
   if (tab === "content" && S.runs.length) {
     const sel = h("select", { "aria-label": "Weekly plan", onchange: (e) => { S.runKey = e.target.value; store.set("run", S.runKey); renderContent(); } });
     for (const r of S.runs) sel.append(h("option", { value: r.key, selected: r.key === currentRun().key, text: `${r.run_id} · week of ${r.week_start}${r.demo ? " · demo" : ""} · ${r.db}` }));
@@ -614,6 +615,58 @@ async function classify(btn) {
   btn.disabled = true; btn.textContent = "Sorting and describing… (about 5 s per photo)";
   try { const r = await api("/api/classify", { method: "POST" }); toast(`${r.classified} sorted by d3${r.judged ? `, ${r.judged} checked by the VLM judge` : ""}${r.described ? `, ${r.described} described by the VLM` : ""}${r.failed.length ? `, ${r.failed.length} failed` : ""}`); await refresh(); renderMedia(); }
   catch (e) { toast(e.message); } finally { btn.disabled = false; btn.textContent = "Sort into pillars"; }
+}
+
+const STEP_ICON = { waiting: "○", running: "◐", done: "✓", failed: "✕" };
+function jobView(job) {
+  return h("div", { class: "todo", id: "job-steps" }, ...job.steps.map((st) => h("div", { class: "row", style: "padding: 8px 4px; flex-wrap: nowrap; align-items: flex-start" },
+    h("span", { class: "ico " + (st.state === "failed" ? "warn" : ""), style: "width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; flex: none; background: var(--" + (st.state === "done" ? "green-soft" : st.state === "failed" ? "red-soft" : "blue-soft") + "); color: var(--" + (st.state === "done" ? "green" : st.state === "failed" ? "red" : "blue") + ")", text: STEP_ICON[st.state] }),
+    h("span", {}, h("b", { text: st.name, style: "display: block; font-size: 14px" }), h("span", { class: "muted", text: [st.detail, st.seconds !== null ? `${st.seconds}s` : ""].filter(Boolean).join(" · ") })))));
+}
+let jobTimer;
+async function generateDrawer() {
+  let info;
+  try { info = await api("/api/generate"); } catch (e) { toast(e.message); return; }
+  const body = h("div");
+  const showJob = (job) => {
+    body.replaceChildren(jobView(job),
+      job.state === "done" ? h("div", { style: "margin-top: 12px" }, h("p", { text: `${job.posts} posts are ready for your approval.` }), h("button", { class: "btn primary", type: "button", onclick: async () => { closeDrawer(); await refresh(); const run = S.runs.find((r) => r.db.startsWith(job.output)); if (run) { S.runKey = run.key; store.set("run", run.key); } S.contentTab = "pending"; show("content"); } }, "Review posts"))
+        : job.state === "failed" ? h("div", { class: "flags" }, h("div", { text: job.error || "Generation failed. Details: outputs/studio/jobs/latest.log" }))
+        : h("p", { class: "muted", text: "This takes a few minutes. You can close this panel; the job keeps running." }));
+  };
+  const poll = async () => {
+    clearTimeout(jobTimer);
+    try { const now = await api("/api/generate"); if (now.job) showJob(now.job); if (now.job && now.job.state === "running") jobTimer = setTimeout(poll, 2000); else { await refresh(); } }
+    catch (e) { jobTimer = setTimeout(poll, 4000); }
+  };
+  if (!info.enabled) {
+    body.append(h("p", { class: "muted", text: "Start the studio with `make studio` to enable generation." }));
+  } else if (info.job && info.job.state === "running") {
+    showJob(info.job); poll();
+  } else {
+    const ready = S.summary.assets.usable;
+    const week = h("input", { type: "date", value: info.next_week, "aria-label": "Week starting" });
+    const confirm = h("input", { type: "checkbox" });
+    const actor = store.get("actor");
+    const go = h("button", { class: "btn primary", type: "button", disabled: !ready }, "Generate");
+    go.addEventListener("click", async () => {
+      if (!actor) return toast("Add your name in Settings first");
+      if (!confirm.checked) return toast("Tick the brand confirmation first");
+      go.disabled = true;
+      try { const job = await api("/api/generate", { method: "POST", body: JSON.stringify({ actor, week_start: week.value, freeze_confirmed: true }) }); showJob(job); poll(); }
+      catch (e) { toast(e.message); go.disabled = false; }
+    });
+    const m = S.summary.cadence;
+    body.append(
+      h("p", { text: `Runs your whole workflow on ${ready} ready photos: planner → briefs → English and Arabic captions → hashtags → checks → photo layouts. It stops at your approval; nothing is published.` }),
+      h("div", { class: "kpis" }, kpi("Posts", m.posts_per_week), kpi("Reels", m.reels_per_week), kpi("Carousels", m.carousels_per_week), kpi("Photos", m.photos_per_week)),
+      h("label", { class: "field" }, h("span", { text: "Week starting (Monday)" }), week),
+      h("label", { class: "row", style: "margin: 4px 0 12px; flex-wrap: nowrap; align-items: flex-start" }, confirm, h("span", { class: "muted", text: `I reviewed config/brand.yaml (pillars, voice, facts) and freeze it for this week as ${actor || "—"}.` })),
+      h("p", { class: "muted", text: "The GPU switches from the image models to the caption model, then back (about 1–2 minutes each way). Reels are written as concepts; rendering reel video is a separate step." }),
+      ready ? go : h("p", { class: "muted", text: "No ready photos yet: sort and describe them in Media first." }));
+    if (info.job) body.append(h("p", { class: "muted", text: `Last run: ${info.job.run_id} · ${info.job.state}` }));
+  }
+  openDrawer(drawerHead("Generate week"), body);
 }
 
 function renderSettings() {
