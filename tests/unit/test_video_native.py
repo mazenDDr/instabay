@@ -160,3 +160,44 @@ def test_comfy_recorded_contract_validates_variables_and_bounded_poll(
             adapter.render_shot(ShotRecipe(recipe=recipe, index=0), tmp_path, tmp_path)
         assert "/view" not in calls
     adapter.close()
+
+
+def test_native_checkpoint_tree_rejects_unlisted_configuration(tmp_path: Path) -> None:
+    from instabay.video.backends.native import checkpoint_directory
+
+    recipe = native_recipe(tmp_path, "wan")
+    data = recipe.model_dump()
+    data["model"]["scheduler_config"] = {"local_model_uri": "weights"}
+    recipe = RenderRecipe.model_validate(data)
+    assert checkpoint_directory(recipe, tmp_path) == (tmp_path / "weights").resolve()
+    (tmp_path / "weights/unpinned.json").write_text("{}")
+    with pytest.raises(RenderError, match="Entire checkpoint"):
+        checkpoint_directory(recipe, tmp_path)
+
+
+def test_incomplete_native_recipe_never_resubmits(tmp_path: Path) -> None:
+    from instabay.video.studio import VideoStudio
+
+    recipe = native_recipe(tmp_path, "wan")
+
+    # Resolver double isolates incomplete-job refusal; no native code or input is used.
+    class UnusedWan:
+        name = "wan"
+
+        def capabilities(self):
+            pytest.fail("backend inspected after incomplete native job")
+
+        def render_shot(self, *args):
+            pytest.fail("native resubmission")
+
+    from unittest.mock import patch
+
+    studio = VideoStudio(tmp_path / "state.sqlite", tmp_path, tmp_path / "renders", UnusedWan())
+    directory = studio.renders / recipe.recipe_hash
+    directory.mkdir()
+    (directory / "recipe.json").write_text(recipe.model_dump_json())
+    with (
+        patch("instabay.video.studio.verify_inputs"),
+        pytest.raises(RenderError, match="reconciliation"),
+    ):
+        studio.render(recipe)

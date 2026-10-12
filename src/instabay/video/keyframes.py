@@ -1,6 +1,7 @@
 """FR-07: still resolution verifies bytes and approvals rather than inventing facilities."""
 
 import importlib.metadata
+import os
 import platform
 import sys
 from pathlib import Path
@@ -18,6 +19,7 @@ def runtime_identity() -> RuntimeIdentity:
         str(p.relative_to(package)): digest(p) for p in sorted(package.rglob("*.py"))
     }
     return RuntimeIdentity(
+        docker_image_digest=os.environ.get("INSTABAY_WORKER_IMAGE_DIGEST") or None,
         python=sys.version.split()[0],
         platform=platform.platform(),
         ffmpeg_sha256=digest(binary("ffmpeg")),

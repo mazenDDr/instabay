@@ -41,6 +41,16 @@ def test_actual_stub_reel_specs_arabic_and_cache_survive_restart(tmp_path: Path)
         recipe
     )
     assert cached == result and backend.calls == 3
+    manifest = Path(result.file).parent / "result.json"
+    original = manifest.read_bytes()
+    changed = result.model_dump()
+    changed["qa"]["status"] = "passed"
+    from instabay.video.studio import RenderResult
+
+    manifest.write_text(RenderResult.model_validate(changed).model_dump_json())
+    with pytest.raises(RenderError, match="metadata"):
+        studio.render(recipe)
+    manifest.write_bytes(original)
     Path(result.file).write_bytes(b"corrupted")
     with pytest.raises(RenderError, match="Cached"):
         studio.render(recipe)

@@ -85,6 +85,13 @@ class VideoStudio:
         if not manifest.exists():
             return None
         result = RenderResult.model_validate_json(manifest.read_bytes())
+        with sqlite3.connect(self.db, timeout=30) as connection:
+            row = connection.execute(
+                "SELECT qa_json FROM render_job WHERE recipe_hash=? AND status='complete'",
+                (recipe.recipe_hash,),
+            ).fetchone()
+        if row is not None and RenderResult.model_validate_json(row[0]) != result:
+            raise RenderError("Cached result metadata differs from the stored render ledger")
         if (
             result.recipe_hash != recipe.recipe_hash
             or result.backend != recipe.backend
