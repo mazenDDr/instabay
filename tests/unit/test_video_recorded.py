@@ -45,6 +45,10 @@ def local_work(tmp_path: Path) -> Path:
 def test_recorded_identity_disclosure_and_bytes_are_verified(local_work: Path) -> None:
     recipe = recorded(local_work)
     assert recipe.generated and recipe.reference_only
+    data = recipe.model_dump()
+    for item in data["shots"]["shots"]:
+        item["keyframe"].update(source="photo", reference_only=False)
+    assert RenderRecipe.model_validate(data).reference_only
     backend = RecordedMotionBackend()
     shot = ShotRecipe(recipe=recipe, index=0)
     result = backend.render_shot(shot, local_work, local_work)

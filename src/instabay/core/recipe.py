@@ -164,4 +164,6 @@ class RenderRecipe(Boundary):
 
     @property
     def reference_only(self) -> bool:
-        return any(s.keyframe.reference_only for s in self.shots.shots)
+        return self.post.recorded_motion is not None or any(
+            s.keyframe.reference_only for s in self.shots.shots
+        )
