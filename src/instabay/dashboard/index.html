@@ -310,7 +310,7 @@ const currentRun = () => S.runs.find((r) => r.key === S.runKey) || S.runs[0];
 function renderTop(tab) {
   const right = $("#topright");
   right.replaceChildren();
-  if (["home", "content", "planner"].includes(tab)) right.append(h("button", { class: "btn primary", type: "button", onclick: generateDrawer }, "Generate week"));
+  if (["home", "content", "planner"].includes(tab)) right.append(h("button", { class: "btn primary", type: "button", onclick: generateDrawer }, "Prepare week"));
   if (tab === "content" && S.runs.length) {
     const sel = h("select", { "aria-label": "Weekly plan", onchange: (e) => { S.runKey = e.target.value; store.set("run", S.runKey); renderContent(); } });
     for (const r of S.runs) sel.append(h("option", { value: r.key, selected: r.key === currentRun().key, text: `${r.run_id} · week of ${r.week_start}${r.demo ? " · demo" : ""} · ${r.db}` }));
@@ -597,6 +597,7 @@ function uploadDrawer() {
   go.addEventListener("click", async () => {
     const actor = store.get("actor");
     if (!files.files.length) return toast("Choose at least one photo");
+    if (auto.checked && !S.summary.generate) return toast("Autopilot is not enabled in this studio");
     if (!rights.checked) return toast("Please confirm you own the photos");
     if (!actor) return toast("Add your name in Settings first");
     go.disabled = true;
@@ -607,9 +608,20 @@ function uploadDrawer() {
       try { await api("/api/assets", { method: "POST", body: JSON.stringify({ name: file.name, data_base64: data, rights_confirmed: true, added_by: actor }) }); ok++; }
       catch (e) { toast(`${file.name}: ${e.message}`); }
     }
-    toast(`${ok} photo(s) added. Click “Sort into pillars” next.`); closeDrawer(); S.mediaFilter = "all"; await refresh(); renderMedia();
+    await refresh();
+    if (auto.checked && ok) {
+      const body = h("div");
+      openDrawer(drawerHead("Autopilot"), body);
+      await startJob("autopilot", "", body);
+      return;
+    }
+    toast(`${ok} photo(s) added. Click “Sort into pillars” next.`); closeDrawer(); S.mediaFilter = "all"; renderMedia();
   });
-  openDrawer(drawerHead("Add photos"), drop, picked, h("label", { class: "row muted", style: "margin: 8px 0 14px" }, rights, "I own these photos and everyone shown agreed to appear."), go);
+  const auto = h("input", { type: "checkbox" });
+  openDrawer(drawerHead("Add photos"), drop, picked,
+    h("label", { class: "row muted", style: "margin: 8px 0 8px" }, rights, "I own these photos and everyone shown agreed to appear."),
+    S.summary.generate ? h("label", { class: "row muted", style: "margin: 0 0 14px; flex-wrap: nowrap; align-items: flex-start" }, auto, h("span", { text: "Autopilot: then prepare next week automatically. I reviewed config/brand.yaml and freeze it." })) : null,
+    go);
 }
 async function classify(btn) {
   btn.disabled = true; btn.textContent = "Sorting and describing… (about 5 s per photo)";
@@ -617,56 +629,74 @@ async function classify(btn) {
   catch (e) { toast(e.message); } finally { btn.disabled = false; btn.textContent = "Sort into pillars"; }
 }
 
-const STEP_ICON = { waiting: "○", running: "◐", done: "✓", failed: "✕" };
+const STEP_ICON = { waiting: "○", running: "◐", done: "✓", failed: "✕", skipped: "–" };
+const LOOK = { sort: ["media", "all", "See the sorted photos"], plan: ["planner", null, "See the plan"], shots: ["media", "generated", "Review the new shots"] };
 function jobView(job) {
-  return h("div", { class: "todo", id: "job-steps" }, ...job.steps.map((st) => h("div", { class: "row", style: "padding: 8px 4px; flex-wrap: nowrap; align-items: flex-start" },
-    h("span", { class: "ico " + (st.state === "failed" ? "warn" : ""), style: "width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; flex: none; background: var(--" + (st.state === "done" ? "green-soft" : st.state === "failed" ? "red-soft" : "blue-soft") + "); color: var(--" + (st.state === "done" ? "green" : st.state === "failed" ? "red" : "blue") + ")", text: STEP_ICON[st.state] }),
-    h("span", {}, h("b", { text: st.name, style: "display: block; font-size: 14px" }), h("span", { class: "muted", text: [st.detail, st.seconds !== null ? `${st.seconds}s` : ""].filter(Boolean).join(" · ") })))));
+  return h("div", { class: "todo" }, ...job.steps.map((st) => {
+    const tone = st.state === "done" ? "green" : st.state === "failed" ? "red" : st.state === "skipped" ? "ink-3" : "blue";
+    return h("div", { class: "row", style: "padding: 8px 4px; flex-wrap: nowrap; align-items: flex-start" },
+      h("span", { style: `width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; flex: none; font-weight: 700; color: var(--${tone}); background: var(--${tone === "ink-3" ? "hover" : tone + "-soft"})`, text: STEP_ICON[st.state] }),
+      h("span", {}, h("b", { text: st.name, style: "display: block; font-size: 14px" }), h("span", { class: "muted", text: [st.detail, st.seconds !== null ? `${st.seconds}s` : ""].filter(Boolean).join(" · ") })));
+  }));
 }
 let jobTimer;
+function jobFooter(job, body) {
+  if (job.state === "done") return h("div", { style: "margin-top: 12px" }, h("p", { text: `${job.posts} posts are ready for your approval.` }), h("button", { class: "btn primary", type: "button", onclick: async () => { closeDrawer(); await refresh(); const run = S.runs.find((r) => r.db.startsWith(job.output)); if (run) { S.runKey = run.key; store.set("run", run.key); } S.contentTab = "pending"; show("content"); } }, "Review posts"));
+  if (job.state === "failed") return h("div", { class: "flags" }, h("div", { text: job.error || "It stopped. Details: outputs/studio/jobs/latest.log" }));
+  if (job.state === "paused") {
+    const [tab, filter, label] = LOOK[job.paused_after] || [];
+    return h("div", { style: "margin-top: 12px" }, h("p", { text: "Paused so you can check this step. Change anything you like, then continue." }),
+      h("div", { class: "row" }, tab ? h("button", { class: "btn", type: "button", onclick: async () => { closeDrawer(); await refresh(); if (filter) S.mediaFilter = filter; show(tab); } }, label) : null,
+        h("button", { class: "btn primary", type: "button", onclick: async (e) => { e.currentTarget.disabled = true; try { await api("/api/generate/continue", { method: "POST" }); pollJob(body); } catch (err) { toast(err.message); } } }, "Continue")));
+  }
+  return h("p", { class: "muted", text: job.mode === "autopilot" ? "Autopilot is running. You can close this panel; it keeps going." : "Running this step…" });
+}
+async function pollJob(body) {
+  clearTimeout(jobTimer);
+  try {
+    const now = await api("/api/generate");
+    if (now.job) body.replaceChildren(h("p", { class: "muted", text: `${now.job.mode === "autopilot" ? "Autopilot" : "Step by step"} · ${now.job.run_id}` }), jobView(now.job), jobFooter(now.job, body));
+    if (now.job && now.job.state === "running") jobTimer = setTimeout(() => pollJob(body), 2000); else await refresh();
+  } catch (e) { jobTimer = setTimeout(() => pollJob(body), 4000); }
+}
+function modeCard(id, title, text, current, onpick) {
+  return h("button", { type: "button", class: "card", style: `text-align: left; cursor: pointer; padding: 12px; outline: 2px solid ${current === id ? "var(--blue)" : "transparent"}`, onclick: () => onpick(id) }, h("b", { text: title, style: "display: block; margin-bottom: 4px" }), h("span", { class: "muted", text }));
+}
+async function startJob(mode, weekValue, body) {
+  const actor = store.get("actor");
+  if (!actor) { toast("Add your name in Settings first"); return false; }
+  try { await api("/api/generate", { method: "POST", body: JSON.stringify({ actor, week_start: weekValue, freeze_confirmed: true, mode }) }); pollJob(body); return true; }
+  catch (e) { toast(e.message); return false; }
+}
 async function generateDrawer() {
   let info;
   try { info = await api("/api/generate"); } catch (e) { toast(e.message); return; }
   const body = h("div");
-  const showJob = (job) => {
-    body.replaceChildren(jobView(job),
-      job.state === "done" ? h("div", { style: "margin-top: 12px" }, h("p", { text: `${job.posts} posts are ready for your approval.` }), h("button", { class: "btn primary", type: "button", onclick: async () => { closeDrawer(); await refresh(); const run = S.runs.find((r) => r.db.startsWith(job.output)); if (run) { S.runKey = run.key; store.set("run", run.key); } S.contentTab = "pending"; show("content"); } }, "Review posts"))
-        : job.state === "failed" ? h("div", { class: "flags" }, h("div", { text: job.error || "Generation failed. Details: outputs/studio/jobs/latest.log" }))
-        : h("p", { class: "muted", text: "This takes a few minutes. You can close this panel; the job keeps running." }));
-  };
-  const poll = async () => {
-    clearTimeout(jobTimer);
-    try { const now = await api("/api/generate"); if (now.job) showJob(now.job); if (now.job && now.job.state === "running") jobTimer = setTimeout(poll, 2000); else { await refresh(); } }
-    catch (e) { jobTimer = setTimeout(poll, 4000); }
-  };
-  if (!info.enabled) {
-    body.append(h("p", { class: "muted", text: "Start the studio with `make studio` to enable generation." }));
-  } else if (info.job && info.job.state === "running") {
-    showJob(info.job); poll();
-  } else {
-    const ready = S.summary.assets.usable;
-    const week = h("input", { type: "date", value: info.next_week, "aria-label": "Week starting" });
-    const confirm = h("input", { type: "checkbox" });
-    const actor = store.get("actor");
-    const go = h("button", { class: "btn primary", type: "button", disabled: !ready }, "Generate");
-    go.addEventListener("click", async () => {
-      if (!actor) return toast("Add your name in Settings first");
-      if (!confirm.checked) return toast("Tick the brand confirmation first");
-      go.disabled = true;
-      try { const job = await api("/api/generate", { method: "POST", body: JSON.stringify({ actor, week_start: week.value, freeze_confirmed: true }) }); showJob(job); poll(); }
-      catch (e) { toast(e.message); go.disabled = false; }
-    });
-    const m = S.summary.cadence;
-    body.append(
-      h("p", { text: `Runs your whole workflow on ${ready} ready photos: planner → briefs → English and Arabic captions → hashtags → checks → photo layouts. It stops at your approval; nothing is published.` }),
-      h("div", { class: "kpis" }, kpi("Posts", m.posts_per_week), kpi("Reels", m.reels_per_week), kpi("Carousels", m.carousels_per_week), kpi("Photos", m.photos_per_week)),
-      h("label", { class: "field" }, h("span", { text: "Week starting (Monday)" }), week),
-      h("label", { class: "row", style: "margin: 4px 0 12px; flex-wrap: nowrap; align-items: flex-start" }, confirm, h("span", { class: "muted", text: `I reviewed config/brand.yaml (pillars, voice, facts) and freeze it for this week as ${actor || "—"}.` })),
-      h("p", { class: "muted", text: "The GPU switches from the image models to the caption model, then back (about 1–2 minutes each way). Reels are written as concepts; rendering reel video is a separate step." }),
-      ready ? go : h("p", { class: "muted", text: "No ready photos yet: sort and describe them in Media first." }));
-    if (info.job) body.append(h("p", { class: "muted", text: `Last run: ${info.job.run_id} · ${info.job.state}` }));
-  }
-  openDrawer(drawerHead("Generate week"), body);
+  openDrawer(drawerHead("Prepare a week"), body);
+  if (!info.enabled) { body.append(h("p", { class: "muted", text: "Start the studio with `make studio` to enable this." })); return; }
+  if (info.job && ["running", "paused"].includes(info.job.state)) { pollJob(body); return; }
+  let mode = store.get("mode", "autopilot");
+  const modes = h("div", { class: "grid", style: "grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px" });
+  const drawModes = () => modes.replaceChildren(
+    modeCard("autopilot", "Autopilot", "Runs everything: sorts photos, plans, creates missing shots, writes EN/AR posts. You approve at the end.", mode, (m) => { mode = m; store.set("mode", m); drawModes(); }),
+    modeCard("guided", "Step by step", "Pauses after each stage so you can check photos, the plan and new shots before it continues.", mode, (m) => { mode = m; store.set("mode", m); drawModes(); }));
+  drawModes();
+  const week = h("input", { type: "date", value: info.next_week, "aria-label": "Week starting" });
+  const confirm = h("input", { type: "checkbox" });
+  const go = h("button", { class: "btn primary", type: "button" }, "Start");
+  go.addEventListener("click", async () => {
+    if (!confirm.checked) return toast("Tick the brand confirmation first");
+    go.disabled = true;
+    if (!(await startJob(mode, week.value, body))) go.disabled = false;
+  });
+  const m = S.summary.cadence;
+  body.append(modes,
+    h("div", { class: "kpis" }, kpi("Posts", m.posts_per_week), kpi("Reels", m.reels_per_week), kpi("Carousels", m.carousels_per_week), kpi("Photos", m.photos_per_week)),
+    h("label", { class: "field" }, h("span", { text: "Week starting (Monday)" }), week),
+    h("label", { class: "row", style: "margin: 4px 0 12px; flex-wrap: nowrap; align-items: flex-start" }, confirm, h("span", { class: "muted", text: `I reviewed config/brand.yaml (pillars, voice, facts) and freeze it for this week as ${store.get("actor") || "—"}.` })),
+    h("p", { class: "muted", text: "No photo is used twice in a week. Where a post lacks photos of its pillar, FLUX makes a new shot from your photos (marked as AI, checked by d3-flash). Reels are written as concepts; reel video rendering is a separate step." }),
+    go);
+  if (info.job) body.append(h("p", { class: "muted", text: `Last run: ${info.job.run_id} · ${info.job.state}` }));
 }
 
 function renderSettings() {
