@@ -13,6 +13,7 @@ from instabay.adapters.fake_llm import FakeLLM
 from instabay.approval import approval_queue, show_post
 from instabay.core.fixture_schemas import CopyFixture
 from instabay.core.schemas import BrandConstitution, BrandInput, WorkflowInput
+from instabay.cycle import CycleInput, CycleRunner
 from instabay.db import SQLiteCallStore
 from instabay.graph import ApprovalPendingError, WeekRunner
 from instabay.llm import LLMService
@@ -195,6 +196,38 @@ def cycle(
     weeks: Annotated[int, typer.Option(min=1)] = 3,
     live: Annotated[bool, typer.Option()] = False,
     confirm_live: Annotated[bool, typer.Option()] = False,
+    db: Annotated[Path, typer.Option()] = DEFAULT_DB,
+    checkpoints: Annotated[Path, typer.Option()] = DEFAULT_CHECKPOINTS,
+    outbox: Annotated[Path, typer.Option()] = DEFAULT_OUTBOX,
+    brand_inputs: Annotated[Path, typer.Option()] = DEFAULT_INPUTS,
+    fixtures: Annotated[Path, typer.Option()] = Path("tests/fixtures/llm"),
+    cycle_id: Annotated[str, typer.Option()] = "cycle",
+    seed: Annotated[int, typer.Option(min=0)] = 7,
+    week_start: Annotated[str, typer.Option()] = "2026-10-12",
 ) -> None:
-    """FR-10, FR-13: never call an external publisher from the Phase 1 scaffold."""
-    _pending(3, "Multi-week cycle")
+    """FR-09, FR-13: plan using sampled beliefs; every week stops for stored human decisions."""
+    _offline_only()
+    if live or confirm_live:
+        raise typer.BadParameter("Live cycles are deferred until the Graph adapter phase")
+    request = CycleInput(
+        id=cycle_id, weeks=weeks, seed=seed, week_start=date.fromisoformat(week_start)
+    )
+    result = CycleRunner(db, checkpoints, outbox, _brand_input(brand_inputs), fixtures).run(request)
+    typer.echo(
+        "Synthetic cycle: canned EN/AR and D1 labels; no calibrated engine or real insights."
+    )
+    for report in result.reports:
+        rate = f"{report.engagement_rate:.2%}" if report.engagement_rate is not None else "no data"
+        typer.echo(
+            f"{report.run_id}: {report.exported} exports; {report.learned} learned; "
+            f"{report.leaked} leaked; {report.unverified} unverified; engagement {rate}"
+        )
+    typer.echo(
+        f"Cycle {result.cycle_id}: {result.status}; {len(result.reports)}/{weeks} weeks complete"
+    )
+    if result.current_run_id:
+        typer.echo(
+            f"STOPPED for human approval. instabay approve --run-id {result.current_run_id} "
+            f"--actor YOUR_NAME --db {db}"
+        )
+        typer.echo("Then rerun this same cycle command to export, learn and draft the next week.")
