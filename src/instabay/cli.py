@@ -16,6 +16,7 @@ from instabay.core.schemas import BrandConstitution, BrandInput, WorkflowInput
 from instabay.cycle import CycleInput, CycleRunner
 from instabay.db import SQLiteCallStore
 from instabay.decision_commands import register_decision_commands
+from instabay.generation_commands import register_generation_commands
 from instabay.graph import ApprovalPendingError, WeekRunner
 from instabay.graph_commands import register_graph_commands
 from instabay.llm import LLMService
@@ -28,6 +29,7 @@ from instabay.video.studio import VideoStudio
 app = typer.Typer(no_args_is_help=True, pretty_exceptions_show_locals=False)
 register_graph_commands(app)
 register_decision_commands(app)
+register_generation_commands(app)
 register_video_commands(app)
 console = Console()
 DEFAULT_DB = Path(os.environ.get("INSTABAY_DB_PATH", "outputs/demo.sqlite3"))

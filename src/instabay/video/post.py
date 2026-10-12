@@ -17,7 +17,15 @@ def shape_arabic(text: str) -> str:
     return visual
 
 
-def overlay_image(overlay: Overlay, font_path: Path, output: Path, *, synthetic: bool) -> None:
+def overlay_image(
+    overlay: Overlay,
+    font_path: Path,
+    output: Path,
+    *,
+    synthetic: bool,
+    preview_label: str | None = None,
+    credit: str | None = None,
+) -> None:
     """NFR-08: fit complete lines into a safe area; never clip or synthesize lettering."""
     image = Image.new("RGBA", (1080, 1920))
     draw = ImageDraw.Draw(image)
@@ -61,6 +69,13 @@ def overlay_image(overlay: Overlay, font_path: Path, output: Path, *, synthetic:
                 anchor="mt",
                 stroke_width=1,
             )
+    for badge, y in ((preview_label, 190), (credit, 1790)):
+        if badge:
+            font = ImageFont.truetype(str(font_path), 28, layout_engine=ImageFont.Layout.BASIC)
+            if draw.textlength(badge, font=font) > 960:
+                raise RenderError("Preview credit or label exceeds its safe area")
+            draw.rounded_rectangle((40, y - 18, 1040, y + 60), radius=12, fill=(0, 20, 30, 200))
+            draw.text((540, y), badge, font=font, fill="white", anchor="mt")
     image.save(output)
 
 
@@ -73,10 +88,18 @@ def post_process(recipe: RenderRecipe, root: Path, files: list[Path], directory:
     sequence = []
     for index, (shot, file) in enumerate(zip(recipe.shots.shots, files, strict=True)):
         overlay = directory / f"overlay-{index}.png"
-        overlay_image(shot.overlay, font, overlay, synthetic=shot.keyframe.source == "synthetic")
+        overlay_image(
+            shot.overlay,
+            font,
+            overlay,
+            synthetic=shot.keyframe.source == "synthetic",
+            preview_label=recipe.post.preview_label,
+            credit=recipe.post.credit,
+        )
         output = directory / f"post-{index}.mp4"
         filters = (
-            "scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920,fps=30,setsar=1"
+            "scale=1080:1920:force_original_aspect_ratio=increase:out_range=tv,"
+            "crop=1080:1920,fps=30,setsar=1,setparams=range=limited"
         )
         if lut:
             filters += ",lut3d=brand.cube"
@@ -111,6 +134,10 @@ def post_process(recipe: RenderRecipe, root: Path, files: list[Path], directory:
                 "-an",
                 "-c:v",
                 "libx264",
+                "-pix_fmt",
+                "yuv420p",
+                "-color_range",
+                "tv",
                 "-preset",
                 recipe.post.preset,
                 "-crf",

@@ -35,6 +35,8 @@ def verify_inputs(recipe: RenderRecipe, root: Path) -> None:
     """NFR-03: every dependency is verified, including fonts, LUT and workflow."""
     refs: list[FileRef] = [s.keyframe for s in recipe.shots.shots] + [recipe.post.font]
     refs.extend(recipe.model.weights + recipe.model.loras)
+    if recipe.post.recorded_motion:
+        refs.extend([recipe.post.recorded_motion.recipe, *recipe.post.recorded_motion.clips])
     refs.extend(
         r
         for r in [

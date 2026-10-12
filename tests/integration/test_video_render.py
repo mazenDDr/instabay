@@ -6,7 +6,7 @@ from pathlib import Path
 import pytest
 
 from instabay.video.backends.stub import StubVideoBackend
-from instabay.video.files import RenderError
+from instabay.video.files import RenderError, digest, probe
 from instabay.video.keyframes import stub_recipe
 from instabay.video.post import shape_arabic
 from instabay.video.studio import VideoStudio
@@ -19,6 +19,27 @@ class CountingStub(StubVideoBackend):
     def render_shot(self, *args, **kwargs):
         self.calls += 1
         return super().render_shot(*args, **kwargs)
+
+
+def test_full_range_jpeg_photo_encodes_limited_yuv420p(tmp_path: Path) -> None:
+    import shutil
+
+    from PIL import Image
+
+    from instabay.video.shotlist import ShotList
+
+    (tmp_path / "assets/fonts").mkdir(parents=True)
+    shutil.copy(ROOT / "assets/fonts/NotoNaskhArabic.ttf", tmp_path / "assets/fonts")
+    jpeg = tmp_path / "photo.jpg"
+    Image.new("RGB", (180, 320), (200, 130, 50)).save(jpeg)
+    data = shotlist().model_dump()
+    for shot in data["shots"]:
+        shot["keyframe"].update(uri="photo.jpg", sha256=digest(jpeg), source="photo")
+    recipe = stub_recipe(ShotList.model_validate(data), tmp_path, preset="ultrafast")
+    result = VideoStudio(tmp_path / "state.sqlite", tmp_path, tmp_path / "renders").render(recipe)
+    assert result.qa.spec_ok
+    video = next(s for s in probe(Path(result.file))["streams"] if s["codec_type"] == "video")
+    assert video["pix_fmt"] == "yuv420p" and video["color_range"] == "tv"
 
 
 def test_actual_stub_reel_specs_arabic_and_cache_survive_restart(tmp_path: Path) -> None:

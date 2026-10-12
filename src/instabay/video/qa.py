@@ -149,7 +149,7 @@ def evaluate(file: Path, recipe: RenderRecipe, visual: VisualQA | None = None) -
     if evidence is None:
         violations.append("semantic/subject/background/seam/palette QA pending")
     else:
-        if recipe.backend != "stub" and evidence.synthetic:
+        if (recipe.backend != "stub" or recipe.post.recorded_motion) and evidence.synthetic:
             violations.append("synthetic QA cannot validate native motion")
         if len(evidence.seam_similarity) != len(recipe.shots.shots) - 1 or any(
             s < recipe.post.continuity_threshold for s in evidence.seam_similarity
