@@ -162,13 +162,31 @@ class MetricRow(SQLModel, table=True):
 
 
 class PosteriorRow(SQLModel, table=True):
-    """FR-13: storage schema only; no posterior updates before the simulator commit."""
+    """FR-13: independent beliefs per brand and synthetic audience scope."""
 
     __tablename__: ClassVar[str] = "posterior"
+    scope_id: str = Field(primary_key=True)
     factor: str = Field(primary_key=True)
     level: str = Field(primary_key=True)
     alpha: float
     beta: float
+
+
+class LearningRow(SQLModel, table=True):
+    """FR-13: append-only metric/fidelity receipt prevents duplicate posterior updates."""
+
+    __tablename__: ClassVar[str] = "learning_observation"
+    post_id: str = Field(primary_key=True, foreign_key="publication.post_id")
+    scope_id: str
+    record_json: str
+
+
+class CycleRow(SQLModel, table=True):
+    """FR-13, NFR-03: immutable cycle inputs, persisted before generation."""
+
+    __tablename__: ClassVar[str] = "cycle"
+    id: str = Field(primary_key=True)
+    config_json: str
 
 
 class RenderJobRow(SQLModel, table=True):

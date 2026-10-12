@@ -6,14 +6,16 @@ The intended weekly loop is brand → plan → native EN/AR content → checks �
 
 ## Current status
 
-Phase 2 implements the offline weekly content loop: typed brand and post schemas,
+Phase 3 adds a frozen seeded audience, factored Thompson sampling, long-format metrics,
+transactional content-bound learning and a multi-week cycle. Phase 2 supplies the offline
+weekly content loop: typed brand and post schemas,
 SQLModel/SQLite storage, a constrained code planner, shared briefs, parallel native EN/AR
 writers, tiered hashtags, deterministic rules, three judge samples, one revision,
 a timed human approval CLI, guarded dry-run exports, and persistent LangGraph pause/resume.
 The Phase 1 LLM cache, budgets, provenance, lint/type checks, hooks and CI remain in place.
-Simulation/optimization, benchmarks, real publishing, System-1 engines and video rendering
-remain in their later [specified phases](docs/SPEC.md). `make bench`, `make render`, and
-`instabay cycle` exit with clear phase-specific messages.
+Benchmarks, real publishing, System-1 engines and video rendering remain in their later
+[specified phases](docs/SPEC.md). `make bench` and `make render` still exit with clear
+phase-specific messages. No optimization uplift or model accuracy is claimed yet.
 
 ## Run locally
 
@@ -43,7 +45,8 @@ Repeating a completed run returns its existing receipts without duplicate artifa
 Demo SQLite state lives in `outputs/demo.sqlite3` and `outputs/demo-checkpoints.sqlite3`.
 Use `--db`, `--checkpoints`, and `--outbox`, or `INSTABAY_DB_PATH`,
 `INSTABAY_CHECKPOINTS_PATH`, and `INSTABAY_OUTBOX_PATH`, to select other paths.
-The fixture pack covers this one run (`2026-w42`); unknown slot keys fail explicitly.
+Individual fixtures cover this demo run (`2026-w42`). The compact cycle catalog covers
+`cycle-w01` through `cycle-w12`, with canned arm variants. Unknown slot keys fail explicitly.
 
 The fixture brand remains **unfrozen** and the judge scores/token counts are illustrative,
 not calibrated ratings or real model measurements. A new week uses 43 fixture requests:
@@ -54,6 +57,47 @@ inputs in temporary databases; they never approve the normal demo's queue.
 The reel outbox item is a **concept**, with shot descriptions, EN/AR overlays, audio intent,
 CTA and cover reference. No video is rendered. All outbox items are dry-run intents marked
 as reference-only and not ready for live media publishing.
+
+## Multi-week synthetic cycle
+
+```sh
+uv run --offline --no-sync instabay cycle --weeks 3 --seed 7
+uv run --offline --no-sync instabay approve --run-id cycle-w01 --actor YOUR_NAME
+uv run --offline --no-sync instabay cycle --weeks 3 --seed 7
+# HUMAN: review cycle-w02, rerun the same cycle, then review cycle-w03.
+```
+
+Each invocation resumes weeks with current stored human decisions, exports approved posts,
+collects synthetic metrics, updates beliefs, and drafts the next week. It stops whenever
+the current week needs approval. Rejections produce no export or metrics. The analyst
+reports total engagement divided by total reach; these descriptive rates are not benchmark
+results. Repeating a completed cycle returns its existing reports and learning receipts.
+
+The simulator was frozen in commit `29fed9c` before any optimizer code. It uses a seeded
+hidden audience with LogNormal reach, Binomial engagement and Beta reel watch-through.
+Thompson sampling starts each factor level at Beta(1,1), and updates all four levels with
+20 × engagement rate successes and 20 × (1 − rate) failures. The constrained planner keeps
+pillar shares, at least one reel, posting windows and an exploration slot.
+
+Learning requires content-bound fidelity evidence. This phase uses **synthetic fixture D1
+labels for exact canned brief/copy replay**; it does not run or calibrate a decision engine.
+Changed content remains unverified and is excluded from learning. Known arm leakage is also
+excluded. Unverified edits receive clearly synthetic metrics assuming the planned arm, with
+`arm_assumed=true`. Judge averages never authorize learning. Real D1 calibration waits for
+Phase 6. Metrics, evidence and posterior updates are one SQLite transaction; interrupted
+analysis and concurrent retries cannot update a post twice.
+
+Beliefs are scoped by brand and audience seed/configuration. Cycle seed, dates, length,
+brand inputs and fixture hashes are fixed at first invocation; changing them requires a
+new cycle ID and matching fixture keys. The default pack has 12 weeks. To author a different
+pack offline, copy the fixture directory, run `scripts/build_cycle_fixtures.py --cycle-id NAME
+--weeks N --output PATH/cycle-catalog.json`, and pass `--fixtures PATH --cycle-id NAME`.
+The authoring script enumerates every arm without consulting policy performance; replay only
+reads canned JSON. Use separate SQLite/checkpoint/outbox paths for independent experiments.
+
+See [the learning ADR](docs/adr/0003-phase3-learning-evidence.md) for synthetic assumptions
+and [the phase report](docs/PHASE3_REPORT.md) for gate evidence. The 12-week, 20-seed baseline,
+regret and confidence interval protocol belongs to Phase 4.
 
 ## Reproducibility and safety
 
@@ -91,10 +135,14 @@ does not create, edit or freeze `config/brand.yaml`. Non-demo storage runs requi
 ## Container demo
 
 ```sh
-docker build -t instabay:phase2 .
-docker run --rm --network none -v instabay-demo:/state instabay:phase2
-docker run -it --rm --network none -v instabay-demo:/state instabay:phase2 approve --actor YOUR_NAME
-docker run --rm --network none -v instabay-demo:/state instabay:phase2 resume
+docker build -t instabay:phase3 .
+docker run --rm --network none -v instabay-demo:/state instabay:phase3
+docker run -it --rm --network none -v instabay-demo:/state instabay:phase3 approve --actor YOUR_NAME
+docker run --rm --network none -v instabay-demo:/state instabay:phase3 resume
+# Use a separate named volume for the multi-week cycle.
+docker run --rm --network none -v instabay-cycle:/state instabay:phase3 cycle --weeks 3
+docker run -it --rm --network none -v instabay-cycle:/state instabay:phase3 approve --run-id cycle-w01 --actor YOUR_NAME
+docker run --rm --network none -v instabay-cycle:/state instabay:phase3 cycle --weeks 3
 ```
 
 The image runs as UID 10001. Its `/state` volume preserves the queue, approval rows,

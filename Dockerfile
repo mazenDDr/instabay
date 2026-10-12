@@ -11,6 +11,7 @@ ENV UV_PYTHON_DOWNLOADS=never \
     PATH="/app/.venv/bin:$PATH"
 COPY pyproject.toml uv.lock README.md ./
 COPY src ./src
+COPY sim ./sim
 RUN uv sync --frozen --no-dev
 COPY tests/fixtures/llm ./tests/fixtures/llm
 COPY config ./config

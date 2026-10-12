@@ -11,6 +11,8 @@ from sqlalchemy import event
 from sqlmodel import Session, SQLModel, col, create_engine, select
 
 from instabay.adapters.storage import OutboxWriter, UnapprovedPublishError
+from instabay.core.learning import BetaPosterior, FidelityResult, LearningRecord, MetricsSnapshot
+from instabay.core.optimizer import arm_levels, update_posterior
 from instabay.core.rules import check_rules
 from instabay.core.schemas import (
     Approval,
@@ -34,8 +36,12 @@ from instabay.core.tables import (
     ApprovalRow,
     ArmRow,
     BrandVersionRow,
+    CycleRow,
     HashtagRow,
     JudgeScoreRow,
+    LearningRow,
+    MetricRow,
+    PosteriorRow,
     PostRow,
     PublicationRow,
     ReviewRow,
@@ -51,7 +57,135 @@ class Repository:
         path.parent.mkdir(parents=True, exist_ok=True)
         self.engine = create_engine(f"sqlite:///{path}", connect_args={"check_same_thread": False})
         event.listen(self.engine, "connect", self._enable_foreign_keys)
+        self._migrate_posterior_scope()
         SQLModel.metadata.create_all(self.engine)
+
+    def _migrate_posterior_scope(self) -> None:
+        """FR-13: preserve Phase 2 prototype rows in an isolated legacy scope."""
+        with self.engine.begin() as connection:
+            columns = connection.exec_driver_sql("PRAGMA table_info(posterior)").fetchall()
+            if not columns or any(row[1] == "scope_id" for row in columns):
+                return
+            connection.exec_driver_sql("BEGIN IMMEDIATE")
+            connection.exec_driver_sql(
+                "CREATE TABLE posterior_scoped (scope_id TEXT NOT NULL, factor TEXT NOT NULL, "
+                "level TEXT NOT NULL, alpha FLOAT NOT NULL, beta FLOAT NOT NULL, "
+                "PRIMARY KEY (scope_id, factor, level))"
+            )
+            connection.exec_driver_sql(
+                "INSERT INTO posterior_scoped SELECT 'legacy', factor, level, alpha, beta "
+                "FROM posterior"
+            )
+            connection.exec_driver_sql("DROP TABLE posterior")
+            connection.exec_driver_sql("ALTER TABLE posterior_scoped RENAME TO posterior")
+
+    def register_cycle(self, cycle_id: str, config: dict[str, object]) -> None:
+        """FR-13, NFR-03: do not silently change a resumed cycle's seed or inputs."""
+        payload = json.dumps(config, sort_keys=True, ensure_ascii=False, allow_nan=False)
+        with Session(self.engine) as session:
+            session.connection().exec_driver_sql("BEGIN IMMEDIATE")
+            row = session.get(CycleRow, cycle_id)
+            if row is not None and row.config_json != payload:
+                raise ValueError("Cycle identity already belongs to different inputs")
+            if row is None:
+                session.add(CycleRow(id=cycle_id, config_json=payload))
+            session.commit()
+
+    def posteriors(self, scope_id: str) -> list[BetaPosterior]:
+        """FR-13: audience/brand scopes cannot contaminate each other's beliefs."""
+        with Session(self.engine) as session:
+            rows = session.exec(
+                select(PosteriorRow)
+                .where(PosteriorRow.scope_id == scope_id)
+                .order_by(PosteriorRow.factor, PosteriorRow.level)
+            ).all()
+            return [
+                BetaPosterior.model_validate(
+                    {key: value for key, value in row.model_dump().items() if key != "scope_id"}
+                )
+                for row in rows
+            ]
+
+    def learning_record(self, post_id: str) -> LearningRecord | None:
+        """FR-13: immutable learning receipt, including skipped fidelity evidence."""
+        with Session(self.engine) as session:
+            row = session.get(LearningRow, post_id)
+            return LearningRecord.model_validate_json(row.record_json) if row else None
+
+    def record_metrics(
+        self, scope_id: str, metrics: MetricsSnapshot, fidelity: FidelityResult
+    ) -> LearningRecord:
+        """FR-11, FR-13: atomically save metrics, fidelity and exactly one guarded update."""
+        metrics = MetricsSnapshot.model_validate(metrics.model_dump())
+        fidelity = FidelityResult.model_validate(fidelity.model_dump())
+        post = self.post(metrics.post_id)
+        planned = next(
+            slot.arm for slot in self.slots(self._post_run(post.slot_id)) if slot.id == post.slot_id
+        )
+        if (
+            fidelity.post_id != post.id
+            or metrics.content_hash != post.content_hash
+            or fidelity.content_hash != post.content_hash
+            or fidelity.planned_arm != planned
+        ):
+            raise ValueError("Metrics and fidelity must bind to the exact stored post and arm")
+        if fidelity.executed_arm is not None and metrics.observed_arm != fidelity.executed_arm:
+            raise ValueError("Metrics arm must match the fidelity evidence")
+        learned = (
+            fidelity.status == "confirmed"
+            and not metrics.arm_assumed
+            and metrics.observed_arm == planned
+        )
+        record = LearningRecord(
+            scope_id=scope_id, metrics=metrics, fidelity=fidelity, learned=learned
+        )
+        with Session(self.engine) as session:
+            session.connection().exec_driver_sql("BEGIN IMMEDIATE")
+            publication = session.exec(
+                select(PublicationRow).where(PublicationRow.post_id == post.id)
+            ).first()
+            if publication is None or publication.content_hash != metrics.content_hash:
+                raise UnapprovedPublishError("Metrics require an authorized stored publication")
+            existing = session.get(LearningRow, post.id)
+            if existing is not None:
+                previous = LearningRecord.model_validate_json(existing.record_json)
+                if previous != record:
+                    raise ValueError("A learned observation cannot be replaced or relabeled")
+                return previous
+            for name, value in metrics.values().items():
+                row = MetricRow(
+                    post_id=post.id,
+                    name=name,
+                    observed_at=metrics.observed_at.isoformat(),
+                    value=value,
+                    source=metrics.source,
+                )
+                session.add(row)
+            if learned:
+                for factor, level in arm_levels(planned):
+                    row_belief = session.get(PosteriorRow, (scope_id, factor, level))
+                    belief = BetaPosterior(
+                        factor=factor,
+                        level=level,
+                        alpha=row_belief.alpha if row_belief else 1,
+                        beta=row_belief.beta if row_belief else 1,
+                    )
+                    updated = update_posterior(belief, metrics.engagement_rate)
+                    session.merge(PosteriorRow(scope_id=scope_id, **updated.model_dump()))
+            session.add(
+                LearningRow(
+                    post_id=post.id, scope_id=scope_id, record_json=record.model_dump_json()
+                )
+            )
+            session.commit()
+        return record
+
+    def _post_run(self, slot_id: str) -> str:
+        with Session(self.engine) as session:
+            row = session.get(SlotRow, slot_id)
+            if row is None:
+                raise KeyError("Unknown slot")
+            return row.run_id
 
     @staticmethod
     def _enable_foreign_keys(connection: sqlite3.Connection, record: object) -> None:

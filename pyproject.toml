@@ -33,7 +33,7 @@ dev = [
 ]
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/instabay"]
+packages = ["src/instabay", "sim"]
 
 [tool.ruff]
 target-version = "py312"
@@ -46,12 +46,12 @@ select = ["E", "F", "I", "B", "UP", "SIM", "RUF"]
 allowed-confusables = ["ا", "ه"]
 
 [tool.ruff.lint.isort]
-known-first-party = ["instabay", "tests"]
+known-first-party = ["instabay", "sim", "tests"]
 
 [tool.mypy]
 python_version = "3.12"
 strict = true
-files = ["src", "config"]
+files = ["src", "config", "sim"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
