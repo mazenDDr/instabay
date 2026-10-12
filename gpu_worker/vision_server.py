@@ -25,8 +25,10 @@ from pydantic import BaseModel, Field
 
 D3_DIR = Path(os.environ.get("INSTABAY_D3_DIR", "data/d3-flash"))
 VIEW_DIR = Path(os.environ.get("INSTABAY_VIEW_DIR", "data/flux2-klein-4b"))
-VLM_DIR = Path(os.environ.get("INSTABAY_VLM_DIR", "data/qwen3.5-4b"))
-VLM_MODEL = "Qwen/Qwen3.5-4B"
+VLM_DIR = Path(os.environ.get("INSTABAY_VLM_DIR", "data/qwen3.5-9b"))
+VLM_MODEL = "Qwen/Qwen3.5-9B"
+VLM_REVISION = "c202236235762e1c871ad0ccb60c8ee5ba337b9a"  # pragma: allowlist secret - commit
+WRITER_ID = f"{VLM_MODEL}:nf4@{VLM_REVISION}"
 D3_MODEL = "vllm-sr/d3-flash"
 VIEW_MODEL = "black-forest-labs/FLUX.2-klein-4B"
 MAX_IMAGE_BYTES = 25_000_000
@@ -147,19 +149,26 @@ def load_view() -> Any:
 
 
 def load_vlm() -> Any:
-    """FR-08: Qwen3.5-4B in bf16 (about 9 GB) as a second-opinion pillar judge."""
+    """FR-04, FR-08: Qwen3.5-9B in NF4 (about 7 GB): pillar judge and multimodal writer."""
     if _state["name"] == "vlm":
         return _state["model"]
     unload()
     started = time.perf_counter()
     torch = importlib.import_module("torch")
     transformers = importlib.import_module("transformers")
+    quant = transformers.BitsAndBytesConfig(
+        load_in_4bit=True,
+        bnb_4bit_compute_dtype=torch.bfloat16,
+        bnb_4bit_quant_type="nf4",
+        bnb_4bit_use_double_quant=True,
+        llm_int8_skip_modules=["visual", "lm_head"],
+    )
     processor = transformers.AutoProcessor.from_pretrained(str(VLM_DIR))
     model = transformers.AutoModelForImageTextToText.from_pretrained(
-        str(VLM_DIR), dtype=torch.bfloat16, device_map="cuda:0"
+        str(VLM_DIR), dtype=torch.bfloat16, quantization_config=quant, device_map="cuda:0"
     ).eval()
     _state["model"], _state["name"] = (model, processor), "vlm"
-    log("load", model=VLM_MODEL, seconds=round(time.perf_counter() - started, 1), **gpu_bytes())
+    log("load", model=WRITER_ID, seconds=round(time.perf_counter() - started, 1), **gpu_bytes())
     return _state["model"]
 
 
@@ -271,16 +280,29 @@ def views(request: ViewRequest) -> dict[str, Any]:
     }
 
 
-def vlm_answer(image: Any, prompt: str, max_new_tokens: int) -> str:
-    """FR-08: one greedy, thinking-disabled Qwen3.5-4B answer about one image."""
+def vlm_answer(
+    image: Any,
+    prompt: str,
+    max_new_tokens: int,
+    *,
+    system: str | None = None,
+    images: list[tuple[str, Any]] | None = None,
+    temperature: float = 0,
+) -> tuple[str, int, int]:
+    """FR-04, FR-08: one thinking-disabled answer; labelled images precede the text."""
     torch = importlib.import_module("torch")
     model, processor = load_vlm()
-    messages = [
-        {
-            "role": "user",
-            "content": [{"type": "image", "image": image}, {"type": "text", "text": prompt}],
-        }
-    ]
+    content: list[dict[str, Any]] = []
+    pairs = images if images is not None else ([("", image)] if image is not None else [])
+    for label, picture in pairs:
+        if label:
+            content.append({"type": "text", "text": f"Photo {label}:"})
+        content.append({"type": "image", "image": picture})
+    content.append({"type": "text", "text": prompt})
+    messages: list[dict[str, Any]] = []
+    if system:
+        messages.append({"role": "system", "content": [{"type": "text", "text": system}]})
+    messages.append({"role": "user", "content": content})
     inputs = processor.apply_chat_template(
         messages,
         add_generation_prompt=True,
@@ -289,11 +311,15 @@ def vlm_answer(image: Any, prompt: str, max_new_tokens: int) -> str:
         return_tensors="pt",
         enable_thinking=False,
     ).to(model.device)
+    kwargs: dict[str, Any] = {"max_new_tokens": max_new_tokens, "do_sample": temperature > 0}
+    if temperature > 0:
+        kwargs["temperature"] = temperature
     with torch.inference_mode():
-        output = model.generate(**inputs, max_new_tokens=max_new_tokens, do_sample=False)
-    return str(
-        processor.decode(output[0][inputs["input_ids"].shape[1] :], skip_special_tokens=True)
-    ).strip()
+        output = model.generate(**inputs, **kwargs)
+    prompt_tokens = int(inputs["input_ids"].shape[1])
+    generated = output[0][prompt_tokens:]
+    text = str(processor.decode(generated, skip_special_tokens=True)).strip()
+    return text, prompt_tokens, int(generated.shape[0])
 
 
 def json_object(text: str) -> dict[str, Any]:
@@ -309,7 +335,7 @@ def json_object(text: str) -> dict[str, Any]:
 def vlm_choice(request: VLMRequest) -> dict[str, Any]:
     enabled()
     if request.model != VLM_MODEL:
-        raise HTTPException(422, "Only Qwen3.5-4B is served as the judge")
+        raise HTTPException(422, "Only the pinned Qwen3.5 judge is served")
     image = decode_image(request.image)
     image.thumbnail((1280, 1280))
     listing = "\n".join(f"- {key}: {text}" for key, text in request.options.items())
@@ -320,40 +346,67 @@ def vlm_choice(request: VLMRequest) -> dict[str, Any]:
     )
     with _lock:
         started = time.perf_counter()
-        text = vlm_answer(image, prompt, 160)
+        text, _, _ = vlm_answer(image, prompt, 160)
     verdict = parse_verdict(text, request.options)
     ms = round((time.perf_counter() - started) * 1000, 1)
     log("vlm", ms=ms, verdict=verdict, raw=text[:300], **gpu_bytes())
     return {"verdict": verdict, "raw": text, "elapsed_ms": ms}
 
 
-class DescribeRequest(BaseModel):
+class WriterImage(BaseModel):
+    id: str = Field(max_length=80)
+    data: str
+
+
+class WriterRequest(BaseModel):
+    """FR-04: same contract as caption_llm_server.NativeRequest, plus labelled photos."""
+
     model: str
-    image: str
+    prompt: str = Field(max_length=20000)
+    inputs: dict[str, Any]
+    output_schema: dict[str, Any]
+    temperature: float = Field(ge=0, le=2)
+    max_output_tokens: int = Field(gt=0, le=4096)
+    validation_feedback: str | None = None
+    images: list[WriterImage] = Field(default_factory=list, max_length=6)
 
 
-DESCRIBE = (
-    "Describe only what is clearly visible in this resort photograph, for a caption writer. "
-    "One short factual sentence in English and the same sentence in Modern Standard Arabic. "
-    "Do not name the resort, the city or any brand. Do not guess at facilities, services, "
-    "prices or anything that is not visible. "
-    'Answer with JSON only: {"en": "<sentence>", "ar": "<sentence>"}'
-)
-
-
-@app.post("/v1/vlm-describe")
-def vlm_describe(request: DescribeRequest) -> dict[str, Any]:
-    """FR-04: draft EN/AR visible-content lines; the owner can edit them."""
-    enabled()
-    if request.model != VLM_MODEL:
-        raise HTTPException(422, "Only Qwen3.5-4B is served as the describer")
-    image = decode_image(request.image)
-    image.thumbnail((1280, 1280))
+@app.post("/generate")
+def generate(request: WriterRequest) -> dict[str, Any]:
+    """FR-04: multimodal brief/caption writing; the model sees the photos it writes about."""
+    if os.environ.get("INSTABAY_LLM_ENABLED") != "1" or request.model != WRITER_ID:
+        raise HTTPException(403, "Writer is not enabled or the model identity differs")
+    system = (
+        request.prompt
+        + "\nReturn JSON only, matching this schema:\n"
+        + json.dumps(request.output_schema, ensure_ascii=False)
+    )
+    if request.validation_feedback:
+        system += "\nCorrect these validation failures: " + request.validation_feedback
+    pictures = []
+    for item in request.images:
+        picture = decode_image(item.data)
+        picture.thumbnail((1024, 1024))
+        pictures.append((item.id, picture))
     with _lock:
         started = time.perf_counter()
-        text = vlm_answer(image, DESCRIBE, 220)
-    data = json_object(text)
-    en, ar = str(data.get("en", "")).strip()[:600], str(data.get("ar", "")).strip()[:600]
+        text, prompt_tokens, output_tokens = vlm_answer(
+            None,
+            json.dumps(request.inputs, ensure_ascii=False),
+            request.max_output_tokens,
+            system=system,
+            images=pictures or [],
+            temperature=request.temperature,
+        )
+    if text.startswith("```"):
+        text = text.split("\n", 1)[-1].rsplit("```", 1)[0].strip()
     ms = round((time.perf_counter() - started) * 1000, 1)
-    log("describe", ms=ms, en=en, ar=ar, **gpu_bytes())
-    return {"en": en, "ar": ar, "raw": text, "elapsed_ms": ms}
+    log("write", ms=ms, images=len(pictures), tokens=output_tokens, **gpu_bytes())
+    return {
+        "model": WRITER_ID,
+        "output_json": text,
+        "input_tokens": prompt_tokens,
+        "output_tokens": output_tokens,
+        "cost_usd": 0.0,
+        "latency_ms": ms,
+    }

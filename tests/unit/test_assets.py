@@ -236,7 +236,9 @@ def test_export_feeds_existing_evidence_contract(library):
         owner_photo(library, 60 + index, pillar)
     owner_photo(library, 99, "spa", note=False)
     evidence, catalog = export_library(library, brand, library.workspace / "export")
-    assert len(catalog.objects) == 5 and not evidence.reference_only
+    # The undescribed photo is still usable: the multimodal writer sees it directly.
+    assert len(catalog.objects) == 6 and len(evidence.facts) == 5
+    assert not evidence.reference_only
     assert set(evidence.pillar_guidance) == set(PILLARS)
     assert all(not o.reference_only and o.source == "photo" for o in catalog.objects)
     assert evidence.objects(library.root) == catalog
@@ -283,28 +285,34 @@ def test_unsure_d3_labels_go_to_the_vlm_judge(library):
     assert agreement(library.all()).accuracy == 0.0
 
 
-def test_vlm_drafts_missing_descriptions_but_never_overwrites_the_owner(library):
-    from instabay.assets.judge import Description, FakePillarJudge
-    from instabay.decisions.vision import image_digest
+def test_writer_observations_become_facts_only_for_undescribed_photos(library):
+    from instabay.content.evidence import EvidenceBrief, Observation
+    from instabay.core.schemas import Brief
 
-    blank, mine = owner_photo(library, 31, note=False), owner_photo(library, 32, note=False)
-    library.review(mine.id, note_en="My pool", note_ar="مسبحي")
-    engine = FakeVisionEngine(
-        [
-            fixture_for(library, blank, "spa", 0.9, 0.0),
-            fixture_for(library, mine, "spa", 0.9, 0.0),
-        ]
+    described = owner_photo(library, 41, "spa")
+    plain = owner_photo(library, 42, "spa", note=False)
+    assert plain.usable and not plain.described and not plain.needs_review
+    evidence, catalog = export_library(library, demo_brand(), library.workspace / "export")
+    brief = Brief(
+        angle="a",
+        hook="h",
+        key_message="k",
+        visual_description="v",
+        photo_uri=catalog.get(described.id).photo.uri,
+        cta="Save it",
+        must_not=[],
     )
-    text = Description(en="A pool with loungers", ar="مسبح مع كراسي")
-    judge = FakePillarJudge({}, {image_digest(library.path(a)): text for a in (blank, mine)})
-    report = classify_assets(library, engine, demo_brand(), judge=judge)
-    assert report.described == 1
-    drafted = library.get(blank.id)
-    assert (drafted.note_en, drafted.note_source, drafted.described) == (
-        "A pool with loungers",
-        "vlm",
-        True,
+    selection = EvidenceBrief(
+        brief=brief,
+        media_ids=[described.id, plain.id],
+        fact_ids=["x"],
+        pillar_intent="p",
+        sequence_reason="s",
+        observations=[
+            Observation(media_id=plain.id, en="Loungers by a pool", ar="كراسي بجانب مسبح"),
+            Observation(media_id=described.id, en="ignored", ar="تجاهل"),
+        ],
     )
-    assert library.get(mine.id).note_en == "My pool"
-    library.review(blank.id, note_en="Main pool at noon", note_ar="المسبح الرئيسي ظهرا")
-    assert library.get(blank.id).note_source == "owner"
+    facts = selection.facts(evidence)
+    assert [f.scene_id for f in facts] == [described.id, plain.id]
+    assert facts[1].id == f"{plain.id}-seen" and facts[1].caption_ar == "كراسي بجانب مسبح"

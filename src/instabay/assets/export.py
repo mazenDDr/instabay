@@ -18,8 +18,8 @@ def resort_object(asset: Asset, property_name: str) -> ResortObject:
     generated = asset.origin == "generated"
     return ResortObject(
         id=asset.id,
-        label=asset.note_en[:60],
-        observed=asset.note_en,
+        label=(asset.note_en if asset.described else f"Photo {asset.id}")[:60],
+        observed=asset.note_en if asset.described else "",
         photo=FileRef(uri=asset.file, sha256=asset.sha256),
         crop=CropBox(x=0, y=0, width=asset.width, height=asset.height),
         approved_by=asset.added_by,
@@ -45,11 +45,11 @@ def resort_object(asset: Asset, property_name: str) -> ResortObject:
 def export_library(
     library: AssetLibrary, brand: BrandConstitution, output: Path
 ) -> tuple[ContentEvidence, ObjectCatalog]:
-    """FR-04: only usable, described photos; every pillar gets brand-derived guidance."""
+    """FR-04: every usable photo; owner descriptions become facts, the writer sees the rest."""
     property_name = str(library.setting(PROPERTY_KEY) or "Insta Bay")
-    chosen = [a for a in library.all() if a.usable and a.described]
+    chosen = [a for a in library.all() if a.usable]
     if not chosen:
-        raise ValueError("No usable photos: add a pillar and an EN/AR description first")
+        raise ValueError("No usable photos: sort them into pillars first")
     catalog = ObjectCatalog(
         resort=property_name,
         objects=[resort_object(a, property_name) for a in chosen],
@@ -75,6 +75,7 @@ def export_library(
                 caption_ar=a.note_ar,
             )
             for a in chosen
+            if a.described
         ],
         pillar_guidance={
             p.id: (

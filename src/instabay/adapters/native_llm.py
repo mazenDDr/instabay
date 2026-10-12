@@ -1,12 +1,15 @@
 """FR-04, NFR-04: schema-bound real generation behind the established LLMClient protocol."""
 
+import base64
+import hashlib
 import os
 import re
+from pathlib import Path
 from urllib.parse import urlsplit
 
 import httpx
 
-from instabay.adapters.llm import Completion, CompletionRequest
+from instabay.adapters.llm import Completion, CompletionRequest, ImageInput
 
 
 class NativeLLMClient:
@@ -44,6 +47,14 @@ class NativeLLMClient:
             limits=httpx.Limits(max_keepalive_connections=0),
         )
 
+    @staticmethod
+    def _image(image: ImageInput) -> str:
+        """NFR-03: send only the exact bytes the request (and its cache key) names."""
+        data = Path(image.uri).read_bytes()
+        if hashlib.sha256(data).hexdigest() != image.sha256:
+            raise ValueError("Image bytes differ from the request")
+        return base64.b64encode(data).decode("ascii")
+
     def close(self) -> None:
         """NFR-06: release transport resources."""
         self.client.close()
@@ -56,12 +67,16 @@ class NativeLLMClient:
             raise ValueError("Request/cache model differs from the native model")
         try:
             self.failure_stage = "transport"
-            response = self.client.post(
-                "/generate",
-                json=request.model_dump(
-                    mode="json", exclude={"template_name", "slot_id", "prompt_hash"}
-                ),
+            payload = request.model_dump(
+                mode="json", exclude={"template_name", "slot_id", "prompt_hash", "images"}
             )
+            if request.images:
+                self.failure_stage = "image_bytes"
+                payload["images"] = [
+                    {"id": image.id, "data": self._image(image)} for image in request.images
+                ]
+                self.failure_stage = "transport"
+            response = self.client.post("/generate", json=payload)
             self.failure_stage = f"http_{response.status_code}"
             response.raise_for_status()
             self.failure_stage = "response_schema"

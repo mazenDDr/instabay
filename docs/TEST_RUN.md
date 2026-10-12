@@ -20,7 +20,7 @@ cp config/insta-bay-brand.example.yaml config/brand.yaml
 ## 2. Start the image models and the dashboard
 
 ```sh
-make vision-up      # gpu-box: d3-flash, Qwen3.5-4B judge, FLUX.2-klein views; opens a tunnel
+make vision-up      # gpu-box: d3-flash, Qwen3.5-9B judge, FLUX.2-klein views; opens a tunnel
 make studio         # http://127.0.0.1:8780 (shows runs under outputs/studio/)
 ```
 
@@ -37,7 +37,7 @@ reloads a model (4–15 s). The first request after a switch is slower.
 1. **Settings**: enter your name. It is stored with every approval.
 2. **Media → + Add photos**: drop the resort photos and confirm you own them.
 3. **Media → Sort into pillars**: d3-flash labels each photo (about 3 s each). When d3's top
-   pillar is under 50%, the Qwen3.5-4B judge looks at the photo and picks one with a short reason.
+   pillar is under 50%, the Qwen3.5-9B judge looks at the photo and picks one with a short reason.
    The tile shows *by d3 · 76%* or *by VLM*.
 4. Open each photo:
    - fix the pillar if it is wrong; your corrections measure both models in **Settings**;

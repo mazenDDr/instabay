@@ -93,7 +93,7 @@ def register_asset_commands(app: typer.Typer) -> None:
         origin: Annotated[str, typer.Option()] = VISION_ORIGIN,
         confirm_external: Annotated[bool, typer.Option()] = False,
         force: Annotated[bool, typer.Option()] = False,
-        judge: Annotated[str, typer.Option(help="none or vlm (Qwen3.5-4B on gpu-box)")] = "none",
+        judge: Annotated[str, typer.Option(help="none or vlm (Qwen3.5-9B on gpu-box)")] = "none",
     ) -> None:
         """FR-08: sort photos into pillars with d3-flash; unsure ones go to the VLM judge."""
         decider = vision_engine(engine, fixtures, origin, confirm_external)

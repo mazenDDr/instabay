@@ -676,7 +676,7 @@ function renderSettings() {
   const row = (ok, title, sub) => h("div", { class: "row", style: "padding: 10px 0; border-bottom: 1px solid var(--line-soft); flex-wrap: nowrap" }, h("span", { class: "badge " + (ok ? "ok" : "warn"), text: ok ? "On" : "Off" }), h("span", {}, h("b", { text: title, style: "display: block; font-size: 14px" }), h("span", { class: "muted", text: sub })));
   $("#connections").replaceChildren(
     row(!!s.engine, "Pillar classifier · d3-flash", !s.engine ? "Start the dashboard with --engine d3" : s.engine_synthetic ? "Offline test fixtures only" : g.labelled ? `Agrees with you on ${pct(g.accuracy, 0)} of ${g.labelled} labels · κ ${(g.kappa ?? 0).toFixed(2)}` : "Correct a few pillars to measure how often it is right"),
-    row(!!s.judge, "VLM judge · Qwen3.5-4B", !s.judge ? "Start with --judge vlm" : v.labelled ? `Checks photos d3 is unsure about · agrees on ${pct(v.accuracy, 0)} of ${v.labelled} labels` : "Checks photos d3 is unsure about"),
+    row(!!s.judge, "VLM judge · Qwen3.5-9B", !s.judge ? "Start with --judge vlm" : v.labelled ? `Checks photos d3 is unsure about · agrees on ${pct(v.accuracy, 0)} of ${v.labelled} labels` : "Checks photos d3 is unsure about"),
     row(s.variants_enabled, "Camera views · FLUX.2-klein-4B", s.variants_enabled ? "Create views from any photo in Media" : "Start with --views gpu"),
     row(s.instagram.configured, "Instagram", s.instagram.configured ? `Token found · mode ${s.instagram.mode}` : "Add INSTAGRAM_ACCESS_TOKEN and INSTAGRAM_USER_ID to .env"),
   );

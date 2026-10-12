@@ -130,16 +130,17 @@ class Asset(Boundary):
 
     @property
     def needs_review(self) -> bool:
-        return not self.rejected and (self.pillar is None or not self.described)
+        return not self.rejected and self.pillar is None
 
     @property
     def described(self) -> bool:
-        return bool(self.note_en.strip() and self.note_ar.strip())
+        """FR-04: owner-written EN/AR lines; optional now that the writer sees the photo."""
+        return bool(self.note_en.strip() and self.note_ar.strip()) and self.note_source != "vlm"
 
     @property
     def usable(self) -> bool:
-        """FR-04, rule 6: labelled, described and (for generated views) owner-approved."""
-        if self.rejected or not self.rights_confirmed or self.pillar is None or not self.described:
+        """FR-04, rule 6: labelled and (for generated views) owner-approved."""
+        if self.rejected or not self.rights_confirmed or self.pillar is None:
             return False
         return self.origin == "owner" or self.approved
 
@@ -341,15 +342,6 @@ class AssetLibrary:
             db.execute(
                 "UPDATE asset SET vlm_pillar = ?, vlm_reason = ? WHERE id = ?",
                 (pillar, reason[:500], asset_id),
-            )
-
-    def record_description(self, asset_id: str, en: str, ar: str) -> None:
-        """FR-04: VLM-drafted lines never overwrite text the owner already wrote."""
-        with self.transaction() as db:
-            db.execute(
-                "UPDATE asset SET note_en = ?, note_ar = ?, note_source = 'vlm' "
-                "WHERE id = ? AND (note_source IS NULL OR note_source = 'vlm')",
-                (en.strip()[:600], ar.strip()[:600], asset_id),
             )
 
     def record_fidelity(self, asset_id: str, result: dict[str, JsonValue]) -> None:

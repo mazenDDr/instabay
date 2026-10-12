@@ -45,6 +45,7 @@ def generate_week(
     draft_only: bool = False,
     cadence: Cadence | None = None,
     asset_pools: Callable[[list[Slot]], dict[str, list[str]]] | None = None,
+    multimodal: bool = False,
 ) -> WorkflowResult:
     """FR-09: draft/review only; approval and Instagram are separate explicit actions."""
     root, output = root.resolve(), output.resolve()
@@ -77,6 +78,7 @@ def generate_week(
         "catalog_hash": canonical_hash(catalog),
         "model": model,
         "draft_only": draft_only,
+        **({"multimodal": True} if multimodal else {}),
         **({"cadence": cadence.model_dump(mode="json")} if cadence else {}),
         "prompt_hashes": {
             t: hashlib.sha256((prompts / f"{t}.md").read_bytes()).hexdigest() for t in TEMPLATES
@@ -104,6 +106,7 @@ def generate_week(
         run_budget=budget,
         cadence=cadence,
         asset_pools=asset_pools,
+        multimodal=multimodal,
         content_evidence=evidence,
         content_root=root,
         video_catalog=catalog,

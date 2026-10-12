@@ -14,7 +14,7 @@ from pydantic import BaseModel, ConfigDict, Field, JsonValue, TypeAdapter, Valid
 
 from instabay.adapters.call_store import CallRecord, CallStore
 from instabay.adapters.fake_llm import FakeLLMMissingFixture
-from instabay.adapters.llm import Completion, CompletionRequest, LLMClient
+from instabay.adapters.llm import Completion, CompletionRequest, ImageInput, LLMClient
 
 
 class LLMOutputError(ValueError):
@@ -81,6 +81,7 @@ class LLMService:
         model: str = "fake-fixture-v1",
         temperature: float = 0,
         max_output_tokens: int = 512,
+        images: list[ImageInput] | None = None,
     ) -> Output:
         """NFR-03: validate JSON, retry once, cache by all generation-affecting inputs."""
         if not re.fullmatch(r"[a-z][a-z0-9_]*", template_name):
@@ -98,6 +99,7 @@ class LLMService:
             ),
             temperature=temperature,
             max_output_tokens=self.token_overrides.get(template_name, max_output_tokens),
+            images=images or [],
         )
         cache_key = hashlib.sha256(
             json.dumps(request.model_dump(mode="json"), sort_keys=True, ensure_ascii=False).encode()

@@ -1,46 +1,37 @@
 # Evidence-first brief — FR-04, FR-06
 
 Produce ONE JSON INSTANCE, not a schema. Do not repeat $defs, properties, required or types.
-Return brief, media_ids, fact_ids, pillar_intent, sequence_reason and cta_kind.
-Read post_format first. For photo, media_ids has EXACTLY ONE element and the brief describes
-ONLY that photograph. For carousel, select multiple photographs. For reel, select three
-to five scenes. This request is for ONE post, not the entire week or all available scenes.
-The supplied scenes and visual facts are the available story. Never invent a facility,
-room interior, underwater view, species, price, deal, availability or guest testimonial.
-Historical photos are not proof of current condition. Do not describe Maldives references
-as Hurghada, the Red Sea, or fictional Insta Bay facilities. Name their actual source property.
+Return brief, media_ids, fact_ids, observations, pillar_intent, sequence_reason and cta_kind.
 
-Keep the slot's pillar and format. Read evidence.pillar_guidance for that pillar. Give the
-post a distinct, concrete angle and one useful viewer action. previous_angles are already
-used this week: avoid repeating them or simply saying "slow down" in every post.
+The candidate photographs are attached as images, in the same order as `scenes`; each image is
+preceded by its scene id. LOOK at them. They are the only evidence of what this place has.
+evidence.property_name is the resort; evidence.geography is where it is. If
+evidence.reference_only is true the photos are a historical reference of the named property:
+never present them as Insta Bay's own facilities. Otherwise they are the owner's own resort.
 
-Photo: choose exactly one scene and one vivid, specific thought drawn from it.
-Carousel: choose 2–5 DIFFERENT photographs, ordered as a mini exploration or a useful
-comparison. Explain the progression in sequence_reason. Do not make repeated crops of one
-image. The caption will carry the sequence; no text panels are required over the images.
-Reel: choose 3–5 complete coastal/property scenes. The video will show gentle continuous
-motion in each scene, normally five seconds each. Describe a readable place with water,
-shoreline, palms or buildings. No rapid object montage or manual start/end keyframes.
+Read post_format first. This request is for ONE post, not the entire week.
+Photo: media_ids has EXACTLY ONE scene; give one vivid, specific thought drawn from it.
+Carousel: choose 2–5 DIFFERENT photographs ordered as a mini exploration or a useful
+comparison, and explain the progression in sequence_reason.
+Reel: choose 3–5 DIFFERENT scenes that together give a readable sense of the place (water,
+pools, buildings, palms, terraces). Each scene gets gentle motion for about five seconds.
+Never pick two photos of the same spot from nearly the same viewpoint in one post.
 
-media_ids must be exact scene IDs. fact_ids must be exact supplied fact IDs, including at
-least one fact from EACH selected scene. brief.photo_uri is the first selected source's
-exact photo_uri. All brief fields are strings except must_not and reel_concept.
-reel_concept is null for photo/carousel. For a reel it has hook, shots (semantic scene
-purposes only), overlay_en, overlay_ar, audio, cta, cover. Cover uses the first source URI.
+Keep the slot's pillar and format and read evidence.pillar_guidance for that pillar. Give the
+post a distinct, concrete angle and one useful viewer action; previous_angles are already used.
 
-The brief is shared by independent English and Arabic writers. Keep its key message and
-CTA concrete. For offers without an offer source, make a travel-planning or visual-comparison
-post; never manufacture a discount. A relaxation pillar does not prove a spa. A water-color
-pillar does not prove snorkeling or a house reef. Give a specific, image-backed payoff.
+observations: for EVERY selected scene whose `has_facts` is false,
+add {"media_id", "en", "ar"}: one short factual sentence in English and the same sentence in
+Modern Standard Arabic stating only what is clearly visible in that photo (objects, layout,
+light, time of day only if obvious). No names, prices, services or facilities you cannot see.
+Scenes that already list facts need no observation.
 
-Every selected source is a daylight photograph. Do NOT make the story depend on sunrise,
-dawn, a morning schedule, sunset, temperature, silence or wind sounds that are not evidenced.
-Do not repeat the same water/shore question each day: use the pillar guidance and actual
-format (single memorable view, ordered comparison, or continuous scenic experience).
+Never invent a facility, room interior, underwater view, species, price, deal, availability or
+guest testimonial. A relaxation pillar does not prove a spa; water colour does not prove
+snorkeling. For offers without an offer source, make a travel-planning or comparison post.
+
+media_ids must be exact scene IDs. brief.photo_uri and fact_ids are filled in by the compiler;
+any value is fine. All brief fields are strings except must_not and reel_concept.
+reel_concept is null for photo/carousel. For a reel it MUST be an object with hook, shots
+(semantic scene purposes only), overlay_en, overlay_ar, audio, cta, cover.
 Set cta_kind to save, compare, comment or swipe; brief.cta must mean the same action.
-For reel slots, reel_concept MUST be an object with all required fields, never null.
-For photo and carousel slots, reel_concept MUST be null. Verify this before returning JSON.
-
-Source fact binding is deterministic: the compiler attaches the facts belonging to each
-selected scene. fact_ids may list supplied IDs but the compiler resolves this metadata;
-concentrate on the semantic brief, format and ordered scene IDs. Never manufacture a fact.
