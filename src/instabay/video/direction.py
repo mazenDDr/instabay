@@ -24,6 +24,13 @@ class CropBox(Boundary):
     height: int = Field(gt=0)
 
 
+class ConditioningCrop(FileRef):
+    """NFR-03: keep exact prepared bytes bound to their source photograph and crop."""
+
+    source_photo_sha256: Hash
+    crop_hash: Hash
+
+
 class ResortObject(Boundary):
     """FR-08: evidence, crop approval and rights are supplied by the catalog, never an LLM."""
 
@@ -49,9 +56,15 @@ class ResortObject(Boundary):
         default="crop", exclude_if=lambda v: v == "crop"
     )
     must_include: list[CropBox] = Field(default_factory=list, exclude_if=lambda v: not v)
+    conditioning: ConditioningCrop | None = Field(default=None, exclude_if=lambda v: v is None)
 
     @model_validator(mode="after")
     def preview_scope(self) -> Self:
+        if self.conditioning and (
+            self.conditioning.source_photo_sha256 != self.photo.sha256
+            or self.conditioning.crop_hash != canonical_hash(self.crop)
+        ):
+            raise ValueError("Conditioning crop belongs to a different source or composition")
         if (
             self.approval_scope == "preview_source_use" or self.source == "synthetic"
         ) and not self.reference_only:
@@ -300,6 +313,23 @@ def resolve_object(item: ResortObject, root: Path, directory: Path) -> Keyframe:
             or item.crop.y + item.crop.height > image.height
         ):
             raise ValueError("Observed crop exceeds the source photograph")
+    if item.conditioning:
+        immutable = local_file(root, item.conditioning)
+        with Image.open(immutable) as image:
+            if image.size != (576, 1024):
+                raise ValueError("Stored conditioning must retain its prepared dimensions")
+        return Keyframe(
+            uri=item.conditioning.uri,
+            sha256=item.conditioning.sha256,
+            source=item.source,
+            scene="facility",
+            approved_by=item.approved_by,
+            approval_id=item.approval_id,
+            approval_scope=item.approval_scope,
+            reference_only=item.reference_only,
+            faces_checked=item.faces_checked,
+            attribution=item.attribution,
+        )
     output = directory / f"{item.id}.pending.jpg"
     directory.mkdir(parents=True, exist_ok=True)
     c = item.crop

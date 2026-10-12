@@ -265,6 +265,14 @@ class Repository:
                 session.add(row)
                 session.commit()
 
+    def frozen_brand(self, digest: str) -> BrandConstitution:
+        """FR-01: resolve only an already stored human-frozen constitution."""
+        with Session(self.engine) as session:
+            row = session.get(BrandVersionRow, digest)
+            if row is None or not row.frozen:
+                raise ValueError("Production generation requires an already human-frozen brand")
+            return BrandConstitution.model_validate_json(row.constitution_json)
+
     def run(self, run_id: str) -> WorkflowInput:
         """FR-03: recover a validated run after a process restart."""
         with Session(self.engine) as session:

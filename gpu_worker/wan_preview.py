@@ -45,6 +45,7 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--spec", type=Path, required=True)
     parser.add_argument("--confirm-gpu", action="store_true")
+    parser.add_argument("--receipt", type=Path)
     args = parser.parse_args()
     if not args.confirm_gpu or os.environ.get("INSTABAY_GPU_ENABLED") != "1":
         raise PermissionError("GPU preview requires both explicit opt-ins")
@@ -114,6 +115,11 @@ def main() -> None:
     if recipe_path.exists():
         raise FileExistsError("Reconcile existing native attempt before retry; never overwrite")
     recipe_path.write_text(json.dumps(recipe, indent=2) + "\n")
+    if args.receipt:
+        args.receipt.parent.mkdir(parents=True, exist_ok=True)
+        args.receipt.write_text(
+            json.dumps({"recipe_hash": recipe_hash, "directory": directory.as_posix()}) + "\n"
+        )
     (directory / "worker.py").write_bytes(Path(__file__).read_bytes())
     print("Stored motion recipe", recipe_hash, flush=True)
     started = perf_counter()

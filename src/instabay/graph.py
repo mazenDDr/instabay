@@ -107,6 +107,7 @@ class WeekRunner:
         content_root: Path | None = None,
         reference_brand: BrandConstitution | None = None,
         run_budget: RunBudget | None = None,
+        frozen_brand_hash: str | None = None,
     ) -> None:
         self._stack = ExitStack()
         self.repository = Repository(db)
@@ -120,6 +121,11 @@ class WeekRunner:
             content_evidence.objects(self.content_root) if content_evidence else None
         )
         self.reference_brand = reference_brand
+        self.frozen_brand_hash = frozen_brand_hash
+        if frozen_brand_hash is not None:
+            if reference_brand is not None or llm_client is None:
+                raise ValueError("A frozen production brand requires an explicit generation client")
+            self.repository.frozen_brand(frozen_brand_hash)
         self.photo_db = db
         self.service = LLMService(
             llm_client or self.fake,
@@ -165,7 +171,11 @@ class WeekRunner:
         return {"configurable": {"thread_id": run_id}, "recursion_limit": 20}
 
     def _brand(self, state: WeekState) -> dict[str, str]:
-        if self.reference_brand is not None:
+        if self.frozen_brand_hash is not None:
+            if state["demo"]:
+                raise ValueError("Production generation cannot be marked as a fixture demo")
+            constitution = self.repository.frozen_brand(self.frozen_brand_hash)
+        elif self.reference_brand is not None:
             if not state["demo"] or self.content_evidence is None:
                 raise ValueError(
                     "Reference brand overrides are preview-only and need scene evidence"
