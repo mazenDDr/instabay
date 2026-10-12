@@ -2,6 +2,7 @@
 
 import hashlib
 import json
+from collections.abc import Callable
 from datetime import date
 from pathlib import Path
 
@@ -11,6 +12,8 @@ from instabay.content.export import export_gallery
 from instabay.core.schemas import (
     BrandConstitution,
     BrandInput,
+    Cadence,
+    Slot,
     WorkflowInput,
     WorkflowResult,
     canonical_hash,
@@ -40,6 +43,8 @@ def generate_week(
     budget: RunBudget,
     replay: bool = False,
     draft_only: bool = False,
+    cadence: Cadence | None = None,
+    asset_pools: Callable[[list[Slot]], dict[str, list[str]]] | None = None,
 ) -> WorkflowResult:
     """FR-09: draft/review only; approval and Instagram are separate explicit actions."""
     root, output = root.resolve(), output.resolve()
@@ -72,6 +77,7 @@ def generate_week(
         "catalog_hash": canonical_hash(catalog),
         "model": model,
         "draft_only": draft_only,
+        **({"cadence": cadence.model_dump(mode="json")} if cadence else {}),
         "prompt_hashes": {
             t: hashlib.sha256((prompts / f"{t}.md").read_bytes()).hexdigest() for t in TEMPLATES
         },
@@ -96,6 +102,8 @@ def generate_week(
             "video_director": 1700,
         },
         run_budget=budget,
+        cadence=cadence,
+        asset_pools=asset_pools,
         content_evidence=evidence,
         content_root=root,
         video_catalog=catalog,
@@ -115,6 +123,7 @@ def generate_week(
             "reviews": [runner.repository.review(p.id).model_dump(mode="json") for p in posts],
             "post_approved": False,
             "published": False,
+            "asset_pools": asset_pools(runner.repository.slots(run_id)) if asset_pools else None,
         }
         (output / "campaign.json").write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n")
         export_gallery(

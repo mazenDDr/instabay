@@ -9,6 +9,7 @@ from instabay.core.schemas import (
     CAIRO,
     Arm,
     BrandConstitution,
+    Cadence,
     HookStyle,
     PlanningPreferences,
     PostFormat,
@@ -23,17 +24,25 @@ def plan_week(
     run_id: str,
     week_start: date,
     preferences: PlanningPreferences | None = None,
+    cadence: Cadence | None = None,
 ) -> list[Slot]:
-    """FR-02: maximize supplied scores within integer shares, reel and quiet-hour limits."""
+    """FR-02: maximize supplied scores within integer shares, reel and quiet-hour limits.
+
+    ``cadence`` is the owner's weekly format mix; it replaces the brand cadence without
+    changing the frozen brand hash.
+    """
     if week_start.weekday() != 0:
         raise ValueError("Weekly plans must start on Monday")
     scores = preferences or PlanningPreferences()
-    count = brand.cadence.posts_per_week
+    rhythm = cadence or brand.cadence
+    count = rhythm.posts_per_week
     ranges = [
         range(math.ceil(p.min_share * count - 1e-9), math.floor(p.max_share * count + 1e-9) + 1)
         for p in brand.pillars
     ]
-    candidates = (mix for mix in product(*ranges) if sum(mix) == count)
+    candidates = [mix for mix in product(*ranges) if sum(mix) == count]
+    if not candidates:
+        raise ValueError("Pillar share limits cannot fit this many posts per week")
     best = max(
         candidates,
         key=lambda mix: sum(
@@ -43,13 +52,13 @@ def plan_week(
     pillars = [p.id for p, n in zip(brand.pillars, best, strict=True) for _ in range(n)]
     formats: list[PostFormat] = ["photo", "carousel", "reel"]
     hooks: list[HookStyle] = ["question", "statement", "number"]
-    buckets: list[TimeBucket] = list(brand.cadence.windows_cairo)
+    buckets: list[TimeBucket] = list(rhythm.windows_cairo)
     preferred_format = max(formats, key=lambda item: scores.format.get(item, 0))
     chosen_formats = [preferred_format] * count
     floors = {
-        "photo": brand.cadence.min_photos,
-        "carousel": brand.cadence.min_carousels,
-        "reel": brand.cadence.min_reels,
+        "photo": rhythm.min_photos,
+        "carousel": rhythm.min_carousels,
+        "reel": rhythm.min_reels,
     }
     required: list[PostFormat] = [
         format
@@ -58,7 +67,7 @@ def plan_week(
         if floors[format] > round_number
     ]
     # Spread mandatory formats across the week rather than stacking identical formats at its end.
-    if brand.cadence.min_photos or brand.cadence.min_carousels:
+    if rhythm.min_photos or rhythm.min_carousels:
         for index, format in enumerate(required):
             chosen_formats[index * count // len(required)] = format
     else:
@@ -73,7 +82,7 @@ def plan_week(
         exploration_hook = hooks[-1] if hooks[-1] != preferred_hook else hooks[0]
         bucket = exploration_bucket if index == 0 else preferred_bucket
         hook = exploration_hook if index == 0 else preferred_hook
-        clock = time.fromisoformat(brand.cadence.windows_cairo[bucket])
+        clock = time.fromisoformat(rhythm.windows_cairo[bucket])
         slots.append(
             Slot(
                 id=f"{run_id}-{day.strftime('%a').lower()}-1",

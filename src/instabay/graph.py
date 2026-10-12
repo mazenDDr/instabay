@@ -1,5 +1,6 @@
 """FR-09, FR-10: persistent LangGraph interrupt; resume reads stored human decisions only."""
 
+from collections.abc import Callable
 from contextlib import ExitStack
 from pathlib import Path
 from typing import Literal, Protocol, Self, TypedDict
@@ -31,11 +32,13 @@ from instabay.core.rules import check_rules
 from instabay.core.schemas import (
     BrandConstitution,
     BrandInput,
+    Cadence,
     EvidenceAttachment,
     PlanningPreferences,
     Post,
     RenderAttachment,
     Review,
+    Slot,
     WorkflowInput,
     WorkflowResult,
     canonical_hash,
@@ -108,6 +111,8 @@ class WeekRunner:
         reference_brand: BrandConstitution | None = None,
         run_budget: RunBudget | None = None,
         frozen_brand_hash: str | None = None,
+        cadence: Cadence | None = None,
+        asset_pools: Callable[[list[Slot]], dict[str, list[str]]] | None = None,
     ) -> None:
         self._stack = ExitStack()
         self.repository = Repository(db)
@@ -136,6 +141,7 @@ class WeekRunner:
         )
         self.brand_input = brand_input
         self.preferences = preferences
+        self.cadence, self.asset_pools = cadence, asset_pools
         self.decision_engine, self.calibration = decision_engine, calibration
         self.allow_synthetic_decisions = allow_synthetic_decisions
         self.video_studio, self.approved_stills = video_studio, approved_stills or []
@@ -205,7 +211,12 @@ class WeekRunner:
         brand = self.repository.brand(state["brand_hash"])
         self.repository.save_slots(
             plan_week(
-                brand, state["brand_hash"], request.run_id, request.week_start, self.preferences
+                brand,
+                state["brand_hash"],
+                request.run_id,
+                request.week_start,
+                self.preferences,
+                self.cadence,
             )
         )
         return {"status": "planned"}
@@ -215,7 +226,9 @@ class WeekRunner:
         ids: list[str] = []
         previous_angles: list[str] = []
         used_photo_scenes: list[str] = []
-        for slot in self.repository.slots(state["run_id"]):
+        slots = self.repository.slots(state["run_id"])
+        pools = self.asset_pools(slots) if self.asset_pools else {}
+        for slot in slots:
             try:
                 post = self.repository.post(slot.id)
             except KeyError:
@@ -229,6 +242,7 @@ class WeekRunner:
                         self.content_catalog,
                         previous_angles,
                         used_photo_scenes,
+                        pools.get(slot.id),
                     )
                     brief = selection.brief
                     context = EvidenceCopyContext(

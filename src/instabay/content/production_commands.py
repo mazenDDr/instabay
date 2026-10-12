@@ -16,7 +16,7 @@ from instabay.adapters.llm import CompletionRequest, LLMClient
 from instabay.adapters.native_llm import NativeLLMClient
 from instabay.content.evidence import ContentEvidence
 from instabay.content.production import generate_week
-from instabay.core.schemas import BrandConstitution, canonical_hash
+from instabay.core.schemas import BrandConstitution, Slot, canonical_hash
 from instabay.llm import RunBudget
 from instabay.settings import Settings
 from instabay.video.direction import ObjectCatalog
@@ -77,7 +77,6 @@ def register_production_commands(app: typer.Typer) -> None:
     @app.command("generate")
     def generate(
         brand: Annotated[Path, typer.Option()],
-        evidence: Annotated[Path, typer.Option()],
         model: Annotated[str, typer.Option()],
         run_id: Annotated[str, typer.Option()],
         week_start: Annotated[str, typer.Option()],
@@ -90,6 +89,10 @@ def register_production_commands(app: typer.Typer) -> None:
         max_calls: Annotated[int, typer.Option(min=1)] = 70,
         max_tokens: Annotated[int, typer.Option(min=1)] = 200000,
         max_cost_usd: Annotated[float, typer.Option(min=0)] = 1,
+        evidence: Annotated[Path | None, typer.Option()] = None,
+        assets: Annotated[
+            Path | None, typer.Option(help="Asset library workspace; replaces --evidence")
+        ] = None,
     ) -> None:
         """FR-04: generate a non-demo mixed week from an already human-frozen brand."""
         dry_generation()
@@ -97,9 +100,27 @@ def register_production_commands(app: typer.Typer) -> None:
         root = Path.cwd().resolve()
         if not output.is_relative_to(root):
             raise typer.BadParameter("Keep generation state under the project root")
+        if (evidence is None) == (assets is None):
+            raise typer.BadParameter("Pass exactly one of --evidence or --assets")
         # Check the stored brand before starting a model or a recording.
         constitution = BrandConstitution.model_validate(yaml.safe_load(brand.read_text()))
-        proof = ContentEvidence.model_validate(yaml.safe_load(evidence.read_text()))
+        rhythm = None
+        pools = None
+        if assets is not None:
+            from instabay.assets.export import export_library
+            from instabay.assets.library import AssetLibrary
+            from instabay.assets.plan import load_cadence, suggest_assets
+
+            with AssetLibrary(assets) as library:
+                proof, _ = export_library(library, constitution, assets / "export")
+                rhythm = load_cadence(library, constitution).cadence(constitution)
+                library_assets = library.all()
+
+            def pools(slots: list[Slot]) -> dict[str, list[str]]:
+                return {k: v.pool for k, v in suggest_assets(slots, library_assets).items()}
+        else:
+            assert evidence is not None
+            proof = ContentEvidence.model_validate(yaml.safe_load(evidence.read_text()))
         catalog = (
             ObjectCatalog.model_validate(yaml.safe_load(scenes.read_text()))
             if scenes
@@ -134,6 +155,8 @@ def register_production_commands(app: typer.Typer) -> None:
                     ),
                     replay=replay is not None,
                     draft_only=draft_only,
+                    cadence=rhythm,
+                    asset_pools=pools,
                 )
             typer.echo(f"{result.status}: {len(result.post_ids)} non-demo posts; no publishing.")
             typer.echo(f"Review: {output / 'review/index.html'}")

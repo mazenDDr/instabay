@@ -1,0 +1,91 @@
+"""FR-04, FR-06: turn reviewed library photos into the evidence/catalog the generator consumes."""
+
+from pathlib import Path
+
+import yaml
+
+from instabay.assets.library import Asset, AssetLibrary
+from instabay.content.evidence import ContentEvidence, VisualFact
+from instabay.core.schemas import BrandConstitution
+from instabay.video.direction import CropBox, ObjectCatalog, ResortObject
+from instabay.video.shotlist import FileRef
+
+PROPERTY_KEY = "property"
+
+
+def resort_object(asset: Asset, property_name: str) -> ResortObject:
+    """FR-08: owner rights confirmation is the approval; generated views stay reference-only."""
+    generated = asset.origin == "generated"
+    return ResortObject(
+        id=asset.id,
+        label=asset.note_en[:60],
+        observed=asset.note_en,
+        photo=FileRef(uri=asset.file, sha256=asset.sha256),
+        crop=CropBox(x=0, y=0, width=asset.width, height=asset.height),
+        approved_by=asset.added_by,
+        approval_id=f"asset-library-{asset.id}",
+        faces_checked=True,
+        attribution=(
+            f"AI-generated camera view of {asset.parent_id}"
+            if generated
+            else f"Photo supplied by {asset.added_by}"
+        ),
+        author=asset.added_by,
+        license_id="ai-generated-from-owner-photo" if generated else "owner-supplied",
+        source_page="instabay-asset-library",
+        license_url="instabay-asset-library",
+        reference_only=generated,
+        source="synthetic" if generated else "photo",
+        allowed_actions=("photo_camera", "scenic_motion"),
+        property_name=property_name,
+    )
+
+
+def export_library(
+    library: AssetLibrary, brand: BrandConstitution, output: Path
+) -> tuple[ContentEvidence, ObjectCatalog]:
+    """FR-04: only usable, described photos; every pillar gets brand-derived guidance."""
+    property_name = str(library.setting(PROPERTY_KEY) or "Insta Bay")
+    chosen = [a for a in library.all() if a.usable and a.described]
+    if not chosen:
+        raise ValueError("No usable photos: add a pillar and an EN/AR description first")
+    catalog = ObjectCatalog(
+        resort=property_name,
+        objects=[resort_object(a, property_name) for a in chosen],
+        edit_style="scenic",
+    )
+    output = output.resolve()
+    output.mkdir(parents=True, exist_ok=True)
+    objects_file = output / "objects.yaml"
+    objects_file.write_text(
+        yaml.safe_dump(catalog.model_dump(mode="json"), allow_unicode=True, sort_keys=False)
+    )
+    evidence = ContentEvidence(
+        property_name=property_name,
+        geography=str(library.setting("geography") or "Hurghada, Red Sea, Egypt"),
+        source_date_note="Photos supplied by the brand owner through the asset library.",
+        objects_file=objects_file.relative_to(library.root).as_posix(),
+        facts=[
+            VisualFact(
+                id=f"{a.id}-fact",
+                scene_id=a.id,
+                text=a.note_en,
+                caption_en=a.note_en,
+                caption_ar=a.note_ar,
+            )
+            for a in chosen
+        ],
+        pillar_guidance={
+            p.id: (
+                f"{p.description}. Use only what is visible in the selected photos; "
+                "never claim facilities that are not in the brand's verified list."
+            )
+            for p in brand.pillars
+        },
+        reference_only=any(a.origin == "generated" for a in chosen),
+    )
+    (output / "evidence.yaml").write_text(
+        yaml.safe_dump(evidence.model_dump(mode="json"), allow_unicode=True, sort_keys=False)
+    )
+    evidence.objects(library.root)
+    return evidence, catalog
