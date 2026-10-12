@@ -14,12 +14,22 @@
 
 ## 2. Gate evidence
 
-Final local fresh-clone, Docker and CI results are added after execution. The gate runs the exact
-`make setup demo test lint` sequence under UID 10001 with Docker networking disabled, then checks
-that the default demo has a persistent approval interrupt, seven drafts and zero approvals,
-publications, metrics, posteriors or render jobs; no outbox. All repository hooks run afterward.
-The ordinary offline suite remains 252 tests; no new feature code or synthetic benchmark rewrite
-is part of this phase. Machine-readable evidence is written to `outputs/clone-evidence.json`.
+| Check | Result |
+|---|---|
+| Fresh clone | Clean committed checkout at `d0edca7`; no host environment/cache/state used. |
+| Docker setup/demo/test/lint | `make setup demo test lint` succeeds as UID 10001 with networking disabled; **252 tests**, Ruff, **126 formatted files**, strict mypy in **83 files**. |
+| Persistent default demo | **7 drafts**, `approval_pending`, **0 approvals/publications/metrics/posteriors/render jobs**, no outbox. Database and checkpoint existence/status checked explicitly. |
+| Repository hooks | Ruff, format, strict typing and secret scanning all pass inside the unprivileged container. |
+| Runtime image | Separate `instabay:phase8` image built; network-disabled default demo reaches the human approval stop. |
+| Documentation | Eight key Markdown files and 41 local links checked; balanced code fences; generated benchmark block preserved byte-for-byte. |
+| Protected inputs | SPEC, application/config/model code, simulator, photos and benchmark JSON unchanged. |
+
+Machine-readable clone evidence is generated at `outputs/clone-evidence.json` inside the image;
+the local transcript/evidence is retained privately. One expected test warning records an explicit
+blocked TCP attempt; ASGI event-loop Unix socketpairs are the only test-local allowance. No keys
+or GPU are used. Fresh-clone CI runs the same gate; final exact-head status is reported at delivery.
+The first acceptance attempt passed the demo/tests but failed the final hook cache at `/.cache`;
+a project-local cache fixed it, and the full sequence passed on the fresh corrected checkout.
 
 ## 3. Deviations / ADR
 
@@ -32,8 +42,8 @@ results are not project measurements. See ADR 0008.
 
 The validation image intentionally retains fresh-checkout Git metadata and dev tools for
 `make setup`/hooks; the production CPU image excludes them. Image preparation downloads the
-locked dependencies; the gate itself runs offline. No host environment, cache, state or keys
-are needed. Final rendered README verification method and any browser limitation are reported
+locked dependencies; the gate itself runs offline. Checkout credentials, inherited hooks and reflogs are excluded; CI checkout does not
+persist credentials. No host environment, cache, state or keys are needed. Final rendered README verification method and any browser limitation are reported
 at delivery. The phase's commits and PR use mazenDDr exclusively.
 
 ## 4. HUMAN items
