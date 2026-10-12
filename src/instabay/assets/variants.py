@@ -64,12 +64,45 @@ PRESETS: dict[str, tuple[str, str]] = {
 
 MODEL = "black-forest-labs/FLUX.2-klein-4B"
 
+SHOT_KEEP = (
+    "Create a NEW photograph of the same resort shown in the reference photos, as if a "
+    "professional photographer took another picture there. Use only the buildings, pools, "
+    "furniture, plants, materials, lighting style and coastline that appear in the references; "
+    "do not add any building, pool, facility, sign or landmark. Photorealistic travel photo, "
+    "natural colours, no illustration, no text, no watermark."
+)
+
+# FR-06: new shots per pillar, used by autopilot when a post lacks images of its pillar.
+SHOTS: dict[str, list[str]] = {
+    "underwater": [
+        "The water is the subject: low view across the clear water toward the shore.",
+        "Close view of the water surface and its colours where it meets the edge.",
+    ],
+    "spa": [
+        "Two relaxed adult guests on the loungers, candid and calm, faces turned away.",
+        "Quiet corner of the lounge area in soft light, cushions and shade in the foreground.",
+    ],
+    "guests": [
+        "A guest's point of view stepping out toward the view, seen from inside looking out.",
+        "Detail of the room or terrace furniture with the outside view softly behind.",
+    ],
+    "local": [
+        "Wide establishing view of the resort buildings and palms from a new spot.",
+        "The same architecture photographed from a different corner, warm late-day light.",
+    ],
+    "offers": [
+        "A table set for dining in this space, guests' hands in frame, inviting and natural.",
+        "The bar or dining area from a seated guest's viewpoint, people softly in background.",
+    ],
+}
+
 
 class ViewRecipe(Boundary):
     """Rule 5: the exact request is stored and hashed with every generated view."""
 
     kind: str = "camera-view-v1"
     parent_sha256: str
+    source_sha256: list[str] = Field(default_factory=list, exclude_if=lambda v: not v)
     preset: str
     prompt: str
     model: str = MODEL
@@ -109,12 +142,33 @@ def view_recipe(parent: Asset, preset: str, seed: int, revision: str) -> ViewRec
     )
 
 
+def shot_recipe(
+    parents: list[Asset], pillar: str, variant: int, seed: int, revision: str
+) -> ViewRecipe:
+    """FR-06: a new photograph built from 1-3 owner photos of one pillar."""
+    if not 1 <= len(parents) <= 3:
+        raise ValueError("A new shot uses one to three reference photos")
+    prompts = SHOTS.get(pillar) or SHOTS["local"]
+    width, height = view_size(parents[0].width, parents[0].height)
+    return ViewRecipe(
+        kind="new-shot-v1",
+        width=width,
+        height=height,
+        parent_sha256=parents[0].sha256,
+        source_sha256=[p.sha256 for p in parents],
+        preset=f"shot:{pillar}:{variant % len(prompts)}",
+        prompt=f"{prompts[variant % len(prompts)]} {SHOT_KEEP}",
+        revision=revision,
+        seed=seed,
+    )
+
+
 class ViewBackend(Protocol):
     """NFR-05: gpu-box service, or the offline stub in tests."""
 
     backend_id: str
 
-    def render(self, source: bytes, recipe: ViewRecipe) -> bytes: ...
+    def render(self, sources: list[bytes], recipe: ViewRecipe) -> bytes: ...
 
 
 class StubViewBackend:
@@ -122,8 +176,8 @@ class StubViewBackend:
 
     backend_id = "stub-view-v1"
 
-    def render(self, source: bytes, recipe: ViewRecipe) -> bytes:
-        with Image.open(io.BytesIO(source)) as image:
+    def render(self, sources: list[bytes], recipe: ViewRecipe) -> bytes:
+        with Image.open(io.BytesIO(sources[0])) as image:
             view = ImageOps.mirror(ImageOps.exif_transpose(image).convert("RGB"))
         width, height = view.size
         inset = (recipe.seed % 7 + 1) * min(width, height) // 40
@@ -154,14 +208,14 @@ class HTTPViewBackend:
             timeout=timeout_s, follow_redirects=False, trust_env=False, transport=transport
         )
 
-    def render(self, source: bytes, recipe: ViewRecipe) -> bytes:
+    def render(self, sources: list[bytes], recipe: ViewRecipe) -> bytes:
         if not self.confirm_gpu or os.environ.get("INSTABAY_GPU_ENABLED") != "1":
             raise RuntimeError("HUMAN: set INSTABAY_GPU_ENABLED=1 and --confirm-gpu")
         try:
             response = self.client.post(
                 self.origin + "/v1/views",
                 json={
-                    "image": base64.b64encode(source).decode("ascii"),
+                    "images": [base64.b64encode(b).decode("ascii") for b in sources],
                     "recipe": recipe.model_dump(mode="json"),
                 },
             )
@@ -188,37 +242,80 @@ def make_view(
     revision: str,
     judge: VisionDecisionEngine | None = None,
 ) -> Asset:
-    """FR-06: identical recipes reuse the stored view; new views wait for owner approval."""
+    """FR-06: one-photo camera view; identical recipes reuse the stored image."""
     if parent.origin != "owner":
         raise ValueError("New views start from the owner's real photos only")
-    recipe = view_recipe(parent, preset, seed, revision)
+    return store_shot(
+        library,
+        [parent],
+        view_recipe(parent, preset, seed, revision),
+        backend=backend,
+        judge=judge,
+    )
+
+
+def make_shot(
+    library: AssetLibrary,
+    parents: list[Asset],
+    pillar: str,
+    variant: int,
+    seed: int,
+    *,
+    backend: ViewBackend,
+    revision: str,
+    judge: VisionDecisionEngine | None = None,
+) -> Asset:
+    """FR-06: a new photograph of the place built from several owner photos together."""
+    if any(p.origin != "owner" for p in parents):
+        raise ValueError("New shots start from the owner's real photos only")
+    return store_shot(
+        library,
+        parents,
+        shot_recipe(parents, pillar, variant, seed, revision),
+        backend=backend,
+        judge=judge,
+        pillar=pillar,
+    )
+
+
+def store_shot(
+    library: AssetLibrary,
+    parents: list[Asset],
+    recipe: ViewRecipe,
+    *,
+    backend: ViewBackend,
+    judge: VisionDecisionEngine | None = None,
+    pillar: str | None = None,
+) -> Asset:
+    """Rule 5/6: stored recipe and hash, inherited pillar, AI origin, optional d3 check."""
     for asset in library.all():
         if asset.recipe and asset.recipe.get("recipe_hash") == recipe.hash:
             return asset
-    data = backend.render(library.path(parent).read_bytes(), recipe)
+    data = backend.render([library.path(p).read_bytes() for p in parents], recipe)
     stored: dict[str, JsonValue] = recipe.model_dump(mode="json") | {
         "recipe_hash": recipe.hash,
         "backend": backend.backend_id,
+        "parents": [p.id for p in parents],
     }
+    lead = parents[0]
     view = library.add(
         data,
-        added_by=f"{backend.backend_id} for {parent.added_by}",
-        rights_confirmed=parent.rights_confirmed,
-        note_en=parent.note_en,
-        note_ar=parent.note_ar,
+        added_by=f"{backend.backend_id} for {lead.added_by}",
+        rights_confirmed=all(p.rights_confirmed for p in parents),
         origin="generated",
-        parent_id=parent.id,
+        parent_id=lead.id,
         recipe=stored,
     )
-    if parent.pillar:
+    label = pillar or lead.pillar
+    if label:
         library.record_classification(
             view.id,
-            engine_id="inherited:" + parent.id,
+            engine_id="inherited:" + ",".join(p.id for p in parents),
             synthetic=False,
             questions_hash=recipe.hash,
-            answers={"pillar": parent.pillar},
-            pillar=parent.pillar,
-            confidence=1.0 if parent.owner_pillar else parent.model_confidence,
+            answers={"pillar": label},
+            pillar=label,
+            confidence=1.0,
             people=None,
         )
     if judge is not None:
@@ -230,12 +327,14 @@ def check_fidelity(library: AssetLibrary, view: Asset, judge: VisionDecisionEngi
     """Rule 6: d3-flash compares (original, view); the score informs, the owner decides."""
     if view.parent_id is None:
         raise ValueError("Only generated views have an original to compare with")
-    parent = library.get(view.parent_id)
+    parents = [library.get(str(i)) for i in (view.recipe or {}).get("parents") or [view.parent_id]]  # type: ignore[union-attr]
     try:
         answers = judge.decide(
-            "Original resort photograph, then a generated camera view of it.",
+            "Real resort photograph(s), then a generated photograph made from them."
+            if len(parents) > 1
+            else "Original resort photograph, then a generated camera view of it.",
             fidelity_questions(),
-            [library.path(parent), library.path(view)],
+            [*(library.path(p) for p in parents), library.path(view)],
         )
         library.record_fidelity(
             view.id,

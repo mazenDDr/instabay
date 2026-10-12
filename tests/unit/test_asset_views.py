@@ -44,7 +44,7 @@ def test_view_stores_recipe_inherits_pillar_records_fidelity_and_dedupes(library
     backend = StubViewBackend()
     recipe = view_recipe(parent, "aerial", 3, "rev1")
     preview = tmp_path / "preview.png"
-    preview.write_bytes(backend.render(library.path(parent).read_bytes(), recipe))
+    preview.write_bytes(backend.render([library.path(parent).read_bytes()], recipe))
     view = make_view(
         library,
         parent,
@@ -152,3 +152,21 @@ def test_view_score_is_the_weaker_d3_answer(library):
     assert view.view_score is None
     library.record_fidelity(view.id, {"same_place": 0.95, "photoreal": 0.49})
     assert library.get(view.id).view_score == 0.49
+
+
+def test_new_shot_uses_several_owner_photos_and_counts_as_their_spot(library):
+    from instabay.assets.plan import family
+    from instabay.assets.variants import make_shot
+
+    a = library.add(jpeg((10, 90, 160), (1200, 1500)), added_by="o", rights_confirmed=True)
+    b = library.add(jpeg((90, 10, 160), (1200, 1500)), added_by="o", rights_confirmed=True)
+    a, b = library.review(a.id, owner_pillar="spa"), library.review(b.id, owner_pillar="spa")
+    shot = make_shot(library, [a, b], "spa", 0, 7, backend=StubViewBackend(), revision="r")
+    assert shot.origin == "generated" and shot.pillar == "spa" and not shot.usable
+    assert shot.recipe and shot.recipe["parents"] == [a.id, b.id]
+    assert (
+        shot.recipe["kind"] == "new-shot-v1" and "Use only the buildings" in shot.recipe["prompt"]
+    )
+    assert family(shot) == {a.id, b.id}
+    with pytest.raises(ValueError, match="real photos"):
+        make_shot(library, [shot], "spa", 0, 7, backend=StubViewBackend(), revision="r")
