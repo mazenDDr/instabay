@@ -22,7 +22,8 @@ includes both disclosure lines. Stub renders are blocked. A recipe is not proof 
 facilities: the human checks visual fidelity and usage rights before approval.
 
 The native verifier checks HTTP 200, MIME, byte count and content SHA-256, with bounded
-streaming and redirects disabled. Codec, color-space, dimensions, timing and fast-start
+streaming and redirects disabled. Verification runs before creation and again immediately
+before publishing, so changed public bytes stop the operation. Codec, color-space, dimensions, timing and fast-start
 metadata are **human verified** in this phase; automatic render/probe QA comes in Phase 7.
 A media edit changes the content hash and requires new checks and approval. Old judge scores
 cannot be relabeled as fresh checks. The production drafting/decision workflow is pending;

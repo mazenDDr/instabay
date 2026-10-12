@@ -21,8 +21,8 @@
 
 | Check | Result |
 |---|---|
-| `make setup test lint`, followed by final `make lint test` | Locked setup succeeds; **174 offline tests**, Ruff clean; strict mypy clean in **53 files**. |
-| Phase 5 contracts | **31 checks**: FINISHED, ERROR, EXPIRED, polling, rate/quota rejection, known receipt retry, timeout/5xx/malformed-ID refusal, three formats, real metric shapes and malformed insight rejection. |
+| `make setup test lint`, followed by final `make lint test` | Locked setup succeeds; **175 offline tests**, Ruff clean; strict mypy clean in **53 files**. |
+| Phase 5 contracts | **32 checks**: FINISHED, ERROR, EXPIRED, polling, rate/quota rejection, known receipt retry, timeout/5xx/malformed-ID refusal, three formats, bytes changed during processing, real metric shapes and malformed insight rejection. |
 | Phase 5 unit/guard checks | **40 checks**: no I/O before approval, live/brand/media refusal, metadata/hash checks, native header handling, secret-safe errors, active edits, migrations, concurrent requests and CLI refusal/retry hints. |
 | Repository hooks | Ruff, format, strict typing and offline secret scan pass. A single invalid synthetic Basic Auth URL has an explicit narrow allowlist annotation; scanning stays enabled. |
 | `docker build -t instabay:phase5 .` and network-disabled acceptance | Real image runs as UID 10001; three formats, no-approval refusal, idempotent receipts, empty/reel insights and ambiguous-response refusal pass with synthetic fixtures mounted read-only. No real keys or calls. |

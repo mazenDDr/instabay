@@ -322,6 +322,9 @@ class GraphPublisher:
             raise GraphReconciliationRequired("HUMAN: container is no longer ready to publish")
 
         def check_quota(post: Post, approval: Approval, current: GraphJob) -> GraphJob:
+            if self.verifier is None or post.media_manifest is None:
+                raise LiveConfigurationError("A media verifier and approved manifest are mandatory")
+            self.verifier.verify(post.media_manifest, self.config)
             self._quota()
             return current
 

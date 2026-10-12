@@ -180,3 +180,34 @@ def test_crash_after_accepted_creation_keeps_prior_committed_intent(
     with pytest.raises(GraphReconciliationRequired):
         engine2.publish(post.id)
     assert fresh.calls == []
+
+
+def test_public_bytes_changed_during_processing_block_publish(repository: Repository) -> None:
+    import httpx
+
+    from instabay.adapters.graph_http import HttpxMediaVerifier
+    from instabay.adapters.graph_models import MediaValidationError
+    from tests.graph_support import GRAPH_CONFIG
+
+    post = live_post(repository)
+    engine, transport = publisher(repository, "media_changed")
+    reads = []
+
+    def changed_bytes(request: httpx.Request) -> httpx.Response:
+        reads.append(request.url)
+        return httpx.Response(
+            200,
+            content=b"jpeg" if len(reads) == 1 else b"evil",
+            headers={"content-type": "image/jpeg"},
+        )
+
+    verifier = HttpxMediaVerifier(GRAPH_CONFIG, transport=httpx.MockTransport(changed_bytes))
+    engine.verifier = verifier
+    try:
+        with pytest.raises(MediaValidationError):
+            engine.publish(post.id)
+        assert len(reads) == 2 and receipts(repository) == 0
+        assert journal(repository).phase == "ready"
+        transport.assert_consumed()
+    finally:
+        verifier.close()
