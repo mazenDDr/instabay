@@ -1,0 +1,8 @@
+# HUMAN: copy to a local input file and provide verified facts, source-backed offers and voice examples.
+brief: >-
+  Fictional Red Sea resort in Hurghada. Relaxed luxury and native EN/AR content
+  for Egyptian, GCC and European audiences. Real resort photos are demo references only.
+owner_answers:
+  real_offers: []
+  must_avoid: [invented facilities, nightlife, alcohol imagery]
+  tone_examples_they_like: ["Slow mornings. Palm shadows."]

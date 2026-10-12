@@ -1,0 +1,38 @@
+{
+  "template_name": "brand_architect",
+  "slot_id": "brand-draft",
+  "input_tokens": 240,
+  "output_tokens": 500,
+  "response": {
+    "version": 1,
+    "positioning": "Relaxed luxury where the Red Sea is the main character.",
+    "voice": {
+      "en": {"do": ["short sentences", "sensory detail"], "dont": ["hard sell", "ALL CAPS"], "examples": ["Slow mornings. Palm shadows."]},
+      "ar": {"do": ["جمل قصيرة", "تفاصيل حسية"], "dont": ["لهجة ثقيلة", "وعود غير موثقة"], "examples": ["صباح على مهل، وظلال النخيل."], "register": "light_msa"}
+    },
+    "pillars": [
+      {"id": "underwater", "description": "Red Sea colors and marine inspiration", "min_share": 0.1, "max_share": 0.4},
+      {"id": "spa", "description": "Relaxation and slower moments, without facility claims", "min_share": 0.1, "max_share": 0.4},
+      {"id": "guests", "description": "Guests imagining their next escape", "min_share": 0.1, "max_share": 0.4},
+      {"id": "local", "description": "Hurghada and Red Sea atmosphere", "min_share": 0.1, "max_share": 0.4},
+      {"id": "offers", "description": "Travel planning; actual offers require verified sources", "min_share": 0.1, "max_share": 0.3}
+    ],
+    "hashtags": {
+      "branded": ["#InstaBay", "#انستا_باي"],
+      "place": ["#Hurghada", "#RedSea", "#الغردقة", "#البحر_الأحمر"],
+      "niche": ["#RedSeaDiving", "#SnorkelEgypt"],
+      "broad": ["#TravelEgypt", "#سياحة_مصر"]
+    },
+    "cadence": {"posts_per_week": 7, "min_reels": 1, "windows_cairo": {"morning_08_10": "08:30", "noon_12_14": "12:30", "evening_19_21": "19:30", "late_21_23": "21:30"}},
+    "visual": {"palette_hex": ["#0D8C91", "#D39B76", "#E8D9BB"], "photo_direction": "Verified real-photo references, modest motion, no identifiable faces", "banned": ["invented facilities", "alcohol imagery", "nightlife"]},
+    "claims_policy": {
+      "no_invented_facilities": true,
+      "verified_facilities": [],
+      "facility_terms": ["house reef", "private beach", "infinity pool", "private pool", "rooftop bar", "أمام غرفتك", "شاطئ خاص", "مسبح خاص", "شعابنا"],
+      "allowed_offers": {},
+      "banned_terms": ["cheap", "buy now", "احجز فوراً", "أرخص"],
+      "emoji_budget": 2
+    },
+    "judge_threshold": 4
+  }
+}
