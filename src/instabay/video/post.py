@@ -244,8 +244,11 @@ def post_process(recipe: RenderRecipe, root: Path, files: list[Path], directory:
                 graph,
                 "-map",
                 "[v]",
-                "-t",
-                str(shot.seconds),
+                *(
+                    ["-r", "30", "-fps_mode", "cfr", "-frames:v", str(round(shot.seconds * 30))]
+                    if recipe.post.style == "editorial"
+                    else ["-t", str(shot.seconds)]
+                ),
                 "-an",
                 "-c:v",
                 "libx264",
@@ -309,8 +312,14 @@ def post_process(recipe: RenderRecipe, root: Path, files: list[Path], directory:
     if recipe.post.style == "editorial":
         args += [
             "-vf",
-            f"fps=30,tpad=stop_mode=clone:stop_duration=0.1,"
+            f"fps=30,tpad=stop_mode=clone:stop_duration=1,"
             f"trim=end_frame={recipe.shots.duration_s * 30},setpts=N/(30*TB)",
+            "-r",
+            "30",
+            "-fps_mode",
+            "cfr",
+            "-frames:v",
+            str(recipe.shots.duration_s * 30),
             "-c:v",
             "libx264",
             "-pix_fmt",
