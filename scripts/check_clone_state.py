@@ -16,6 +16,10 @@ def main() -> None:
     outbox = root / os.environ["INSTABAY_OUTBOX_PATH"]
     assert os.getuid() == 10001, "Validation must use the unprivileged runtime user"
     assert (root / ".git").exists(), "Validation needs a committed checkout for hooks"
+    git_config = root / ".git/config"
+    assert not git_config.exists() or "extraheader" not in git_config.read_text().casefold(), (
+        "Checkout authorization headers must not enter the validation image"
+    )
     assert not (root / ".env").exists(), "Personal credentials must not enter the image"
     assert db.is_file() and checkpoints.is_file(), "Absent files are not evidence of a safe stop"
     with sqlite3.connect(db) as connection:

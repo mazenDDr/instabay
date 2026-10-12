@@ -32,6 +32,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          persist-credentials: false
       - name: Prepare validation image from a clean checkout
         run: docker build -f Dockerfile.validation -t instabay:validation .
       - name: Run setup, persistent approval stop and tests without network
