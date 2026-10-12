@@ -1,0 +1,294 @@
+{
+  "template_name": "visual_brief",
+  "slot_id": "reference-w42-wed-1",
+  "model": "Qwen/Qwen3-8B:nf4@b968826d9c46dd6066d109eabc6255188de91218",
+  "prompt": "# Evidence-first brief — FR-04, FR-06\n\nProduce ONE JSON INSTANCE, not a schema. Do not repeat $defs, properties, required or types.\nReturn brief, media_ids, fact_ids, pillar_intent, sequence_reason and cta_kind.\nRead post_format first. For photo, media_ids has EXACTLY ONE element and the brief describes\nONLY that photograph. For carousel, select multiple photographs. For reel, select three\nto five scenes. This request is for ONE post, not the entire week or all available scenes.\nThe supplied scenes and visual facts are the available story. Never invent a facility,\nroom interior, underwater view, species, price, deal, availability or guest testimonial.\nHistorical photos are not proof of current condition. Do not describe Maldives references\nas Hurghada, the Red Sea, or fictional Insta Bay facilities. Name their actual source property.\n\nKeep the slot's pillar and format. Read evidence.pillar_guidance for that pillar. Give the\npost a distinct, concrete angle and one useful viewer action. previous_angles are already\nused this week: avoid repeating them or simply saying \"slow down\" in every post.\n\nPhoto: choose exactly one scene and one vivid, specific thought drawn from it.\nCarousel: choose 2–5 DIFFERENT photographs, ordered as a mini exploration or a useful\ncomparison. Explain the progression in sequence_reason. Do not make repeated crops of one\nimage. The caption will carry the sequence; no text panels are required over the images.\nReel: choose 3–5 complete coastal/property scenes. The video will show gentle continuous\nmotion in each scene, normally five seconds each. Describe a readable place with water,\nshoreline, palms or buildings. No rapid object montage or manual start/end keyframes.\n\nmedia_ids must be exact scene IDs. fact_ids must be exact supplied fact IDs, including at\nleast one fact from EACH selected scene. brief.photo_uri is the first selected source's\nexact photo_uri. All brief fields are strings except must_not and reel_concept.\nreel_concept is null for photo/carousel. For a reel it has hook, shots (semantic scene\npurposes only), overlay_en, overlay_ar, audio, cta, cover. Cover uses the first source URI.\n\nThe brief is shared by independent English and Arabic writers. Keep its key message and\nCTA concrete. For offers without an offer source, make a travel-planning or visual-comparison\npost; never manufacture a discount. A relaxation pillar does not prove a spa. A water-color\npillar does not prove snorkeling or a house reef. Give a specific, image-backed payoff.\n\nEvery selected source is a daylight photograph. Do NOT make the story depend on sunrise,\ndawn, a morning schedule, sunset, temperature, silence or wind sounds that are not evidenced.\nDo not repeat the same water/shore question each day: use the pillar guidance and actual\nformat (single memorable view, ordered comparison, or continuous scenic experience).\nSet cta_kind to save, compare, comment or swipe; brief.cta must mean the same action.\nFor reel slots, reel_concept MUST be an object with all required fields, never null.\nFor photo and carousel slots, reel_concept MUST be null. Verify this before returning JSON.\n\nSource fact binding is deterministic: the compiler attaches the facts belonging to each\nselected scene. fact_ids may list supplied IDs but the compiler resolves this metadata;\nconcentrate on the semantic brief, format and ordered scene IDs. Never manufacture a fact.\n",
+  "prompt_hash": "df6fe21945a3f604d52992ab08a5289def728cfc20a6c74929abe7b94a0cc31e",
+  "inputs": {
+    "slot": {
+      "id": "reference-w42-wed-1",
+      "run_id": "reference-w42",
+      "brand_hash": "8f3983a1982c0c57b645c10a17f093f463ad3b4b66c81a4f52c27f3f52b49bd3",
+      "scheduled_at": "2026-10-14T08:30:00+03:00",
+      "arm": {
+        "pillar": "guests",
+        "format": "reel",
+        "time_bucket": "morning_08_10",
+        "hook_style": "question"
+      },
+      "segment": "european",
+      "explore": false
+    },
+    "evidence": {
+      "property_name": "Reethi Faru Resort, Maldives",
+      "geography": "Maldives",
+      "source_date_note": "Historical source photographs published in April 2020; present condition and offers are not verified.",
+      "objects_file": "config/reethi-faru-scenes.yaml",
+      "facts": [
+        {
+          "id": "lagoon-villas-fact-1",
+          "scene_id": "lagoon-villas",
+          "text": "Overwater villas joined by a jetty",
+          "caption_en": "Thatched villas follow a wooden jetty through turquoise water.",
+          "caption_ar": "فلل بسقوف من القش على امتداد رصيف خشبي وسط مياه فيروزية."
+        },
+        {
+          "id": "lagoon-villas-fact-2",
+          "scene_id": "lagoon-villas",
+          "text": "Clear turquoise water around the buildings",
+          "caption_en": "Clear turquoise water surrounds the photographed villas and walkway.",
+          "caption_ar": "مياه فيروزية صافية تحيط بالفلل والممر الخشبي في الصورة."
+        },
+        {
+          "id": "lagoon-villas-fact-3",
+          "scene_id": "lagoon-villas",
+          "text": "White shoreline and island vegetation",
+          "caption_en": "From above, white sand curves between island greenery and the lagoon.",
+          "caption_ar": "من أعلى، يلتف الرمل الأبيض بين خضرة الجزيرة ومياه البحيرة الساحلية."
+        },
+        {
+          "id": "shoreline-fact-1",
+          "scene_id": "shoreline",
+          "text": "Turquoise shallows reaching white sand",
+          "caption_en": "Turquoise shallows meet a curve of white sand.",
+          "caption_ar": "مياه فيروزية تلتقي بانحناءة من الرمل الأبيض."
+        },
+        {
+          "id": "shoreline-fact-2",
+          "scene_id": "shoreline",
+          "text": "Palms and thatched structures beside the shoreline",
+          "caption_en": "Palms and thatched structures sit beside the photographed shoreline.",
+          "caption_ar": "نخيل ومبان بسقوف من القش بجوار خط الشاطئ في الصورة."
+        },
+        {
+          "id": "shoreline-fact-3",
+          "scene_id": "shoreline",
+          "text": "Blue sky and a visible ocean horizon",
+          "caption_en": "Blue sky sits above an open ocean horizon.",
+          "caption_ar": "سماء زرقاء وأفق بحر مفتوح."
+        },
+        {
+          "id": "palm-jetty-fact-1",
+          "scene_id": "palm-jetty",
+          "text": "A wooden jetty crossing the shallows",
+          "caption_en": "A wooden jetty crosses the turquoise shallows beside the beach.",
+          "caption_ar": "رصيف خشبي يعبر المياه الفيروزية الضحلة بجوار الشاطئ."
+        },
+        {
+          "id": "palm-jetty-fact-2",
+          "scene_id": "palm-jetty",
+          "text": "Palm shadows on white sand",
+          "caption_en": "Palm shadows fall across white sand at the waterline.",
+          "caption_ar": "ظلال النخيل تمتد على الرمل الأبيض عند خط الماء."
+        },
+        {
+          "id": "palm-jetty-fact-3",
+          "scene_id": "palm-jetty",
+          "text": "Water, palms and an open horizon in the same view",
+          "caption_en": "Water, palms and an open horizon share this beach-level view.",
+          "caption_ar": "مياه ونخيل وأفق مفتوح في مشهد من مستوى الشاطئ."
+        }
+      ],
+      "pillar_guidance": {
+        "underwater": "Use the visible coastal water colors and clarity. No underwater coral, marine species or snorkeling claims without footage.",
+        "spa": "A shoreline pause and relaxation through visible scenery. No spa facility or treatment claim.",
+        "guests": "Imagine the visible approach and the relationship of villas, water and shoreline. Do not invent guest testimonials or room amenities.",
+        "local": "Show the named Maldives reference location; never label it Hurghada or the Red Sea.",
+        "offers": "Offer a useful planning or comparison prompt. No price, deal, availability or booking promise."
+      },
+      "reference_only": true
+    },
+    "previous_angles": [
+      "Aerial view of the lagoon villas and jetty",
+      "A visual journey from the lagoon villas to the shoreline"
+    ],
+    "scenes": [
+      {
+        "id": "lagoon-villas",
+        "photo_uri": "assets/photos/reethi_faru/lagoon-villas.jpg",
+        "observed": "Aerial view of a line of thatched overwater villas and a connecting jetty, surrounded by clear turquoise water; island trees and white shoreline at the lower left."
+      },
+      {
+        "id": "shoreline",
+        "photo_uri": "assets/photos/reethi_faru/shoreline.jpg",
+        "observed": "Wide beach-level scene with turquoise shallows, white sand, blue sky, palm trees and existing thatched structures on the left."
+      },
+      {
+        "id": "palm-jetty",
+        "photo_uri": "assets/photos/reethi_faru/palm-jetty.jpg",
+        "observed": "Beach-level view with palms on the right, their shadows across white sand, a wooden jetty across turquoise water, and an open blue sky."
+      }
+    ],
+    "post_format": "reel",
+    "pillar_goal": "Imagine the visible approach and the relationship of villas, water and shoreline. Do not invent guest testimonials or room amenities."
+  },
+  "output_schema": {
+    "$defs": {
+      "ReelBrief": {
+        "additionalProperties": false,
+        "description": "FR-06: a reel concept is required at the schema boundary, not merely in instructions.",
+        "properties": {
+          "angle": {
+            "title": "Angle",
+            "type": "string"
+          },
+          "hook": {
+            "title": "Hook",
+            "type": "string"
+          },
+          "key_message": {
+            "title": "Key Message",
+            "type": "string"
+          },
+          "visual_description": {
+            "title": "Visual Description",
+            "type": "string"
+          },
+          "photo_uri": {
+            "title": "Photo Uri",
+            "type": "string"
+          },
+          "cta": {
+            "title": "Cta",
+            "type": "string"
+          },
+          "must_not": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Must Not",
+            "type": "array"
+          },
+          "reel_concept": {
+            "$ref": "#/$defs/ReelConcept"
+          }
+        },
+        "required": [
+          "angle",
+          "hook",
+          "key_message",
+          "visual_description",
+          "photo_uri",
+          "cta",
+          "must_not",
+          "reel_concept"
+        ],
+        "title": "ReelBrief",
+        "type": "object"
+      },
+      "ReelConcept": {
+        "additionalProperties": false,
+        "description": "FR-06: concept only; executable shot recipes/renders arrive in Phase 7.",
+        "properties": {
+          "hook": {
+            "title": "Hook",
+            "type": "string"
+          },
+          "shots": {
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "title": "Shots",
+            "type": "array"
+          },
+          "overlay_en": {
+            "title": "Overlay En",
+            "type": "string"
+          },
+          "overlay_ar": {
+            "title": "Overlay Ar",
+            "type": "string"
+          },
+          "audio": {
+            "title": "Audio",
+            "type": "string"
+          },
+          "cta": {
+            "title": "Cta",
+            "type": "string"
+          },
+          "cover": {
+            "title": "Cover",
+            "type": "string"
+          }
+        },
+        "required": [
+          "hook",
+          "shots",
+          "overlay_en",
+          "overlay_ar",
+          "audio",
+          "cta",
+          "cover"
+        ],
+        "title": "ReelConcept",
+        "type": "object"
+      }
+    },
+    "additionalProperties": false,
+    "properties": {
+      "brief": {
+        "$ref": "#/$defs/ReelBrief"
+      },
+      "media_ids": {
+        "items": {
+          "enum": [
+            "lagoon-villas",
+            "shoreline",
+            "palm-jetty"
+          ],
+          "type": "string"
+        },
+        "maxItems": 5,
+        "minItems": 3,
+        "title": "Media Ids",
+        "type": "array"
+      },
+      "fact_ids": {
+        "items": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "type": "string"
+        },
+        "minItems": 1,
+        "title": "Fact Ids",
+        "type": "array"
+      },
+      "pillar_intent": {
+        "maxLength": 500,
+        "minLength": 1,
+        "title": "Pillar Intent",
+        "type": "string"
+      },
+      "sequence_reason": {
+        "maxLength": 500,
+        "minLength": 1,
+        "title": "Sequence Reason",
+        "type": "string"
+      },
+      "cta_kind": {
+        "default": "save",
+        "enum": [
+          "save",
+          "compare",
+          "comment",
+          "swipe"
+        ],
+        "title": "Cta Kind",
+        "type": "string"
+      }
+    },
+    "required": [
+      "brief",
+      "media_ids",
+      "fact_ids",
+      "pillar_intent",
+      "sequence_reason"
+    ],
+    "title": "GroundedEvidenceBrief",
+    "type": "object"
+  },
+  "temperature": 0.0,
+  "max_output_tokens": 1200,
+  "validation_feedback": "[{\"loc\": [\"reel_concept\"], \"type\": \"extra_forbidden\"}, {\"loc\": [\"brief\", \"reel_concept\"], \"type\": \"missing\"}]"
+}

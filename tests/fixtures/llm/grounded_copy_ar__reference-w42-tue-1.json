@@ -1,0 +1,13 @@
+{
+  "template_name": "grounded_copy_ar",
+  "slot_id": "reference-w42-tue-1",
+  "response": {
+    "opening": "استراحة عند خط الماء.",
+    "detail": "ابدأ بالرمل الأبيض، ثم اتبع ظلال النخيل، وانظر إلى الفلل من أعلى.",
+    "action": "تنقل بين الصور واختر إطلالتك المفضلة.",
+    "alt_text": "صور مرجعية للمياه الفيروزية والشاطئ والفلل في المالديف.",
+    "fact_id": "shoreline-fact-1"
+  },
+  "input_tokens": 350,
+  "output_tokens": 450
+}

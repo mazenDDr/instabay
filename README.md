@@ -1,5 +1,11 @@
 # Insta Bay
 
+The new [coastal mixed-week preview](docs/samples/coastal-week/README.md) uses source-grounded
+scenic reels, three single photographs and two real carousels, with EN/AR captions.
+See [content direction and generation limits](docs/CONTENT_DIRECTION.md).
+Run `uv run instabay reference-week` for the offline mixed-format draft and local review gallery;
+it stops at human approval and never publishes the historical reference property.
+
 An approval-first Instagram marketing system for a fictional Red Sea resort in Hurghada.
 The intended weekly loop is brand → plan → native EN/AR content → checks → human approval
 → publishing → metrics → learning. **LLMs write, statistics decide, a human approves.**
@@ -263,3 +269,10 @@ from offline demos, calibrated benchmarks, brand freezing and post approval.
 - # HUMAN: approve the next backlog/deployment scope; no native job or live publish starts automatically.
 
 The simulator was committed separately in `29fed9c` before optimizer code in `98c9202`.
+
+### Brief-led video direction
+
+The new [Video Director](docs/VIDEO_DIRECTION.md) turns a Brief Writer brief into an object-led
+sequence, with automatic reference selection, deterministic timing, unique motion shots,
+sparse white type and separate EN/AR editions. Start with `instabay direct-video --brief path/to/brief.json`; finished rendering requires motion footage, while `--render --animatic`
+explicitly produces a photo edit. Preview generation never stores a publishing approval.

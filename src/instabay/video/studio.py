@@ -13,6 +13,7 @@ from instabay.core.recipe import RenderRecipe
 from instabay.core.schemas import Boundary, Hash
 from instabay.repository import Repository
 from instabay.video.backends.base import ShotRecipe, VideoBackend
+from instabay.video.backends.editorial import EditorialVideoBackend
 from instabay.video.backends.recorded import RecordedMotionBackend
 from instabay.video.backends.stub import StubVideoBackend
 from instabay.video.files import RenderError, digest, frame_hashes
@@ -116,6 +117,10 @@ class VideoStudio:
             raise RenderError("Requested backend differs from configured backend")
         if bool(recipe.post.recorded_motion) != isinstance(self.backend, RecordedMotionBackend):
             raise RenderError("Recorded motion requires the recorded CPU post backend")
+        if any(s.source_clip for s in recipe.shots.shots) and not isinstance(
+            self.backend, EditorialVideoBackend
+        ):
+            raise RenderError("Directed source clips require the editorial assembler")
         verify_inputs(recipe, self.root)
         directory = self.renders / recipe.recipe_hash
         # OS lock is released on process death; no stale-running lock or concurrent GPU execution.

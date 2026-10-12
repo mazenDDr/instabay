@@ -1,0 +1,7 @@
+{
+  "model": "Qwen/Qwen3-8B:nf4@b968826d9c46dd6066d109eabc6255188de91218",
+  "output_json": "{\n  \"brief\": {\n    \"angle\": \"Aerial view of the lagoon villas and jetty\",\n    \"hook\": \"1. A line of thatched overwater villas\",\n    \"key_message\": \"Experience the serene beauty of Reethi Faru Resort's lagoon villas and turquoise waters.\",\n    \"visual_description\": \"Aerial view of a line of thatched overwater villas and a connecting jetty, surrounded by clear turquoise water; island trees and white shoreline at the lower left.\",\n    \"photo_uri\": \"assets/photos/reethi_faru/lagoon-villas.jpg\",\n    \"cta\": \"Save this view for your dream getaway\",\n    \"must_not\": [\"Underwater coral\", \"Marine species\", \"Snorkeling\", \"Spa facilities\", \"Room amenities\"]\n  },\n  \"media_ids\": [\"lagoon-villas\"],\n  \"fact_ids\": [\"lagoon-villas-fact-1\", \"lagoon-villas-fact-2\", \"lagoon-villas-fact-3\"],\n  \"pillar_intent\": \"Use the visible coastal water colors and clarity. No underwater coral, marine species or snorkeling claims without footage.\",\n  \"sequence_reason\": \"This single aerial view captures the essence of the lagoon villas and their connection to the turquoise waters, offering a clear and serene visual of the resort's coastal setting.\",\n  \"cta_kind\": \"save\"\n}",
+  "input_tokens": 2581,
+  "output_tokens": 295,
+  "cost_usd": 0.0
+}

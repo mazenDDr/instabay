@@ -1,0 +1,50 @@
+{
+  "caption": "What if time slowed?\nSave or share a detail\nScenes created with AI.",
+  "credits": [
+    {
+      "object_id": "water",
+      "author": "Ercan.G",
+      "source": "https://commons.wikimedia.org/wiki/File:Hotel_Grand_Resort_-_panoramio_(1).jpg",
+      "license": "CC-BY-3.0",
+      "license_url": "https://creativecommons.org/licenses/by/3.0/",
+      "changes": "cropped, edited and animated"
+    },
+    {
+      "object_id": "flowers",
+      "author": "1089hruskapetr",
+      "source": "https://commons.wikimedia.org/wiki/File:Hotel_The_Grand_resort_-_panoramio.jpg",
+      "license": "CC-BY-3.0",
+      "license_url": "https://creativecommons.org/licenses/by/3.0/",
+      "changes": "cropped, edited and animated"
+    },
+    {
+      "object_id": "palms",
+      "author": "Szombat78",
+      "source": "https://commons.wikimedia.org/wiki/File:Hurghada_The_Grand_Resort.jpg",
+      "license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "changes": "cropped, edited and animated"
+    },
+    {
+      "object_id": "arches",
+      "author": "Ercan.G",
+      "source": "https://commons.wikimedia.org/wiki/File:Hotel_Grand_Resort_-_panoramio.jpg",
+      "license": "CC-BY-3.0",
+      "license_url": "https://creativecommons.org/licenses/by/3.0/",
+      "changes": "cropped, edited and animated"
+    },
+    {
+      "object_id": "courtyard",
+      "author": "Szombat78",
+      "source": "https://commons.wikimedia.org/wiki/File:Hurghada_The_Grand_Resort.jpg",
+      "license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "changes": "cropped, edited and animated"
+    }
+  ],
+  "reference_only": true,
+  "ai_disclosure": true,
+  "post_approved": false,
+  "brief_hash": "4922dd0eeae48f160b2eee2aa5bc8db29edf7d81daa6f605e85b995a79149fe6",
+  "recipe_hash": "84d0f75aac8198f634fdc31980487ee8cbefb6c6c304edaef75035240de7e855"
+}

@@ -1,0 +1,42 @@
+{
+  "raw_scene_order": [
+    "lagoon-villas",
+    "palm-jetty",
+    "shoreline"
+  ],
+  "edited_scene_order": [
+    "lagoon-villas",
+    "palm-jetty",
+    "shoreline"
+  ],
+  "raw_overlays": [
+    {
+      "en": "A seamless coastal journey from the lagoon to the beach",
+      "ar": "رحلة ساحلية سلسة من البحيرة إلى الشاطئ"
+    },
+    {
+      "en": "Experience the seamless transition from the tranquil lagoon to the vibrant shoreline",
+      "ar": "تجربة الانتقال السلس من البحيرة الهادئة إلى الشاطئ النشيط"
+    },
+    {
+      "en": "Plan your coastal escape with Reethi Faru Resort",
+      "ar": "احجز رحلتك الساحلية مع فندق ريثي فارو"
+    }
+  ],
+  "edited_overlays": [
+    {
+      "en": "",
+      "ar": ""
+    },
+    {
+      "en": "",
+      "ar": ""
+    },
+    {
+      "en": "",
+      "ar": ""
+    }
+  ],
+  "policy": "No panels; exact five-second scene holds; opening/closing roles assigned by editor; rotate repeated scene order.",
+  "human_review": "pending"
+}

@@ -1,0 +1,13 @@
+{
+  "template_name": "grounded_copy_ar",
+  "slot_id": "reference-w42-fri-1",
+  "response": {
+    "opening": "ثلاث زوايا لإطلالة واحدة.",
+    "detail": "فلل فوق الماء، ورصيف يعبر المياه الضحلة، وشاطئ يلتقي بالبحر.",
+    "action": "تنقل بين الصور لتكتشف العلاقة بين الأرض والماء.",
+    "alt_text": "صور مرجعية للمياه الفيروزية والشاطئ والفلل في المالديف.",
+    "fact_id": "lagoon-villas-fact-1"
+  },
+  "input_tokens": 350,
+  "output_tokens": 450
+}

@@ -1,0 +1,7 @@
+{
+  "model": "Qwen/Qwen3-8B:nf4@b968826d9c46dd6066d109eabc6255188de91218",
+  "output_json": "{\n  \"brief\": {\n    \"angle\": \"A serene connection between the shoreline and the lagoon villas\",\n    \"hook\": \"What connects the beach to the villas?\",\n    \"key_message\": \"Discover the natural link between the shoreline and the lagoon villas at Reethi Faru Resort.\",\n    \"visual_description\": \"A wooden jetty crosses turquoise shallows beside the beach, with palm shadows on white sand and a clear view of the open ocean horizon.\",\n    \"photo_uri\": \"assets/photos/reethi_faru/palm-jetty.jpg\",\n    \"cta\": \"Explore the connection between the beach and the villas.\",\n    \"must_not\": [\"Underwater details\", \"Spa facilities\", \"Guest testimonials\", \"Price or booking promises\"]\n  },\n  \"media_ids\": [\"palm-jetty\"],\n  \"fact_ids\": [\"palm-jetty-fact-1\", \"palm-jetty-fact-2\", \"palm-jetty-fact-3\"],\n  \"pillar_intent\": \"Show the named Maldives reference location; never label it Hurghada or the Red Sea.\",\n  \"sequence_reason\": \"The single scene captures the natural link between the shoreline and the lagoon villas, emphasizing the connection through the wooden jetty and palm shadows.\",\n  \"cta_kind\": \"compare\"\n}",
+  "input_tokens": 2559,
+  "output_tokens": 277,
+  "cost_usd": 0.0
+}

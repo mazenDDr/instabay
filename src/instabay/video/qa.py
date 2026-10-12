@@ -24,6 +24,9 @@ class VisualEvidence(Boundary):
     planned_scene: bool
     distorted_faces_or_hands: bool
     stray_text: bool
+    consistency_scope: Literal["whole_reel", "within_shots"] = "whole_reel"
+    editorial_brief_match: bool | None = None
+    object_actions_readable: bool | None = None
 
 
 class VisualQA(Protocol):
@@ -132,10 +135,10 @@ def evaluate(file: Path, recipe: RenderRecipe, visual: VisualQA | None = None) -
     )
     frames = [raw[i : i + 1792] for i in range(0, len(raw), 1792)]
     cuts = set()
-    elapsed = 0
+    elapsed = 0.0
     for shot in recipe.shots.shots[:-1]:
         elapsed += shot.seconds
-        cuts.add(elapsed * 30)
+        cuts.add(round(elapsed * 30))
     changes = [
         sum(abs(a - b) for a, b in zip(frames[i - 1], frame, strict=True)) / (1792 * 255)
         for i, frame in enumerate(frames)
@@ -149,9 +152,17 @@ def evaluate(file: Path, recipe: RenderRecipe, visual: VisualQA | None = None) -
     if evidence is None:
         violations.append("semantic/subject/background/seam/palette QA pending")
     else:
-        if (recipe.backend != "stub" or recipe.post.recorded_motion) and evidence.synthetic:
+        if recipe.generated and evidence.synthetic:
             violations.append("synthetic QA cannot validate native motion")
-        if len(evidence.seam_similarity) != len(recipe.shots.shots) - 1 or any(
+        if recipe.post.style == "editorial":
+            if evidence.consistency_scope != "within_shots":
+                violations.append("Within-shot consistency evidence pending")
+            if (
+                evidence.editorial_brief_match is not True
+                or evidence.object_actions_readable is not True
+            ):
+                violations.append("Directed brief/action review pending or failed")
+        elif len(evidence.seam_similarity) != len(recipe.shots.shots) - 1 or any(
             s < recipe.post.continuity_threshold for s in evidence.seam_similarity
         ):
             violations.append("DINO seam continuity failed")

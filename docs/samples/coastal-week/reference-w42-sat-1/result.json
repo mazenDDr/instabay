@@ -1,0 +1,32 @@
+{
+  "recipe_hash": "68c3c4265519388c56de51391861e470ed863b42428b913119e92166402f0a6c",
+  "backend": "stub",
+  "file": "/Users/mazenkhaled/Task/outputs/place-led/sample-renders/68c3c4265519388c56de51391861e470ed863b42428b913119e92166402f0a6c/reel.mp4",
+  "file_sha256": "72a09ea304b91accbb21f929aa94100628b8e288c0e3c2bc34a7145beabd0a07",
+  "contact_sheet": "/Users/mazenkhaled/Task/outputs/place-led/sample-renders/68c3c4265519388c56de51391861e470ed863b42428b913119e92166402f0a6c/contact-sheet.jpg",
+  "contact_sha256": "7839c8e447320b8c775edb56e182fecdb41412e9f82557e0c42987b817414a60",
+  "seconds": 41.97488270804752,
+  "cost_usd": 0.0,
+  "qa": {
+    "spec_ok": true,
+    "width": 1080,
+    "height": 1920,
+    "fps": 30.0,
+    "duration_s": 15.0,
+    "size_bytes": 5174819,
+    "moov_at_front": true,
+    "violations": [
+      "semantic/subject/background/seam/palette QA pending"
+    ],
+    "flicker": 0.0006707052228050056,
+    "visual": null,
+    "status": "needs_review"
+  },
+  "ai_disclosure": true,
+  "reference_only": true,
+  "determinism_level": "L0",
+  "frame_manifest": {
+    "uri": "docs/samples/coastal-week/reference-w42-sat-1/frames.json",
+    "sha256": "e8b97301ac21c5f6e75bcae4c1ab1346aad51280738a6af5ecbfff62891884bb"
+  }
+}

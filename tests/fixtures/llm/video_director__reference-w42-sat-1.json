@@ -1,0 +1,65 @@
+{
+  "template_name": "video_director",
+  "slot_id": "reference-w42-sat-1",
+  "response": {
+    "reel_id": "reference-w42-sat-1",
+    "idea": "Which waterfront view belongs on your shortlist?",
+    "viewer_payoff": "Compare the beach-level shoreline with the villas seen from above and the palm-lined jetty.",
+    "hook_mechanism": "Readable water and architecture in a complete opening scene.",
+    "bpm": 70,
+    "missing_visuals": [],
+    "edit_style": "scenic",
+    "beats": [
+      {
+        "id": "scene-1",
+        "object_id": "shoreline",
+        "role": "hook",
+        "pace": "linger",
+        "purpose": "Show the complete observed setting with continuous natural motion.",
+        "brief_anchor": "hook",
+        "camera": "static",
+        "action": "scenic_motion",
+        "action_prompt": "Preserve the photographed place; natural water and palm motion, restrained stable camera drift.",
+        "overlay": {
+          "en": "",
+          "ar": ""
+        },
+        "text_position": "lower"
+      },
+      {
+        "id": "scene-2",
+        "object_id": "lagoon-villas",
+        "role": "reveal",
+        "pace": "linger",
+        "purpose": "Show the complete observed setting with continuous natural motion.",
+        "brief_anchor": "visual_description",
+        "camera": "static",
+        "action": "scenic_motion",
+        "action_prompt": "Preserve the photographed place; natural water and palm motion, restrained stable camera drift.",
+        "overlay": {
+          "en": "",
+          "ar": ""
+        },
+        "text_position": "lower"
+      },
+      {
+        "id": "scene-3",
+        "object_id": "palm-jetty",
+        "role": "cta",
+        "pace": "linger",
+        "purpose": "Show the complete observed setting with continuous natural motion.",
+        "brief_anchor": "cta",
+        "camera": "static",
+        "action": "scenic_motion",
+        "action_prompt": "Preserve the photographed place; natural water and palm motion, restrained stable camera drift.",
+        "overlay": {
+          "en": "Save this view.",
+          "ar": "احفظ هذه الإطلالة."
+        },
+        "text_position": "lower"
+      }
+    ]
+  },
+  "input_tokens": 350,
+  "output_tokens": 450
+}

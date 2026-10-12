@@ -1,0 +1,7 @@
+{
+  "model": "Qwen/Qwen3-8B:nf4@b968826d9c46dd6066d109eabc6255188de91218",
+  "output_json": "{\n  \"brief\": {\n    \"angle\": \"A serene coastal journey from the lagoon villas to the shoreline\",\n    \"hook\": \"What's the best way to experience the connection between the lagoon and the shore?\",\n    \"key_message\": \"Discover how the lagoon villas and shoreline of Reethi Faru Resort, Maldives, are seamlessly connected through natural beauty and design.\",\n    \"visual_description\": \"A wide beach-level scene with turquoise shallows, white sand, blue sky, palm trees and existing thatched structures on the left.\",\n    \"photo_uri\": \"assets/photos/reethi_faru/shoreline.jpg\",\n    \"cta\": \"Compare the lagoon villas and shoreline to plan your coastal journey.\",\n    \"must_not\": [\"Underwater coral\", \"Marine species\", \"Spa facilities\", \"Guest testimonials\", \"Price or booking promises\"]\n  },\n  \"media_ids\": [\"shoreline\"],\n  \"fact_ids\": [\"shoreline-fact-1\", \"shoreline-fact-2\", \"shoreline-fact-3\"],\n  \"pillar_intent\": \"Offer a useful planning or comparison prompt. No price, deal, availability or booking promise.\",\n  \"sequence_reason\": \"This single scene captures the natural connection between the lagoon and the shoreline, highlighting the seamless transition from water to land through the visual elements of turquoise shallows, white sand, palm trees, and thatched structures.\",\n  \"cta_kind\": \"compare\"\n}",
+  "input_tokens": 2532,
+  "output_tokens": 305,
+  "cost_usd": 0.0
+}

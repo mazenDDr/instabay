@@ -6,6 +6,7 @@ from concurrent.futures import ThreadPoolExecutor
 from instabay.agents.common import agent_inputs, prompt_hashes
 from instabay.agents.copy_ar import ArabicWriter
 from instabay.agents.copy_en import EnglishWriter
+from instabay.content.evidence import EvidenceCopyContext
 from instabay.core.rules import check_rules
 from instabay.core.schemas import (
     BrandConstitution,
@@ -28,6 +29,9 @@ def write_bilingual(
     brief: Brief,
     previous: Post | None = None,
     fixes: list[str] | None = None,
+    visual_context: EvidenceCopyContext | None = None,
+    previous_openings_en: list[str] | None = None,
+    previous_openings_ar: list[str] | None = None,
 ) -> tuple[Copy, Copy]:
     """FR-04: EN/AR provider requests run concurrently from the common brief."""
     with ThreadPoolExecutor(max_workers=2) as pool:
@@ -38,6 +42,8 @@ def write_bilingual(
             brief,
             previous.en if previous else None,
             fixes,
+            visual_context,
+            previous_openings_en,
         )
         ar = pool.submit(
             ArabicWriter(service).write,
@@ -46,6 +52,8 @@ def write_bilingual(
             brief,
             previous.ar if previous else None,
             fixes,
+            visual_context,
+            previous_openings_ar,
         )
         return en.result(), ar.result()
 

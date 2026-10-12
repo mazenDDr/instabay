@@ -35,6 +35,13 @@ def verify_inputs(recipe: RenderRecipe, root: Path) -> None:
     """NFR-03: every dependency is verified, including fonts, LUT and workflow."""
     refs: list[FileRef] = [s.keyframe for s in recipe.shots.shots] + [recipe.post.font]
     refs.extend(recipe.model.weights + recipe.model.loras)
+    if recipe.post.latin_font:
+        refs.append(recipe.post.latin_font)
+    for shot in recipe.shots.shots:
+        if shot.source_clip:
+            refs.append(shot.source_clip)
+            if shot.source_clip.motion_recipe:
+                refs.append(shot.source_clip.motion_recipe)
     if recipe.post.recorded_motion:
         refs.extend([recipe.post.recorded_motion.recipe, *recipe.post.recorded_motion.clips])
     refs.extend(
@@ -64,7 +71,7 @@ def stub_recipe(shots: ShotList, root: Path, *, preset: str = "fast") -> RenderR
             scheduler="frame-index",
         ),
         motion=MotionSpec(
-            frames=[s.seconds * 30 for s in shots.shots], seeds=[7] * len(shots.shots)
+            frames=[round(s.seconds * 30) for s in shots.shots], seeds=[7] * len(shots.shots)
         ),
         post=PostSpec.model_validate(
             {

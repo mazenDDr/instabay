@@ -66,6 +66,14 @@ class GraphPublisher:
         return result
 
     def _payload(self, post: Post, job: GraphJob | None = None) -> dict[str, str]:
+        if (
+            (post.evidence and post.evidence.reference_only)
+            or (post.photo_artifact and post.photo_artifact.reference_only)
+            or (post.render_artifact and post.render_artifact.reference_only)
+        ):
+            raise MediaValidationError(
+                "Reference campaign sources cannot become live property advertisements"
+            )
         manifest = post.media_manifest
         if manifest is None or manifest.format != post.format:
             raise MediaValidationError(

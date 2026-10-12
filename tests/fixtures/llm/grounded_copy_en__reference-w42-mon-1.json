@@ -1,0 +1,13 @@
+{
+  "template_name": "grounded_copy_en",
+  "slot_id": "reference-w42-mon-1",
+  "response": {
+    "opening": "How many shades of blue can one view hold?",
+    "detail": "Clear shallows frame the villas and their connecting jetty.",
+    "action": "Save this palette for your travel moodboard.",
+    "alt_text": "Reference photographs: lagoon-villas.",
+    "fact_id": "lagoon-villas-fact-1"
+  },
+  "input_tokens": 350,
+  "output_tokens": 450
+}

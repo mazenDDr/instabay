@@ -1,0 +1,13 @@
+{
+  "template_name": "grounded_copy_en",
+  "slot_id": "reference-w42-fri-1",
+  "response": {
+    "opening": "Waterfront, from three perspectives.",
+    "detail": "Look at the line of villas, the jetty across the shallows and the curve of the beach.",
+    "action": "Swipe through to explore how land and water meet.",
+    "alt_text": "Reference photographs: lagoon-villas, palm-jetty, shoreline.",
+    "fact_id": "lagoon-villas-fact-1"
+  },
+  "input_tokens": 350,
+  "output_tokens": 450
+}

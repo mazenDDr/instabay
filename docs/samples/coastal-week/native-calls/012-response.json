@@ -1,0 +1,7 @@
+{
+  "model": "Qwen/Qwen3-8B:nf4@b968826d9c46dd6066d109eabc6255188de91218",
+  "output_json": "{\n  \"opening\": \"الانتقال من الفلل إلى الشاطئ عبر الماء\",\n  \"detail\": \"\",\n  \"action\": \"احفظ رحلتك من الفلل إلى الشاطئ\",\n  \"alt_text\": \"الانتقال السلس من الفلل إلى الشاطئ في فندق ريثي فارو، مالديب.\",\n  \"fact_id\": \"palm-jetty-fact-3\"\n}",
+  "input_tokens": 2644,
+  "output_tokens": 93,
+  "cost_usd": 0.0
+}

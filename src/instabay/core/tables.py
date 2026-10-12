@@ -70,6 +70,8 @@ class PostRow(SQLModel, table=True):
     media_status: str
     media_json: str | None = None
     render_json: str | None = None
+    photo_json: str | None = None
+    evidence_json: str | None = None
     idempotency_key: str
 
 
@@ -108,6 +110,7 @@ class ReviewRow(SQLModel, table=True):
     arabic_ratio: float
     flags_json: str
     cascade_json: str | None = None
+    pending_json: str | None = None
 
 
 class ApprovalRow(SQLModel, table=True):

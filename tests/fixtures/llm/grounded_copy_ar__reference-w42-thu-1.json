@@ -1,0 +1,13 @@
+{
+  "template_name": "grounded_copy_ar",
+  "slot_id": "reference-w42-thu-1",
+  "response": {
+    "opening": "الساحل يرسم المشهد.",
+    "detail": "رمل أبيض ونخيل وأفق مفتوح، في صورة مرجعية لمنتجع ريثي فارو بالمالديف.",
+    "action": "أي جزء من هذه الإطلالة تود تصويره؟",
+    "alt_text": "صور مرجعية للمياه الفيروزية والشاطئ والفلل في المالديف.",
+    "fact_id": "shoreline-fact-1"
+  },
+  "input_tokens": 350,
+  "output_tokens": 450
+}

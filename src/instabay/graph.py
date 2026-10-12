@@ -19,25 +19,38 @@ from instabay.agents.brand_architect import BrandArchitect
 from instabay.agents.brief_writer import BriefWriter
 from instabay.agents.common import prompt_hashes
 from instabay.agents.judge import Judge, write_bilingual
+from instabay.agents.video_director import VideoDirector
+from instabay.agents.visual_brief import VisualBriefWriter
+from instabay.content.evidence import ContentEvidence, EvidenceCopyContext
+from instabay.content.photos import PhotoRecipe, PhotoStudio
+from instabay.content.quality import quality_report
 from instabay.core.hashtags import select_hashtags
 from instabay.core.planner import plan_week
 from instabay.core.recipe import RenderRecipe
+from instabay.core.rules import check_rules
 from instabay.core.schemas import (
+    BrandConstitution,
     BrandInput,
+    EvidenceAttachment,
     PlanningPreferences,
     Post,
     RenderAttachment,
+    Review,
     WorkflowInput,
     WorkflowResult,
+    canonical_hash,
 )
 from instabay.db import SQLiteCallStore
 from instabay.decisions.calibration import CalibrationProfile
 from instabay.decisions.cascade import CheckCascade
 from instabay.decisions.engine import DecisionEngine
-from instabay.llm import LLMService, RunUsage
+from instabay.llm import LLMService, RunBudget, RunUsage
 from instabay.repository import Repository
-from instabay.video.keyframes import stub_recipe
+from instabay.video.direction import ObjectCatalog
+from instabay.video.direction_commands import editorial_recipe
+from instabay.video.keyframes import runtime_identity, stub_recipe
 from instabay.video.remote import RenderService
+from instabay.video.review import media_flags
 from instabay.video.shotlist import Keyframe
 
 
@@ -88,17 +101,32 @@ class WeekRunner:
         model_overrides: dict[str, str] | None = None,
         token_overrides: dict[str, int] | None = None,
         render_recipes: dict[str, RenderRecipe] | None = None,
+        video_catalog: ObjectCatalog | None = None,
+        allow_video_animatic: bool = False,
+        content_evidence: ContentEvidence | None = None,
+        content_root: Path | None = None,
+        reference_brand: BrandConstitution | None = None,
+        run_budget: RunBudget | None = None,
     ) -> None:
         self._stack = ExitStack()
         self.repository = Repository(db)
         self._stack.callback(self.repository.close)
         self.calls = self._stack.enter_context(SQLiteCallStore(db))
         self.fake = FakeLLM(fixtures)
+        self.video_catalog, self.allow_video_animatic = video_catalog, allow_video_animatic
+        self.content_evidence = content_evidence
+        self.content_root = (content_root or Path.cwd()).resolve()
+        self.content_catalog = (
+            content_evidence.objects(self.content_root) if content_evidence else None
+        )
+        self.reference_brand = reference_brand
+        self.photo_db = db
         self.service = LLMService(
             llm_client or self.fake,
             self.calls,
             model_overrides=model_overrides,
             token_overrides=token_overrides,
+            budget=run_budget,
         )
         self.brand_input = brand_input
         self.preferences = preferences
@@ -137,7 +165,14 @@ class WeekRunner:
         return {"configurable": {"thread_id": run_id}, "recursion_limit": 20}
 
     def _brand(self, state: WeekState) -> dict[str, str]:
-        constitution = BrandArchitect(self.service).draft(self.brand_input)
+        if self.reference_brand is not None:
+            if not state["demo"] or self.content_evidence is None:
+                raise ValueError(
+                    "Reference brand overrides are preview-only and need scene evidence"
+                )
+            constitution = self.reference_brand
+        else:
+            constitution = BrandArchitect(self.service).draft(self.brand_input)
         digest = self.repository.register_brand(constitution)
         self.repository.start_run(
             WorkflowInput.model_validate(
@@ -167,13 +202,60 @@ class WeekRunner:
 
     def _draft(self, state: WeekState) -> dict[str, object]:
         brand = self.repository.brand(state["brand_hash"])
-        ids = []
+        ids: list[str] = []
+        previous_angles: list[str] = []
+        used_photo_scenes: list[str] = []
         for slot in self.repository.slots(state["run_id"]):
             try:
                 post = self.repository.post(slot.id)
             except KeyError:
-                brief = BriefWriter(self.service).write(slot, brand)
-                en, ar = write_bilingual(self.service, slot, brand, brief)
+                context = None
+                photo_artifact = None
+                if self.content_evidence and self.content_catalog:
+                    selection = VisualBriefWriter(self.service).write(
+                        slot,
+                        brand,
+                        self.content_evidence,
+                        self.content_catalog,
+                        previous_angles,
+                        used_photo_scenes,
+                    )
+                    brief = selection.brief
+                    context = EvidenceCopyContext(
+                        selection=selection,
+                        property_name=self.content_evidence.property_name,
+                        geography=self.content_evidence.geography,
+                        source_date_note=self.content_evidence.source_date_note,
+                        facts=[
+                            f for f in self.content_evidence.facts if f.id in selection.fact_ids
+                        ],
+                        reference_only=self.content_evidence.reference_only,
+                    )
+                    if slot.arm.format != "reel":
+                        recipe = PhotoRecipe(
+                            format=slot.arm.format,
+                            story=selection,
+                            sources=[
+                                self.content_catalog.get(i).model_copy(update={"clip": None})
+                                for i in selection.media_ids
+                            ],
+                            runtime=runtime_identity(),
+                        )
+                        photo_artifact = PhotoStudio(
+                            self.content_root, self.photo_db.parent / "photos", self.photo_db
+                        ).render(recipe)
+                else:
+                    brief = BriefWriter(self.service).write(slot, brand)
+                earlier = [self.repository.post(i) for i in ids]
+                en, ar = write_bilingual(
+                    self.service,
+                    slot,
+                    brand,
+                    brief,
+                    visual_context=context,
+                    previous_openings_en=[p.en.caption.split("\n", 1)[0] for p in earlier],
+                    previous_openings_ar=[p.ar.caption.split("\n", 1)[0] for p in earlier],
+                )
                 post = Post(
                     id=slot.id,
                     slot_id=slot.id,
@@ -185,13 +267,36 @@ class WeekRunner:
                     hashtags=select_hashtags(brand),
                     prompt_hashes=prompt_hashes(
                         self.service,
-                        ["brand_architect", "brief_writer", "copy_en", "copy_ar", "judge"],
+                        ["visual_brief", "grounded_copy_en", "grounded_copy_ar"]
+                        if context
+                        else ["brand_architect", "brief_writer", "copy_en", "copy_ar", "judge"],
                     ),
-                    media_path=brief.photo_uri if slot.arm.format != "reel" else None,
-                    media_status="concept_only" if slot.arm.format == "reel" else "reference",
+                    media_path=photo_artifact.files[0].file
+                    if photo_artifact
+                    else brief.photo_uri
+                    if slot.arm.format != "reel"
+                    else None,
+                    media_status="rendered"
+                    if photo_artifact
+                    else "concept_only"
+                    if slot.arm.format == "reel"
+                    else "reference",
+                    photo_artifact=photo_artifact,
+                    evidence=EvidenceAttachment(
+                        context=context.model_dump(mode="json"),
+                        context_hash=canonical_hash(context),
+                        reference_only=context.reference_only,
+                    )
+                    if context
+                    else None,
                 )
                 self.repository.save_post(post)
             ids.append(post.id)
+            previous_angles.append(post.brief.angle)
+            if post.format == "photo" and post.evidence:
+                used_photo_scenes.extend(
+                    EvidenceCopyContext.model_validate(post.evidence.context).selection.media_ids
+                )
         return {"post_ids": ids, "status": "drafted"}
 
     def _render_reel(self, state: WeekState) -> dict[str, str]:
@@ -199,12 +304,44 @@ class WeekRunner:
         if self.video_studio is None:
             return {"status": "drafted"}
         brand = self.repository.brand(state["brand_hash"])
+        previous_scene_orders: list[list[str]] = []
         for slot in self.repository.slots(state["run_id"]):
             post = self.repository.post(slot.id)
+            if post.render_artifact:
+                saved = RenderRecipe.model_validate(post.render_artifact.render_recipe)
+                if saved.model.workflow:
+                    from instabay.video.direction import VideoBoard
+
+                    old_board = VideoBoard.model_validate_json(
+                        (self.video_studio.root / saved.model.workflow.uri).read_bytes()
+                    )
+                    previous_scene_orders.append([b.object_id for b in old_board.plan.beats])
             if post.format != "reel" or post.render_artifact is not None:
                 continue
             recipe = self.render_recipes.get(slot.id)
-            if recipe is None:
+            if recipe is None and self.video_catalog is not None:
+                from instabay.video.backends.editorial import EditorialVideoBackend
+
+                if not isinstance(self.video_studio.backend, EditorialVideoBackend):
+                    raise ValueError("The directed board requires the editorial assembler")
+                catalog = self.video_catalog
+                if post.evidence:
+                    context = EvidenceCopyContext.model_validate(post.evidence.context)
+                    catalog = catalog.model_copy(
+                        update={"objects": [catalog.get(i) for i in context.selection.media_ids]}
+                    )
+                board = VideoDirector(self.service).direct(
+                    slot.id, post.brief, catalog, previous_scene_orders
+                )
+                previous_scene_orders.append([b.object_id for b in board.plan.beats])
+                recipe = editorial_recipe(
+                    board,
+                    self.video_studio.root,
+                    self.video_studio.root / "outputs/video-boards" / slot.id,
+                    "en",
+                    animatic=self.allow_video_animatic and state["demo"],
+                )
+            elif recipe is None:
                 if not state["demo"] or self.video_studio.backend.name != "stub":
                     raise ValueError(
                         "HUMAN: supply an exact approved native recipe before GPU work"
@@ -238,7 +375,9 @@ class WeekRunner:
                         "render_artifact": attachment,
                         "ai_disclosure": result.ai_disclosure,
                         "prompt_hashes": post.prompt_hashes
-                        | prompt_hashes(self.service, ["shot_list"]),
+                        | prompt_hashes(
+                            self.service, ["video_director" if self.video_catalog else "shot_list"]
+                        ),
                     }
                 )
             )
@@ -246,6 +385,34 @@ class WeekRunner:
 
     def _checks(self, state: WeekState) -> dict[str, str]:
         brand = self.repository.brand(state["brand_hash"])
+        if self.content_evidence:
+            previous: list[Post] = []
+            for slot in self.repository.slots(state["run_id"]):
+                post = self.repository.post(slot.id)
+                if post.evidence is None:
+                    raise ValueError("Evidence-first workflow lost a source attachment")
+                context = EvidenceCopyContext.model_validate(post.evidence.context)
+                report = quality_report(post, context.selection, previous)
+                rules = check_rules(post, brand)
+                self.repository.save_review(
+                    Review(
+                        post_id=post.id,
+                        content_hash=post.content_hash,
+                        rules=rules,
+                        judge=None,
+                        check_path="human_pending",
+                        flagged=True,
+                        flags=[
+                            "Human source/caption/appeal review pending",
+                            *rules.violations,
+                            *report.flags,
+                            *media_flags(post),
+                        ],
+                        decision_trace=report.model_dump(mode="json"),
+                    )
+                )
+                previous.append(post)
+            return {"status": "checked"}
         judge = CheckCascade(
             Judge(self.service),
             self.decision_engine,

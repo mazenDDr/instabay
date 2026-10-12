@@ -1,0 +1,177 @@
+{
+  "template_name": "grounded_copy_en",
+  "slot_id": "reference-w42-fri-1",
+  "model": "Qwen/Qwen3-8B:nf4@b968826d9c46dd6066d109eabc6255188de91218",
+  "prompt": "# Evidence-backed English framing — FR-04\n\nReturn only the GroundedCaptionDraft JSON schema. Write natural, concise travel copy from\nthis selected evidence, shared brief and pillar intent. This is a historical reference\nstudy of the named Maldives property, not Insta Bay's own facilities.\n\nopening: one specific thought, 4–12 words, that makes THIS view interesting for THIS pillar.\nPrefer a clear statement to a generic rhetorical question. Do not repeat or paraphrase\nprevious_openings. Do not copy the brief's hook verbatim. No vague personification,\n\"paradise\", \"ultimate luxury\", \"unforgettable\", or generic \"What color is the water?\".\nFor water/nature, draw attention to a visible water/shore relationship; for relaxation,\nto the visual space or shade; for stay inspiration, to the approach or visible buildings;\nfor local setting, to a visible feature and the actual Maldives location; for planning,\nto comparing views before choosing a destination. Stay within visible evidence.\n\naction: one clear viewer action matching selection.cta_kind. Save asks saving; compare asks\ncomparing these photographed views; comment asks a specific preference; swipe asks opening\nthe carousel. Vary wording. Never promise a deal, room, availability or booking.\n\nfact_id: choose one supplied visual_context.facts ID. The editor compiles factual body and\nalt text from curated English clauses. Set detail and alt_text to empty strings. Do not\nadd factual claims in opening/action beyond those clauses. No facilities, activities,\nguest stories, species, time of day, sound, smell, temperature or current-condition claims\nthat the photographs cannot establish. No ownership, affiliation, Hurghada/Red Sea label,\nhashtags, auditing language or technical jargon. No emojis needed.\n",
+  "prompt_hash": "a86f9f5be4dad60647691ea46cb5855559f95b3c39a2d5608d7a386148af680f",
+  "inputs": {
+    "slot": {
+      "id": "reference-w42-fri-1",
+      "run_id": "reference-w42",
+      "brand_hash": "8f3983a1982c0c57b645c10a17f093f463ad3b4b66c81a4f52c27f3f52b49bd3",
+      "scheduled_at": "2026-10-16T08:30:00+03:00",
+      "arm": {
+        "pillar": "local",
+        "format": "carousel",
+        "time_bucket": "morning_08_10",
+        "hook_style": "question"
+      },
+      "segment": "gcc",
+      "explore": false
+    },
+    "brief": {
+      "angle": "A visual journey from the lagoon villas to the shoreline",
+      "hook": "What connects the villas to the beach?",
+      "key_message": "Discover the seamless link between the lagoon villas and the pristine shoreline of Reethi Faru Resort.",
+      "visual_description": "Aerial view of thatched overwater villas connected by a jetty, surrounded by clear turquoise water, transitioning to a wide beach-level scene with white sand, palm trees, and a blue sky.",
+      "photo_uri": "assets/photos/reethi_faru/lagoon-villas.jpg",
+      "cta": "Compare the connection between the villas and the shoreline",
+      "must_not": [
+        "Underwater details",
+        "Spa facilities",
+        "Guest testimonials",
+        "Price or booking promises"
+      ],
+      "reel_concept": null
+    },
+    "visual_context": {
+      "selection": {
+        "brief": {
+          "angle": "A visual journey from the lagoon villas to the shoreline",
+          "hook": "What connects the villas to the beach?",
+          "key_message": "Discover the seamless link between the lagoon villas and the pristine shoreline of Reethi Faru Resort.",
+          "visual_description": "Aerial view of thatched overwater villas connected by a jetty, surrounded by clear turquoise water, transitioning to a wide beach-level scene with white sand, palm trees, and a blue sky.",
+          "photo_uri": "assets/photos/reethi_faru/lagoon-villas.jpg",
+          "cta": "Compare the connection between the villas and the shoreline",
+          "must_not": [
+            "Underwater details",
+            "Spa facilities",
+            "Guest testimonials",
+            "Price or booking promises"
+          ],
+          "reel_concept": null
+        },
+        "media_ids": [
+          "lagoon-villas",
+          "shoreline"
+        ],
+        "fact_ids": [
+          "lagoon-villas-fact-1",
+          "lagoon-villas-fact-2",
+          "lagoon-villas-fact-3",
+          "shoreline-fact-1",
+          "shoreline-fact-2",
+          "shoreline-fact-3"
+        ],
+        "pillar_intent": "Show the named Maldives reference location; never label it Hurghada or the Red Sea.",
+        "sequence_reason": "The transition from the lagoon villas to the shoreline highlights the natural connection between the water and the island's landscape, emphasizing the resort's coastal setting.",
+        "cta_kind": "compare"
+      },
+      "property_name": "Reethi Faru Resort, Maldives",
+      "geography": "Maldives",
+      "source_date_note": "Historical source photographs published in April 2020; present condition and offers are not verified.",
+      "facts": [
+        {
+          "id": "lagoon-villas-fact-1",
+          "scene_id": "lagoon-villas",
+          "text": "Overwater villas joined by a jetty",
+          "caption_en": "Thatched villas follow a wooden jetty through turquoise water.",
+          "caption_ar": "فلل بسقوف من القش على امتداد رصيف خشبي وسط مياه فيروزية."
+        },
+        {
+          "id": "lagoon-villas-fact-2",
+          "scene_id": "lagoon-villas",
+          "text": "Clear turquoise water around the buildings",
+          "caption_en": "Clear turquoise water surrounds the photographed villas and walkway.",
+          "caption_ar": "مياه فيروزية صافية تحيط بالفلل والممر الخشبي في الصورة."
+        },
+        {
+          "id": "lagoon-villas-fact-3",
+          "scene_id": "lagoon-villas",
+          "text": "White shoreline and island vegetation",
+          "caption_en": "From above, white sand curves between island greenery and the lagoon.",
+          "caption_ar": "من أعلى، يلتف الرمل الأبيض بين خضرة الجزيرة ومياه البحيرة الساحلية."
+        },
+        {
+          "id": "shoreline-fact-1",
+          "scene_id": "shoreline",
+          "text": "Turquoise shallows reaching white sand",
+          "caption_en": "Turquoise shallows meet a curve of white sand.",
+          "caption_ar": "مياه فيروزية تلتقي بانحناءة من الرمل الأبيض."
+        },
+        {
+          "id": "shoreline-fact-2",
+          "scene_id": "shoreline",
+          "text": "Palms and thatched structures beside the shoreline",
+          "caption_en": "Palms and thatched structures sit beside the photographed shoreline.",
+          "caption_ar": "نخيل ومبان بسقوف من القش بجوار خط الشاطئ في الصورة."
+        },
+        {
+          "id": "shoreline-fact-3",
+          "scene_id": "shoreline",
+          "text": "Blue sky and a visible ocean horizon",
+          "caption_en": "Blue sky sits above an open ocean horizon.",
+          "caption_ar": "سماء زرقاء وأفق بحر مفتوح."
+        }
+      ],
+      "reference_only": true
+    },
+    "previous_openings": [
+      "A line of thatched overwater villas stretches through turquoise water.",
+      "A wooden jetty bridges the lagoon to the shoreline.",
+      "A wooden jetty connects the lagoon to the shore.",
+      "A wooden jetty bridges the lagoon to the shore."
+    ]
+  },
+  "output_schema": {
+    "additionalProperties": false,
+    "properties": {
+      "opening": {
+        "maxLength": 120,
+        "minLength": 1,
+        "title": "Opening",
+        "type": "string"
+      },
+      "detail": {
+        "default": "",
+        "maxLength": 300,
+        "title": "Detail",
+        "type": "string"
+      },
+      "action": {
+        "maxLength": 100,
+        "minLength": 1,
+        "title": "Action",
+        "type": "string"
+      },
+      "alt_text": {
+        "default": "",
+        "maxLength": 600,
+        "title": "Alt Text",
+        "type": "string"
+      },
+      "fact_id": {
+        "enum": [
+          "lagoon-villas-fact-1",
+          "lagoon-villas-fact-2",
+          "lagoon-villas-fact-3",
+          "shoreline-fact-1",
+          "shoreline-fact-2",
+          "shoreline-fact-3"
+        ],
+        "title": "Fact Id",
+        "type": "string"
+      }
+    },
+    "required": [
+      "opening",
+      "action",
+      "fact_id"
+    ],
+    "title": "GroundedCaptionDraft",
+    "type": "object"
+  },
+  "temperature": 0.0,
+  "max_output_tokens": 700,
+  "validation_feedback": "[{\"loc\": [], \"type\": \"value_error\"}]"
+}

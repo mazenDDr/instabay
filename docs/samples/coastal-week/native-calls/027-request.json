@@ -1,0 +1,272 @@
+{
+  "template_name": "video_director",
+  "slot_id": "reference-w42-wed-1",
+  "model": "Qwen/Qwen3-8B:nf4@b968826d9c46dd6066d109eabc6255188de91218",
+  "prompt": "# Brief-led film direction — FR-06\n\nReturn CreativeIntent JSON only. Select exact observed_objects IDs and serve the supplied brief.\nNo paths, keyframe endpoints, approvals, invented amenities or timing arithmetic. If a requested\nplace, activity or facility is absent, list it in missing_visuals. Source selection authorization\npermits reference previews; it never approves the generated scene or a published post.\n\nThe supplied edit_style is a creative constraint. Return the same edit_style.\n\nFor scenic:\n- Make 3–5 continuous, spacious scene shots. The editor normally gives each five seconds.\n- Open on the strongest readable view of the place, not a flower or a tiny texture. Show the\n  relationship between photographed water, shoreline, palms and buildings where available.\n- Use a hook scene, a reveal and a closing payoff/CTA. A scenic visual hook does not need text.\n- Preserve the brief's pillar: coastal water/light for nature, a shoreline pause for relaxation,\n  the arrival/relationship of buildings and water for an imagined stay. Do not use one generic\n  emotional idea for every pillar. Explain how each scene contributes to the brief.\n- Every shot needs scenic_motion or existing recorded_footage. No photo_camera snapshots in a\n  finished scenic reel. No repeated source clip inside the film and no invented reverse angles.\n- Hold the setting long enough to understand it. No rapid macro montage, speed ramps or forced\n  curiosity/reveal formula. Natural water movement and restrained, stable camera movement.\n- Leave every opening/body overlay empty in both languages. Only the final CTA may have one\n  short thought, <=45 characters and <=7 words per language. Do not cover the water or buildings.\n- Calm original ambience/music; default bpm 70. Reference images are the real composition,\n  not ingredients to invent a different property. Caption questions can carry the brief's hook.\n\nFor detail_reveal (legacy compatibility):\nDirect 6–10 beats, quick opening, detail/body/reveal and a closing CTA. At least three objects,\nat least two distinct physical-motion subjects and no repeating a clip. Use photo_camera only\nwhen photographic edits are explicitly intended. Text only on the opening and closing beats,\nshort independent EN/AR copy. Preserve a question-style hook when requested. Default bpm 90.\n\nAll styles: beat roles open with hook, contain reveal, end with cta. brief_anchor is the brief\nfield served by that beat; hook and cta anchors must match those roles. Use purpose and\nviewer_payoff to explain the film, not to assert unsupported facilities or prices. Pace is\nquick/steady/linger; timing is computed by code. Architecture remains the architecture in the\nsource photograph. Historic source media is not proof of current conditions or an endorsement.\n\nاكتب العربية بصورة طبيعية وموجزة. لا تختلق مرافق أو خدمات أو أسعاراً، ولا تترجم حرفياً.\nفي المشاهد الساحلية اترك الصورة واضحة، واجعل طلب الإجراء في النهاية فقط إن لزم.\n",
+  "prompt_hash": "baacc088cfcc0f1e58ead2bd8aa754aa0331fdfb88871ff83ca483e4fd9c54bf",
+  "inputs": {
+    "reel_id": "reference-w42-wed-1",
+    "edit_style": "scenic",
+    "available_unique_scenes": 3,
+    "previous_scene_orders": [],
+    "brief": {
+      "angle": "A seamless transition from the lagoon villas to the shoreline, highlighting the connection between the water and the island's natural beauty",
+      "hook": "What connects the villas to the shore?",
+      "key_message": "Experience the natural flow from the lagoon to the beach at Reethi Faru Resort, Maldives.",
+      "visual_description": "Aerial view of overwater villas and a wooden jetty, transitioning to a beach-level scene with turquoise water, white sand, and palm trees.",
+      "photo_uri": "assets/photos/reethi_faru/lagoon-villas.jpg",
+      "cta": "Plan your journey from the lagoon to the shore at Reethi Faru Resort.",
+      "must_not": [
+        "Underwater details",
+        "Spa facilities",
+        "Guest testimonials",
+        "Room amenities"
+      ],
+      "reel_concept": {
+        "hook": "What connects the villas to the shore?",
+        "shots": [
+          "lagoon-villas",
+          "shoreline",
+          "palm-jetty"
+        ],
+        "overlay_en": "A seamless transition from the lagoon to the shore at Reethi Faru Resort, Maldives.",
+        "overlay_ar": "الانتقال السلس من البحيرة إلى الشاطئ في فندق ريثي فارو، مالديب.",
+        "audio": "Soft ambient waves and light wind sounds",
+        "cta": "Plan your journey from the lagoon to the shore at Reethi Faru Resort.",
+        "cover": "assets/photos/reethi_faru/lagoon-villas.jpg"
+      }
+    },
+    "observed_objects": [
+      {
+        "id": "lagoon-villas",
+        "label": "Lagoon Villas",
+        "observed": "Aerial view of a line of thatched overwater villas and a connecting jetty, surrounded by clear turquoise water; island trees and white shoreline at the lower left.",
+        "motion_available": true,
+        "allowed_actions": [
+          "scenic_motion",
+          "recorded_footage"
+        ]
+      },
+      {
+        "id": "shoreline",
+        "label": "Shoreline",
+        "observed": "Wide beach-level scene with turquoise shallows, white sand, blue sky, palm trees and existing thatched structures on the left.",
+        "motion_available": true,
+        "allowed_actions": [
+          "scenic_motion",
+          "recorded_footage"
+        ]
+      },
+      {
+        "id": "palm-jetty",
+        "label": "Palm Jetty",
+        "observed": "Beach-level view with palms on the right, their shadows across white sand, a wooden jetty across turquoise water, and an open blue sky.",
+        "motion_available": true,
+        "allowed_actions": [
+          "scenic_motion",
+          "recorded_footage"
+        ]
+      }
+    ]
+  },
+  "output_schema": {
+    "$defs": {
+      "BeatIntent": {
+        "additionalProperties": false,
+        "description": "FR-06: the LLM directs subject/action/purpose; the editor computes exact frame counts.",
+        "properties": {
+          "id": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+            "title": "Id",
+            "type": "string"
+          },
+          "object_id": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+            "title": "Object Id",
+            "type": "string"
+          },
+          "role": {
+            "enum": [
+              "hook",
+              "detail",
+              "reveal",
+              "payoff",
+              "cta"
+            ],
+            "title": "Role",
+            "type": "string"
+          },
+          "pace": {
+            "default": "steady",
+            "enum": [
+              "quick",
+              "steady",
+              "linger"
+            ],
+            "title": "Pace",
+            "type": "string"
+          },
+          "purpose": {
+            "maxLength": 300,
+            "minLength": 1,
+            "title": "Purpose",
+            "type": "string"
+          },
+          "brief_anchor": {
+            "enum": [
+              "hook",
+              "angle",
+              "key_message",
+              "visual_description",
+              "cta"
+            ],
+            "title": "Brief Anchor",
+            "type": "string"
+          },
+          "camera": {
+            "enum": [
+              "push_in",
+              "pull_out",
+              "pan_left",
+              "pan_right",
+              "static"
+            ],
+            "title": "Camera",
+            "type": "string"
+          },
+          "action": {
+            "enum": [
+              "photo_camera",
+              "water_ripples",
+              "plant_sway",
+              "recorded_footage",
+              "scenic_motion"
+            ],
+            "title": "Action",
+            "type": "string"
+          },
+          "action_prompt": {
+            "maxLength": 800,
+            "minLength": 1,
+            "title": "Action Prompt",
+            "type": "string"
+          },
+          "overlay": {
+            "$ref": "#/$defs/Overlay"
+          },
+          "text_position": {
+            "default": "lower",
+            "enum": [
+              "upper",
+              "lower"
+            ],
+            "title": "Text Position",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "object_id",
+          "role",
+          "purpose",
+          "brief_anchor",
+          "camera",
+          "action",
+          "action_prompt",
+          "overlay"
+        ],
+        "title": "BeatIntent",
+        "type": "object"
+      },
+      "Overlay": {
+        "additionalProperties": false,
+        "description": "FR-06, NFR-08: short independent EN/AR copy added only in post.",
+        "properties": {
+          "en": {
+            "maxLength": 120,
+            "title": "En",
+            "type": "string"
+          },
+          "ar": {
+            "maxLength": 120,
+            "title": "Ar",
+            "type": "string"
+          }
+        },
+        "required": [
+          "en",
+          "ar"
+        ],
+        "title": "Overlay",
+        "type": "object"
+      }
+    },
+    "additionalProperties": false,
+    "properties": {
+      "reel_id": {
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+        "title": "Reel Id",
+        "type": "string"
+      },
+      "idea": {
+        "maxLength": 500,
+        "minLength": 1,
+        "title": "Idea",
+        "type": "string"
+      },
+      "viewer_payoff": {
+        "maxLength": 300,
+        "minLength": 1,
+        "title": "Viewer Payoff",
+        "type": "string"
+      },
+      "hook_mechanism": {
+        "maxLength": 300,
+        "minLength": 1,
+        "title": "Hook Mechanism",
+        "type": "string"
+      },
+      "bpm": {
+        "default": 90,
+        "maximum": 140,
+        "minimum": 60,
+        "title": "Bpm",
+        "type": "integer"
+      },
+      "missing_visuals": {
+        "items": {
+          "type": "string"
+        },
+        "title": "Missing Visuals",
+        "type": "array"
+      },
+      "beats": {
+        "items": {
+          "$ref": "#/$defs/BeatIntent"
+        },
+        "maxItems": 3,
+        "minItems": 3,
+        "title": "Beats",
+        "type": "array"
+      },
+      "edit_style": {
+        "const": "scenic",
+        "title": "Edit Style",
+        "type": "string"
+      }
+    },
+    "required": [
+      "reel_id",
+      "idea",
+      "viewer_payoff",
+      "hook_mechanism",
+      "beats",
+      "edit_style"
+    ],
+    "title": "BoundScenicIntent",
+    "type": "object"
+  },
+  "temperature": 0.0,
+  "max_output_tokens": 1700,
+  "validation_feedback": null
+}

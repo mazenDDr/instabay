@@ -1,0 +1,28 @@
+{
+  "recipe_hash": "cce9295b1b2a57079f155c74a98f159448db21a7a1779b86e6ae6323195e97f6",
+  "backend": "stub",
+  "file": "/app/outputs/coastal-replay/renders/cce9295b1b2a57079f155c74a98f159448db21a7a1779b86e6ae6323195e97f6/reel.mp4",
+  "file_sha256": "029c7814f2b8f67714f6af19a10e77fd40c4e8936123070fe7daafba4888a237",
+  "contact_sheet": "/app/outputs/coastal-replay/renders/cce9295b1b2a57079f155c74a98f159448db21a7a1779b86e6ae6323195e97f6/contact-sheet.jpg",
+  "contact_sha256": "d4aa640d9ee65e6e126a69c5ea40b23bdec24135d3f0ce14b161375f51bfaea1",
+  "seconds": 46.6770495630044,
+  "cost_usd": 0.0,
+  "qa": {
+    "spec_ok": true,
+    "width": 1080,
+    "height": 1920,
+    "fps": 30.0,
+    "duration_s": 15.0,
+    "size_bytes": 5177113,
+    "moov_at_front": true,
+    "violations": [
+      "semantic/subject/background/seam/palette QA pending"
+    ],
+    "flicker": 0.0006708423022452829,
+    "visual": null,
+    "status": "needs_review"
+  },
+  "ai_disclosure": true,
+  "reference_only": true,
+  "determinism_level": "L0"
+}

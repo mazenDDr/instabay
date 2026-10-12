@@ -1,0 +1,100 @@
+{
+  "kind": "reference-photo-layout-v1",
+  "format": "photo",
+  "sources": [
+    {
+      "id": "palm-jetty",
+      "label": "Palm Jetty",
+      "observed": "Beach-level view with palms on the right, their shadows across white sand, a wooden jetty across turquoise water, and an open blue sky.",
+      "photo": {
+        "uri": "assets/photos/reethi_faru/palm-jetty.jpg",
+        "sha256": "96b60edd88e3e11cda2b975eab45d687cc6cc5f73a8cfe6bc7e219a156a7ea58"
+      },
+      "crop": {
+        "x": 470,
+        "y": 0,
+        "width": 2528,
+        "height": 4494
+      },
+      "approved_by": "mazenDDr",
+      "approval_id": "reference-media-request-2026-10-12",
+      "faces_checked": true,
+      "attribution": "Moosa Haleem / Unsplash License - resized, cropped and animated",
+      "author": "Moosa Haleem",
+      "license_id": "Unsplash License",
+      "source_page": "https://unsplash.com/photos/palm-trees-on-beach-shore-during-daytime-2opFBNXAJzw",
+      "license_url": "https://unsplash.com/license",
+      "reference_only": true,
+      "source": "photo",
+      "clip": null,
+      "allowed_actions": [
+        "scenic_motion",
+        "recorded_footage"
+      ],
+      "property_name": "Reethi Faru Resort, Maldives",
+      "approval_scope": "preview_source_use",
+      "must_include": [
+        {
+          "x": 550,
+          "y": 2150,
+          "width": 2400,
+          "height": 1100
+        },
+        {
+          "x": 1600,
+          "y": 3000,
+          "width": 1100,
+          "height": 1100
+        }
+      ]
+    }
+  ],
+  "layout": "contain",
+  "background": "#e8eeee",
+  "width": 1080,
+  "height": 1350,
+  "runtime": {
+    "docker_image_digest": null,
+    "python": "3.12.15",
+    "platform": "macOS-27.0-arm64-arm-64bit",
+    "ffmpeg_sha256": "c8173e9755795978bce8e104f8d7044fabe7d6d84044aba37d3648c6f4e4e1a8",
+    "ffprobe_sha256": "56559c234422b0e3722c54b2bd99bbd8cd83d3732a13a6d207589982a6b7085e",
+    "implementation_sha256": "a71466351a02da4ab25cda26073ed8f12b2fb274c10bc8ad0ab8d3c08837647d",
+    "pillow": "12.3.0",
+    "reshaper": "3.0.1",
+    "bidi": "0.6.11",
+    "torch": null,
+    "cuda": null,
+    "driver": null,
+    "gpu": null,
+    "native_packages": {}
+  },
+  "story": {
+    "brief": {
+      "angle": "A serene connection between the shoreline and the lagoon villas",
+      "hook": "What connects the beach to the villas?",
+      "key_message": "Discover the natural link between the shoreline and the lagoon villas at Reethi Faru Resort.",
+      "visual_description": "A wooden jetty crosses turquoise shallows beside the beach, with palm shadows on white sand and a clear view of the open ocean horizon.",
+      "photo_uri": "assets/photos/reethi_faru/palm-jetty.jpg",
+      "cta": "Explore the connection between the beach and the villas.",
+      "must_not": [
+        "Underwater details",
+        "Spa facilities",
+        "Guest testimonials",
+        "Price or booking promises"
+      ],
+      "reel_concept": null
+    },
+    "media_ids": [
+      "palm-jetty"
+    ],
+    "fact_ids": [
+      "palm-jetty-fact-1",
+      "palm-jetty-fact-2",
+      "palm-jetty-fact-3"
+    ],
+    "pillar_intent": "Show the named Maldives reference location; never label it Hurghada or the Red Sea.",
+    "sequence_reason": "The single scene captures the natural link between the shoreline and the lagoon villas, emphasizing the connection through the wooden jetty and palm shadows.",
+    "cta_kind": "compare"
+  }
+}

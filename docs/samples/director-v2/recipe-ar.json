@@ -1,0 +1,374 @@
+{
+  "version": 1,
+  "backend": "stub",
+  "shots": {
+    "reel_id": "2026-w42-sun-1",
+    "duration_s": 18,
+    "aspect": "9:16",
+    "shots": [
+      {
+        "id": "beat_01",
+        "role": "hook",
+        "keyframe": {
+          "uri": "docs/samples/director-v2/references/flowers-a26f777aa0f29a7aa15ed323139ded8bbb46caddf64419b152c45f2745e03be6.jpg",
+          "sha256": "a26f777aa0f29a7aa15ed323139ded8bbb46caddf64419b152c45f2745e03be6",
+          "source": "photo",
+          "scene": "mood",
+          "approved_by": "mazenDDr",
+          "approval_id": "crop-approval-2026-10-12",
+          "reference_only": true,
+          "faces_checked": true,
+          "attribution": "1089hruskapetr / CC-BY-3.0 - cropped and animated",
+          "prompt": null,
+          "seed": null
+        },
+        "end_keyframe": null,
+        "motion_prompt": "Show a close-up of yellow flowers with a gentle sway in the breeze, captured in natural light, no people or signs.",
+        "negative_prompt": "New facilities, buildings added, new objects, people, faces, hands, signage, text, logos,\nwarped architecture, distorted pillars, camera shake, over-saturated colours, abrupt cuts,\nextra petals, duplicated leaves, boiling texture, flickering, frozen still frame.\n",
+        "camera": "static",
+        "seconds": 1.3333333333333333,
+        "overlay": {
+          "en": "What if time slowed?",
+          "ar": "ماذا لو تمهلنا؟"
+        },
+        "motion_strength": 0.16,
+        "source_clip": {
+          "uri": "docs/samples/director-v2/motion/flowers/source.mp4",
+          "sha256": "16acdaab697a2094393930cda625687b97effa7a4d26efd6c1c82d7b67da9130",
+          "generated": true,
+          "reference_only": true,
+          "credit": "1089hruskapetr / CC-BY-3.0 - cropped and animated",
+          "motion_recipe": {
+            "uri": "docs/samples/director-v2/motion/flowers/recipe.json",
+            "sha256": "1e9246ae0d718b2358e9638e76ae65105b8636ad6841cc938ef8f0408530e63d"
+          },
+          "motion_recipe_hash": "295751d6be449c727f4c9a37d506f7d5f7664198f3d5897aaa45217f5d5a057a",
+          "start_s": 0.0
+        },
+        "text_start_s": 0.1,
+        "text_end_s": 1.2333333333333332,
+        "text_position": "lower"
+      },
+      {
+        "id": "beat_02",
+        "role": "body",
+        "keyframe": {
+          "uri": "docs/samples/director-v2/references/water-b90dfc9bbb8e63215a8129fbf7912907b99da435d5f37820c270520b1ee82d88.jpg",
+          "sha256": "b90dfc9bbb8e63215a8129fbf7912907b99da435d5f37820c270520b1ee82d88",
+          "source": "photo",
+          "scene": "mood",
+          "approved_by": "mazenDDr",
+          "approval_id": "crop-approval-2026-10-12",
+          "reference_only": true,
+          "faces_checked": true,
+          "attribution": "Ercan.G / CC-BY-3.0 - cropped and animated",
+          "prompt": null,
+          "seed": null
+        },
+        "end_keyframe": null,
+        "motion_prompt": "Show a wide shot of water with reflected light, framed by the arches, capturing the calm surface and natural glow.",
+        "negative_prompt": "New facilities, buildings added, new objects, people, faces, hands, signage, text, logos,\nwarped architecture, distorted pillars, camera shake, over-saturated colours, abrupt cuts,\nextra petals, duplicated leaves, boiling texture, flickering, frozen still frame.\n",
+        "camera": "pull_out",
+        "seconds": 2.3333333333333335,
+        "overlay": {
+          "en": "",
+          "ar": ""
+        },
+        "motion_strength": 0.16,
+        "source_clip": null,
+        "text_start_s": 0.1,
+        "text_end_s": 1.8,
+        "text_position": "lower"
+      },
+      {
+        "id": "beat_03",
+        "role": "body",
+        "keyframe": {
+          "uri": "docs/samples/director-v2/references/palms-7c492398f225dba47e0b089472fb870c3dd69af284bbb390d1aa8ded924d2daa.jpg",
+          "sha256": "7c492398f225dba47e0b089472fb870c3dd69af284bbb390d1aa8ded924d2daa",
+          "source": "photo",
+          "scene": "mood",
+          "approved_by": "mazenDDr",
+          "approval_id": "crop-approval-2026-10-12",
+          "reference_only": true,
+          "faces_checked": true,
+          "attribution": "Szombat78 / CC0-1.0 - cropped and animated",
+          "prompt": null,
+          "seed": null
+        },
+        "end_keyframe": null,
+        "motion_prompt": "Show the palm canopy in mid-frame, gently framing the courtyard with soft shadows and light.",
+        "negative_prompt": "New facilities, buildings added, new objects, people, faces, hands, signage, text, logos,\nwarped architecture, distorted pillars, camera shake, over-saturated colours, abrupt cuts,\nextra petals, duplicated leaves, boiling texture, flickering, frozen still frame.\n",
+        "camera": "push_in",
+        "seconds": 2.3333333333333335,
+        "overlay": {
+          "en": "",
+          "ar": ""
+        },
+        "motion_strength": 0.16,
+        "source_clip": null,
+        "text_start_s": 0.1,
+        "text_end_s": 1.8,
+        "text_position": "lower"
+      },
+      {
+        "id": "beat_04",
+        "role": "body",
+        "keyframe": {
+          "uri": "docs/samples/director-v2/references/arches-a919190f3cfbf9a032622d6929ba22278d8cc6f12b6938d4d21b5e041ca0bba7.jpg",
+          "sha256": "a919190f3cfbf9a032622d6929ba22278d8cc6f12b6938d4d21b5e041ca0bba7",
+          "source": "photo",
+          "scene": "mood",
+          "approved_by": "mazenDDr",
+          "approval_id": "crop-approval-2026-10-12",
+          "reference_only": true,
+          "faces_checked": true,
+          "attribution": "Ercan.G / CC-BY-3.0 - cropped and animated",
+          "prompt": null,
+          "seed": null
+        },
+        "end_keyframe": null,
+        "motion_prompt": "Center on the arches with a slight push-in to emphasize their structure and the light falling through them.",
+        "negative_prompt": "New facilities, buildings added, new objects, people, faces, hands, signage, text, logos,\nwarped architecture, distorted pillars, camera shake, over-saturated colours, abrupt cuts,\nextra petals, duplicated leaves, boiling texture, flickering, frozen still frame.\n",
+        "camera": "push_in",
+        "seconds": 2.6666666666666665,
+        "overlay": {
+          "en": "",
+          "ar": ""
+        },
+        "motion_strength": 0.16,
+        "source_clip": null,
+        "text_start_s": 0.1,
+        "text_end_s": 1.8,
+        "text_position": "lower"
+      },
+      {
+        "id": "beat_05",
+        "role": "body",
+        "keyframe": {
+          "uri": "docs/samples/director-v2/references/water-b90dfc9bbb8e63215a8129fbf7912907b99da435d5f37820c270520b1ee82d88.jpg",
+          "sha256": "b90dfc9bbb8e63215a8129fbf7912907b99da435d5f37820c270520b1ee82d88",
+          "source": "photo",
+          "scene": "mood",
+          "approved_by": "mazenDDr",
+          "approval_id": "crop-approval-2026-10-12",
+          "reference_only": true,
+          "faces_checked": true,
+          "attribution": "Ercan.G / CC-BY-3.0 - cropped and animated",
+          "prompt": null,
+          "seed": null
+        },
+        "end_keyframe": null,
+        "motion_prompt": "Show a subtle ripple in the water, reflecting the arches and sky, to suggest movement within stillness.",
+        "negative_prompt": "New facilities, buildings added, new objects, people, faces, hands, signage, text, logos,\nwarped architecture, distorted pillars, camera shake, over-saturated colours, abrupt cuts,\nextra petals, duplicated leaves, boiling texture, flickering, frozen still frame.\n",
+        "camera": "static",
+        "seconds": 2.6666666666666665,
+        "overlay": {
+          "en": "",
+          "ar": ""
+        },
+        "motion_strength": 0.16,
+        "source_clip": {
+          "uri": "docs/samples/director-v2/motion/water/source.mp4",
+          "sha256": "3d22861fe6cc27c88ab8b9e91b329dc9536c7bb00ef6be189259cec2bf66852c",
+          "generated": true,
+          "reference_only": true,
+          "credit": "Ercan.G / CC-BY-3.0 - cropped and animated",
+          "motion_recipe": {
+            "uri": "docs/samples/director-v2/motion/water/recipe.json",
+            "sha256": "606e170169f38062db3e7cf55a775f68145677f5a820cf7cdb7a3c3455249873"
+          },
+          "motion_recipe_hash": "c27630df22acb12b9f6b0e869c1485c948c64473af5463360f2558e3ad9c562d",
+          "start_s": 0.0
+        },
+        "text_start_s": 0.1,
+        "text_end_s": 1.8,
+        "text_position": "lower"
+      },
+      {
+        "id": "beat_06",
+        "role": "body",
+        "keyframe": {
+          "uri": "docs/samples/director-v2/references/flowers-a26f777aa0f29a7aa15ed323139ded8bbb46caddf64419b152c45f2745e03be6.jpg",
+          "sha256": "a26f777aa0f29a7aa15ed323139ded8bbb46caddf64419b152c45f2745e03be6",
+          "source": "photo",
+          "scene": "mood",
+          "approved_by": "mazenDDr",
+          "approval_id": "crop-approval-2026-10-12",
+          "reference_only": true,
+          "faces_checked": true,
+          "attribution": "1089hruskapetr / CC-BY-3.0 - cropped and animated",
+          "prompt": null,
+          "seed": null
+        },
+        "end_keyframe": null,
+        "motion_prompt": "Show a close-up of the yellow flowers again, now in a slightly wider context, with soft light.",
+        "negative_prompt": "New facilities, buildings added, new objects, people, faces, hands, signage, text, logos,\nwarped architecture, distorted pillars, camera shake, over-saturated colours, abrupt cuts,\nextra petals, duplicated leaves, boiling texture, flickering, frozen still frame.\n",
+        "camera": "push_in",
+        "seconds": 2.0,
+        "overlay": {
+          "en": "",
+          "ar": ""
+        },
+        "motion_strength": 0.16,
+        "source_clip": null,
+        "text_start_s": 0.1,
+        "text_end_s": 1.8,
+        "text_position": "lower"
+      },
+      {
+        "id": "beat_07",
+        "role": "body",
+        "keyframe": {
+          "uri": "docs/samples/director-v2/references/courtyard-6ec824c835c018c4ee9e842bc95bfb5637af23ca74c7b987cccc3a7757548dba.jpg",
+          "sha256": "6ec824c835c018c4ee9e842bc95bfb5637af23ca74c7b987cccc3a7757548dba",
+          "source": "photo",
+          "scene": "mood",
+          "approved_by": "mazenDDr",
+          "approval_id": "crop-approval-2026-10-12",
+          "reference_only": true,
+          "faces_checked": true,
+          "attribution": "Szombat78 / CC0-1.0 - cropped and animated",
+          "prompt": null,
+          "seed": null
+        },
+        "end_keyframe": null,
+        "motion_prompt": "Show the full courtyard architecture, with palms and sky, in a wide, balanced composition.",
+        "negative_prompt": "New facilities, buildings added, new objects, people, faces, hands, signage, text, logos,\nwarped architecture, distorted pillars, camera shake, over-saturated colours, abrupt cuts,\nextra petals, duplicated leaves, boiling texture, flickering, frozen still frame.\n",
+        "camera": "pull_out",
+        "seconds": 2.6666666666666665,
+        "overlay": {
+          "en": "",
+          "ar": ""
+        },
+        "motion_strength": 0.16,
+        "source_clip": null,
+        "text_start_s": 0.1,
+        "text_end_s": 1.8,
+        "text_position": "lower"
+      },
+      {
+        "id": "beat_08",
+        "role": "cta",
+        "keyframe": {
+          "uri": "docs/samples/director-v2/references/arches-a919190f3cfbf9a032622d6929ba22278d8cc6f12b6938d4d21b5e041ca0bba7.jpg",
+          "sha256": "a919190f3cfbf9a032622d6929ba22278d8cc6f12b6938d4d21b5e041ca0bba7",
+          "source": "photo",
+          "scene": "mood",
+          "approved_by": "mazenDDr",
+          "approval_id": "crop-approval-2026-10-12",
+          "reference_only": true,
+          "faces_checked": true,
+          "attribution": "Ercan.G / CC-BY-3.0 - cropped and animated",
+          "prompt": null,
+          "seed": null
+        },
+        "end_keyframe": null,
+        "motion_prompt": "Final static shot of the terracotta arches, softly lit, with the courtyard behind.",
+        "negative_prompt": "New facilities, buildings added, new objects, people, faces, hands, signage, text, logos,\nwarped architecture, distorted pillars, camera shake, over-saturated colours, abrupt cuts,\nextra petals, duplicated leaves, boiling texture, flickering, frozen still frame.\n",
+        "camera": "pull_out",
+        "seconds": 2.0,
+        "overlay": {
+          "en": "Save or share a detail",
+          "ar": "احفظ أو شارك تفاصيل"
+        },
+        "motion_strength": 0.16,
+        "source_clip": null,
+        "text_start_s": 0.1,
+        "text_end_s": 1.8,
+        "text_position": "lower"
+      }
+    ],
+    "audio": {
+      "music": {
+        "uri": "docs/samples/director-v2/original-preview-score-5a1b145bfaacbd7d2b72a467faa898752fb168c77968a3307559eafd954973b4.wav",
+        "sha256": "5a1b145bfaacbd7d2b72a467faa898752fb168c77968a3307559eafd954973b4"
+      },
+      "music_credit": "Original procedural preview score; synthesized tones, no external samples or field recordings",
+      "voiceover": null,
+      "voiceover_lang": null
+    }
+  },
+  "model": {
+    "repo": "instabay/editorial-assembler",
+    "revision": "0000000000000000000000000000000000000000",
+    "weights": [],
+    "loras": [],
+    "pipeline_class": "EditorialVideoBackend",
+    "scheduler": "frame-index",
+    "scheduler_config": {},
+    "steps": 1,
+    "cfg": 1.0,
+    "shift": 1.0,
+    "supports_flf": false,
+    "workflow": {
+      "uri": "docs/samples/director-v2/boards/2a8a825472f03f18aa55b05e11e1341042c7c70b18aa5a6187b3458a78d92073.json",
+      "sha256": "35034ed9252c46f64cb137300e2865213d99b31413bb346054f5a14a1262bf88"
+    },
+    "custom_nodes": {}
+  },
+  "motion": {
+    "width": 576,
+    "height": 1024,
+    "fps": 30,
+    "frames": [
+      40,
+      70,
+      70,
+      80,
+      80,
+      60,
+      80,
+      60
+    ],
+    "seeds": [
+      7,
+      7,
+      7,
+      7,
+      7,
+      7,
+      7,
+      7
+    ]
+  },
+  "post": {
+    "font": {
+      "uri": "assets/fonts/NotoSansArabic.ttf",
+      "sha256": "63111b5b2e074dd48cc67692e0a2726d86ee94c1c37fe8598257b7b4e87e869e"
+    },
+    "lut": null,
+    "grain_strength": 0,
+    "preset": "fast",
+    "crf": 23,
+    "max_bytes": 300000000,
+    "continuity_threshold": 0.9,
+    "flicker_threshold": 0.08,
+    "palette": [],
+    "preview_label": null,
+    "credit": "Photos: Ercan.G / 1089hruskapetr / Szombat78\nCC-BY-3.0 / CC0-1.0 - cropped and animated",
+    "recorded_motion": null,
+    "style": "editorial",
+    "language": "ar",
+    "latin_font": {
+      "uri": "assets/fonts/Manrope.ttf",
+      "sha256": "3ae11c49db0455a3cc33e37d380f20fdb8c7f8b41dc07625c177e3d87a9d6ae6"
+    }
+  },
+  "runtime": {
+    "docker_image_digest": null,
+    "python": "3.12.15",
+    "platform": "macOS-27.0-arm64-arm-64bit",
+    "ffmpeg_sha256": "c8173e9755795978bce8e104f8d7044fabe7d6d84044aba37d3648c6f4e4e1a8",
+    "ffprobe_sha256": "56559c234422b0e3722c54b2bd99bbd8cd83d3732a13a6d207589982a6b7085e",
+    "implementation_sha256": "140ff56cbc1c1e6afa1a6cc95ee278c0cbff2998a0700d34843feef167c8c0ad",
+    "pillow": "12.3.0",
+    "reshaper": "3.0.1",
+    "bidi": "0.6.11",
+    "torch": null,
+    "cuda": null,
+    "driver": null,
+    "gpu": null,
+    "native_packages": {}
+  }
+}

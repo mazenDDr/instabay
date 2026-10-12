@@ -1,0 +1,36 @@
+{
+  "template_name": "visual_brief",
+  "slot_id": "reference-w42-fri-1",
+  "response": {
+    "brief": {
+      "angle": "Waterfront, from three perspectives.",
+      "hook": "Open with a specific scene-led thought",
+      "key_message": "Look at the line of villas, the jetty across the shallows and the curve of the beach.",
+      "visual_description": "Complete source scenes with water, shore and architecture visible together.",
+      "photo_uri": "assets/photos/reethi_faru/lagoon-villas.jpg",
+      "cta": "Swipe through to explore how land and water meet.",
+      "must_not": [
+        "invented facilities",
+        "prices",
+        "unverified present conditions",
+        "wrong geography"
+      ],
+      "reel_concept": null
+    },
+    "media_ids": [
+      "lagoon-villas",
+      "palm-jetty",
+      "shoreline"
+    ],
+    "fact_ids": [
+      "lagoon-villas-fact-1",
+      "palm-jetty-fact-1",
+      "shoreline-fact-1"
+    ],
+    "pillar_intent": "The photographed Maldives reference setting, never labeled Hurghada or the Red Sea.",
+    "sequence_reason": "Move through distinct views of the same named property, preserving context.",
+    "cta_kind": "swipe"
+  },
+  "input_tokens": 350,
+  "output_tokens": 450
+}

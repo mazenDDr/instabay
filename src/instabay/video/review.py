@@ -7,6 +7,8 @@ def media_flags(post: Post) -> list[str]:
     """FR-08: missing semantic/video evidence stays visible at human approval."""
     if post.media_status == "concept_only":
         return ["Reel concept only: no video has been rendered"]
+    if post.photo_artifact:
+        return ["Photo reference only: source fidelity, caption and rights review required"]
     if post.render_artifact:
         flags = []
         if post.render_artifact.qa_status != "passed":

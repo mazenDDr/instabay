@@ -1,0 +1,32 @@
+{
+  "template_name": "visual_brief",
+  "slot_id": "reference-w42-sun-1",
+  "response": {
+    "brief": {
+      "angle": "Start your moodboard with a place.",
+      "hook": "Open with a specific scene-led thought",
+      "key_message": "White sand, palm shade and an open horizon can help you define the kind of view you are looking for.",
+      "visual_description": "Complete source scenes with water, shore and architecture visible together.",
+      "photo_uri": "assets/photos/reethi_faru/palm-jetty.jpg",
+      "cta": "Save this reference for your travel moodboard.",
+      "must_not": [
+        "invented facilities",
+        "prices",
+        "unverified present conditions",
+        "wrong geography"
+      ],
+      "reel_concept": null
+    },
+    "media_ids": [
+      "palm-jetty"
+    ],
+    "fact_ids": [
+      "palm-jetty-fact-1"
+    ],
+    "pillar_intent": "Travel planning; actual offers require verified sources",
+    "sequence_reason": "Move through distinct views of the same named property, preserving context.",
+    "cta_kind": "save"
+  },
+  "input_tokens": 350,
+  "output_tokens": 450
+}

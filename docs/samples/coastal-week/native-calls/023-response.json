@@ -1,0 +1,7 @@
+{
+  "model": "Qwen/Qwen3-8B:nf4@b968826d9c46dd6066d109eabc6255188de91218",
+  "output_json": "{\n  \"opening\": \"رحلة ساحلية من الفلل إلى الشاطئ\",\n  \"action\": \"احفظ رحلتك الساحلية\",\n  \"fact_id\": \"lagoon-villas-fact-1\"\n}",
+  "input_tokens": 2608,
+  "output_tokens": 53,
+  "cost_usd": 0.0
+}

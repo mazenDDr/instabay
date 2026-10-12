@@ -1,0 +1,33 @@
+{
+  "recipe_hash": "84d0f75aac8198f634fdc31980487ee8cbefb6c6c304edaef75035240de7e855",
+  "backend": "stub",
+  "file": "/Users/mazenkhaled/Task/outputs/directed-resort/portable-renders/84d0f75aac8198f634fdc31980487ee8cbefb6c6c304edaef75035240de7e855/reel.mp4",
+  "file_sha256": "a860d137032c89880e17699878e5e233f87812e630112845455d75fbe81a78e2",
+  "contact_sheet": "/Users/mazenkhaled/Task/outputs/directed-resort/portable-renders/84d0f75aac8198f634fdc31980487ee8cbefb6c6c304edaef75035240de7e855/contact-sheet.jpg",
+  "contact_sha256": "83755708b301544c459e12f191f4261441a535c826b9e34b996a5014b7c20acd",
+  "seconds": 46.36878500005696,
+  "cost_usd": 0.0,
+  "qa": {
+    "spec_ok": true,
+    "width": 1080,
+    "height": 1920,
+    "fps": 30.0,
+    "duration_s": 18.0,
+    "size_bytes": 6925319,
+    "moov_at_front": true,
+    "violations": [
+      "semantic/subject/background/seam/palette QA pending"
+    ],
+    "flicker": 0.004777795164118279,
+    "visual": null,
+    "status": "needs_review"
+  },
+  "ai_disclosure": true,
+  "reference_only": true,
+  "determinism_level": "L0",
+  "frame_count": 540,
+  "frame_manifest": {
+    "uri": "docs/samples/director-v2/frames-en.json",
+    "sha256": "c3ed94b80c441e4ab9f7f8564de1b2578bf978080ac439449b80236f415e0780"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "model": "Qwen/Qwen3-8B:nf4@b968826d9c46dd6066d109eabc6255188de91218",
+  "output_json": "{\n  \"opening\": \"الفلل تصل إلى الشاطئ عبر الماء\",\n  \"detail\": \"\",\n  \"action\": \"قارن الربط بين الفلل والشاطئ\",\n  \"alt_text\": \"\",\n  \"fact_id\": \"lagoon-villas-fact-1\"\n}",
+  "input_tokens": 2065,
+  "output_tokens": 64,
+  "cost_usd": 0.0
+}

@@ -1,0 +1,13 @@
+{
+  "template_name": "grounded_copy_en",
+  "slot_id": "reference-w42-sat-1",
+  "response": {
+    "opening": "Which waterfront view belongs on your shortlist?",
+    "detail": "Compare the beach-level shoreline with the villas seen from above and the palm-lined jetty.",
+    "action": "Save the views you would like to explore further.",
+    "alt_text": "Reference photographs: shoreline, lagoon-villas, palm-jetty.",
+    "fact_id": "shoreline-fact-1"
+  },
+  "input_tokens": 350,
+  "output_tokens": 450
+}

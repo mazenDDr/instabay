@@ -1,0 +1,48 @@
+{
+  "offline_tests": 313,
+  "strict_typechecked_sources": 104,
+  "lint": "passed",
+  "hooks": "passed",
+  "docker_network": "disabled",
+  "docker_demo": "approval_pending",
+  "docker_reference_week": {
+    "posts": 7,
+    "status": "approval_pending"
+  },
+  "linux_recorded_clip_replay": {
+    "spec_ok": true,
+    "frames": 450,
+    "fps": 30.0,
+    "duration_s": 15.0
+  },
+  "browser": {
+    "browser": "154.0.8037.99",
+    "videos": [
+      {
+        "duration": 15,
+        "width": 1080,
+        "height": 1920,
+        "time": 1.179072,
+        "error": null
+      },
+      {
+        "duration": 15,
+        "width": 1080,
+        "height": 1920,
+        "time": 0,
+        "error": null
+      }
+    ],
+    "errors": [],
+    "overflow": false,
+    "carousel_navigation": true,
+    "arabic_captions": true
+  },
+  "human_appeal_review": "pending",
+  "semantic_fidelity_review": "pending",
+  "engagement_lift": null,
+  "actual_carousel_sizes": [
+    3,
+    2
+  ]
+}

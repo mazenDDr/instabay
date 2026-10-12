@@ -30,6 +30,13 @@ def show_post(repository: Repository, post_id: str, console: Console) -> None:
         )
         for flag in review.flags:
             console.print(f"Flag: {flag}")
+    elif review is not None and review.check_path == "human_pending":
+        console.print(
+            f"Human review pending; rules: {'PASS' if review.rules.passed else 'FAIL'}. "
+            "No quality score is claimed."
+        )
+        for flag in review.flags:
+            console.print(f"Flag: {flag}")
     elif review is not None:
         console.print("System1 checks passed; no judge rubric score was generated.")
         for flag in review.flags:
@@ -48,7 +55,20 @@ def show_post(repository: Repository, post_id: str, console: Console) -> None:
                     f"video QA: {post.render_artifact.qa_status}"
                 )
             )
-        console.print("Reference property: The Grand Resort Hurghada; fictional Insta Bay demo.")
+        if post.photo_artifact:
+            for index, image in enumerate(post.photo_artifact.files, 1):
+                console.print(Text(f"Photo {index}: {image.file}"))
+        if post.evidence:
+            console.print(
+                Text(
+                    f"Reference property: {post.evidence.context['property_name']}; "
+                    "unpublished source study."
+                )
+            )
+        else:
+            console.print(
+                "Reference property: The Grand Resort Hurghada; fictional Insta Bay demo."
+            )
     else:
         manifest = post.media_manifest
         console.print(Text(f"Media: {post.media_status}; verified by {manifest.verified_by}"))

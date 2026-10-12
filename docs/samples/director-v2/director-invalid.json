@@ -1,0 +1,106 @@
+{
+  "reel_id": "2026-w42-sun-1",
+  "idea": "A quiet moment in a real resort courtyard invites reflection on slowing down.",
+  "viewer_payoff": "The viewer feels a sense of peace and connection to stillness in nature.",
+  "hook_mechanism": "Opening with a question draws the viewer into contemplation of a slower life.",
+  "bpm": 90,
+  "missing_visuals": [],
+  "beats": [
+    {
+      "id": "hook_q",
+      "object_id": "palms",
+      "role": "hook",
+      "frames": 40,
+      "purpose": "Open with a question to invite reflection on time and pace, using the palm canopy as a visual anchor. The slow, natural framing of the palms in daylight creates a calm, real atmosphere without any human activity or facility cues.",
+      "brief_anchor": "hook",
+      "camera": "static",
+      "action": "photo_camera",
+      "action_prompt": "Apply a subtle sharpen and contrast adjustment to the palm canopy to enhance the natural light and depth, emphasizing the stillness of the scene.",
+      "overlay": {
+        "en": "What if you slowed down?",
+        "ar": "ما إذا تبطئ؟"
+      },
+      "text_position": "upper"
+    },
+    {
+      "id": "detail_flowers",
+      "object_id": "flowers",
+      "role": "detail",
+      "frames": 60,
+      "purpose": "Highlight the yellow flowers in the foreground to ground the scene in nature, showing a small, real detail that feels intimate and unforced. This adds texture without introducing any artificial elements.",
+      "brief_anchor": "visual_description",
+      "camera": "push_in",
+      "action": "photo_camera",
+      "action_prompt": "Zoom slightly into the yellow flowers and green leaves, maintaining natural lighting and avoiding any motion or blur.",
+      "overlay": {
+        "en": "",
+        "ar": ""
+      },
+      "text_position": "lower"
+    },
+    {
+      "id": "detail_arches",
+      "object_id": "arches",
+      "role": "detail",
+      "frames": 80,
+      "purpose": "Show the terracotta arches with wooden shade and a glimpse of water to reinforce the architectural calm and timeless quality of the space, reinforcing the theme of stillness.",
+      "brief_anchor": "angle",
+      "camera": "pull_out",
+      "action": "photo_camera",
+      "action_prompt": "Slightly pull back from the arches to include the wooden shade and water reflection, preserving the natural light and architectural balance.",
+      "overlay": {
+        "en": "",
+        "ar": ""
+      },
+      "text_position": "lower"
+    },
+    {
+      "id": "reveal_courtyard",
+      "object_id": "courtyard",
+      "role": "reveal",
+      "frames": 80,
+      "purpose": "Reveal the full courtyard architecture with palm canopy and sky, completing the visual narrative of a peaceful, unhurried space. This wide view pays off the initial curiosity by showing the full context of the stillness.",
+      "brief_anchor": "visual_description",
+      "camera": "pull_out",
+      "action": "photo_camera",
+      "action_prompt": "Expand to show the full upper courtyard with sky and palm canopy, maintaining the natural light and clean composition.",
+      "overlay": {
+        "en": "",
+        "ar": ""
+      },
+      "text_position": "lower"
+    },
+    {
+      "id": "payoff_sway",
+      "object_id": "palms",
+      "role": "payoff",
+      "frames": 80,
+      "purpose": "Use a subtle plant_sway motion in the palm canopy to show natural movement, reinforcing the idea of time passing gently and without rush. This motion adds life to the stillness.",
+      "brief_anchor": "key_message",
+      "camera": "static",
+      "action": "plant_sway",
+      "action_prompt": "Add a gentle, natural sway to the palm canopy to simulate real-world movement, ensuring it feels organic and not forced.",
+      "overlay": {
+        "en": "",
+        "ar": ""
+      },
+      "text_position": "lower"
+    },
+    {
+      "id": "cta_save",
+      "object_id": "arches",
+      "role": "cta",
+      "frames": 60,
+      "purpose": "Close with a return to the arches, inviting the viewer to save or share a moment of stillness, aligning with the core message of preserving quiet time.",
+      "brief_anchor": "cta",
+      "camera": "static",
+      "action": "photo_camera",
+      "action_prompt": "Return to the arches with clean, balanced composition and natural light, emphasizing the timeless quality of the space.",
+      "overlay": {
+        "en": "Save or share a detail",
+        "ar": "احفظ أو شارك تفاصيل"
+      },
+      "text_position": "lower"
+    }
+  ]
+}

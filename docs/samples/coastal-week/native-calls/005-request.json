@@ -1,0 +1,146 @@
+{
+  "template_name": "grounded_copy_ar",
+  "slot_id": "reference-w42-mon-1",
+  "model": "Qwen/Qwen3-8B:nf4@b968826d9c46dd6066d109eabc6255188de91218",
+  "prompt": "# افتتاحية عربية مرتبطة بالدليل — FR-04\n\nأعد JSON مطابقاً لمخطط GroundedCaptionDraft فقط. اكتب بفصحى بسيطة وطبيعية، من الموجز\nوالدليل المرئي وهدف الركيزة. هذا مرجع تاريخي لمنتجع في المالديف، وليس مرافق إنستا باي.\n\nopening: فكرة واضحة ومحددة في ٤–١٢ كلمة تربط المشهد بهذه الركيزة. فضّل جملة مباشرة\nعلى سؤال عام. لا تكرر previous_openings ولا تعِد صياغتها، ولا تنسخ افتتاحية الموجز.\nلا تجعل الماء يسأل أو الشاطئ يتنفس، ولا تكتب «جنة على الأرض» أو «تجربة لا تنسى».\nركيزة الماء تلفت الانتباه للعلاقة المرئية بين الماء والشاطئ؛ الاسترخاء للمساحة أو\nالظل؛ الإقامة للممر أو المباني الظاهرة؛ المكان لتفصيل واضح وموقع المالديف الصحيح؛\nالتخطيط لمقارنة الإطلالات قبل اختيار الوجهة. لا تضف حقيقة غير موجودة في الدليل.\n\naction: طلب إجراء واحد صريح يوافق selection.cta_kind: الحفظ أو مقارنة الإطلالات أو\nذكر تفضيل محدد في تعليق أو التنقل بين صور المنشور. نوّع الصياغة. لا تعد بعرض أو سعر\nأو غرفة أو توافر حجز. اختر fact_id من visual_context.facts فقط. سيضيف البرنامج\nالتفاصيل الواقعية والنص البديل من عبارات الدليل العربي؛ اجعل detail وalt_text فارغين.\n\nلا تختلق مسابح أو سبا أو غرفاً أو أنشطة أو قصص ضيوف أو كائنات بحرية. لا تصف وقتاً\nأو أصواتاً أو روائح أو حرارة الماء أو حالة راهنة لا تثبتها الصور. لا تنسب المكان\nإلى الغردقة أو البحر الأحمر، ولا توحِ بالملكية أو الشراكة. لا تضف وسوماً أو لغة تدقيق\nأو مصطلحات تقنية أو رموزاً تعبيرية. لا تتلقَّ تعليقاً إنجليزياً ولا تترجمه.\n",
+  "prompt_hash": "5e549da0e03c3efbeecd1ed6b48bf00f2ce9b513fa3ddb1bf59241116151c37f",
+  "inputs": {
+    "slot": {
+      "id": "reference-w42-mon-1",
+      "run_id": "reference-w42",
+      "brand_hash": "8f3983a1982c0c57b645c10a17f093f463ad3b4b66c81a4f52c27f3f52b49bd3",
+      "scheduled_at": "2026-10-12T21:30:00+03:00",
+      "arm": {
+        "pillar": "underwater",
+        "format": "photo",
+        "time_bucket": "late_21_23",
+        "hook_style": "number"
+      },
+      "segment": "egyptian",
+      "explore": true
+    },
+    "brief": {
+      "angle": "Aerial view of the lagoon villas and jetty",
+      "hook": "1. A line of thatched overwater villas",
+      "key_message": "Experience the serene beauty of Reethi Faru Resort's lagoon villas and turquoise waters.",
+      "visual_description": "Aerial view of a line of thatched overwater villas and a connecting jetty, surrounded by clear turquoise water; island trees and white shoreline at the lower left.",
+      "photo_uri": "assets/photos/reethi_faru/lagoon-villas.jpg",
+      "cta": "Save this view for your dream getaway",
+      "must_not": [
+        "Underwater coral",
+        "Marine species",
+        "Snorkeling",
+        "Spa facilities",
+        "Room amenities"
+      ],
+      "reel_concept": null
+    },
+    "visual_context": {
+      "selection": {
+        "brief": {
+          "angle": "Aerial view of the lagoon villas and jetty",
+          "hook": "1. A line of thatched overwater villas",
+          "key_message": "Experience the serene beauty of Reethi Faru Resort's lagoon villas and turquoise waters.",
+          "visual_description": "Aerial view of a line of thatched overwater villas and a connecting jetty, surrounded by clear turquoise water; island trees and white shoreline at the lower left.",
+          "photo_uri": "assets/photos/reethi_faru/lagoon-villas.jpg",
+          "cta": "Save this view for your dream getaway",
+          "must_not": [
+            "Underwater coral",
+            "Marine species",
+            "Snorkeling",
+            "Spa facilities",
+            "Room amenities"
+          ],
+          "reel_concept": null
+        },
+        "media_ids": [
+          "lagoon-villas"
+        ],
+        "fact_ids": [
+          "lagoon-villas-fact-1",
+          "lagoon-villas-fact-2",
+          "lagoon-villas-fact-3"
+        ],
+        "pillar_intent": "Use the visible coastal water colors and clarity. No underwater coral, marine species or snorkeling claims without footage.",
+        "sequence_reason": "This single aerial view captures the essence of the lagoon villas and their connection to the turquoise waters, offering a clear and serene visual of the resort's coastal setting.",
+        "cta_kind": "save"
+      },
+      "property_name": "Reethi Faru Resort, Maldives",
+      "geography": "Maldives",
+      "source_date_note": "Historical source photographs published in April 2020; present condition and offers are not verified.",
+      "facts": [
+        {
+          "id": "lagoon-villas-fact-1",
+          "scene_id": "lagoon-villas",
+          "text": "Overwater villas joined by a jetty",
+          "caption_en": "Thatched villas follow a wooden jetty through turquoise water.",
+          "caption_ar": "فلل بسقوف من القش على امتداد رصيف خشبي وسط مياه فيروزية."
+        },
+        {
+          "id": "lagoon-villas-fact-2",
+          "scene_id": "lagoon-villas",
+          "text": "Clear turquoise water around the buildings",
+          "caption_en": "Clear turquoise water surrounds the photographed villas and walkway.",
+          "caption_ar": "مياه فيروزية صافية تحيط بالفلل والممر الخشبي في الصورة."
+        },
+        {
+          "id": "lagoon-villas-fact-3",
+          "scene_id": "lagoon-villas",
+          "text": "White shoreline and island vegetation",
+          "caption_en": "From above, white sand curves between island greenery and the lagoon.",
+          "caption_ar": "من أعلى، يلتف الرمل الأبيض بين خضرة الجزيرة ومياه البحيرة الساحلية."
+        }
+      ],
+      "reference_only": true
+    },
+    "previous_openings": []
+  },
+  "output_schema": {
+    "additionalProperties": false,
+    "properties": {
+      "opening": {
+        "maxLength": 120,
+        "minLength": 1,
+        "title": "Opening",
+        "type": "string"
+      },
+      "detail": {
+        "default": "",
+        "maxLength": 300,
+        "title": "Detail",
+        "type": "string"
+      },
+      "action": {
+        "maxLength": 100,
+        "minLength": 1,
+        "title": "Action",
+        "type": "string"
+      },
+      "alt_text": {
+        "default": "",
+        "maxLength": 600,
+        "title": "Alt Text",
+        "type": "string"
+      },
+      "fact_id": {
+        "enum": [
+          "lagoon-villas-fact-1",
+          "lagoon-villas-fact-2",
+          "lagoon-villas-fact-3"
+        ],
+        "title": "Fact Id",
+        "type": "string"
+      }
+    },
+    "required": [
+      "opening",
+      "action",
+      "fact_id"
+    ],
+    "title": "GroundedCaptionDraft",
+    "type": "object"
+  },
+  "temperature": 0.0,
+  "max_output_tokens": 800,
+  "validation_feedback": null
+}

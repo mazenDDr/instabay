@@ -1,0 +1,13 @@
+{
+  "template_name": "grounded_copy_ar",
+  "slot_id": "reference-w42-sun-1",
+  "response": {
+    "opening": "ابدأ قائمة رحلاتك بإطلالة.",
+    "detail": "رمل أبيض وظلال نخيل وأفق مفتوح، لتختار التفاصيل التي تهمك في وجهتك.",
+    "action": "احفظ هذه الصورة مرجعاً لقائمة رحلاتك.",
+    "alt_text": "صور مرجعية للمياه الفيروزية والشاطئ والفلل في المالديف.",
+    "fact_id": "palm-jetty-fact-1"
+  },
+  "input_tokens": 350,
+  "output_tokens": 450
+}

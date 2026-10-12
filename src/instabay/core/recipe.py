@@ -92,6 +92,12 @@ class PostSpec(Boundary):
     preview_label: str | None = Field(default=None, max_length=80)
     credit: str | None = Field(default=None, max_length=100)
     recorded_motion: RecordedMotion | None = None
+    style: Literal["legacy", "editorial"] = "legacy"
+    language: Literal["bilingual", "en", "ar"] = "bilingual"
+    latin_font: FileRef | None = None
+    frame_interpolation: Literal["repeat", "motion"] = Field(
+        default="repeat", exclude_if=lambda v: v == "repeat"
+    )
 
 
 class RenderRecipe(Boundary):
@@ -108,6 +114,12 @@ class RenderRecipe(Boundary):
     @model_validator(mode="after")
     def complete(self) -> Self:
         count = len(self.shots.shots)
+        if self.post.style == "editorial" and (
+            self.post.language == "bilingual" or not self.post.latin_font
+        ):
+            raise ValueError("Editorial reels need independent language exports and a Latin font")
+        if any(s.source_clip for s in self.shots.shots) and self.backend != "stub":
+            raise ValueError("Recorded editorial media is assembled by the CPU backend")
         recorded = self.post.recorded_motion
         if recorded and (
             self.backend != "stub"
@@ -159,11 +171,13 @@ class RenderRecipe(Boundary):
         return (
             self.backend != "stub"
             or self.post.recorded_motion is not None
+            or any(s.source_clip and s.source_clip.generated for s in self.shots.shots)
             or any(s.keyframe.source == "generated" for s in self.shots.shots)
         )
 
     @property
     def reference_only(self) -> bool:
         return self.post.recorded_motion is not None or any(
-            s.keyframe.reference_only for s in self.shots.shots
+            s.keyframe.reference_only or (s.source_clip and s.source_clip.reference_only)
+            for s in self.shots.shots
         )

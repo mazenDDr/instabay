@@ -1,0 +1,62 @@
+property_name: Reethi Faru Resort, Maldives
+geography: Maldives
+source_date_note: Historical source photographs published in April 2020; present condition
+  and offers are not verified.
+objects_file: config/reethi-faru-scenes.yaml
+facts:
+- id: lagoon-villas-fact-1
+  scene_id: lagoon-villas
+  text: Overwater villas joined by a jetty
+  caption_en: Thatched villas follow a wooden jetty through turquoise water.
+  caption_ar: فلل بسقوف من القش على امتداد رصيف خشبي وسط مياه فيروزية.
+- id: lagoon-villas-fact-2
+  scene_id: lagoon-villas
+  text: Clear turquoise water around the buildings
+  caption_en: Clear turquoise water surrounds the photographed villas and walkway.
+  caption_ar: مياه فيروزية صافية تحيط بالفلل والممر الخشبي في الصورة.
+- id: lagoon-villas-fact-3
+  scene_id: lagoon-villas
+  text: White shoreline and island vegetation
+  caption_en: From above, white sand curves between island greenery and the lagoon.
+  caption_ar: من أعلى، يلتف الرمل الأبيض بين خضرة الجزيرة ومياه البحيرة الساحلية.
+- id: shoreline-fact-1
+  scene_id: shoreline
+  text: Turquoise shallows reaching white sand
+  caption_en: Turquoise shallows meet a curve of white sand.
+  caption_ar: مياه فيروزية تلتقي بانحناءة من الرمل الأبيض.
+- id: shoreline-fact-2
+  scene_id: shoreline
+  text: Palms and thatched structures beside the shoreline
+  caption_en: Palms and thatched structures sit beside the photographed shoreline.
+  caption_ar: نخيل ومبان بسقوف من القش بجوار خط الشاطئ في الصورة.
+- id: shoreline-fact-3
+  scene_id: shoreline
+  text: Blue sky and a visible ocean horizon
+  caption_en: Blue sky sits above an open ocean horizon.
+  caption_ar: سماء زرقاء وأفق بحر مفتوح.
+- id: palm-jetty-fact-1
+  scene_id: palm-jetty
+  text: A wooden jetty crossing the shallows
+  caption_en: A wooden jetty crosses the turquoise shallows beside the beach.
+  caption_ar: رصيف خشبي يعبر المياه الفيروزية الضحلة بجوار الشاطئ.
+- id: palm-jetty-fact-2
+  scene_id: palm-jetty
+  text: Palm shadows on white sand
+  caption_en: Palm shadows fall across white sand at the waterline.
+  caption_ar: ظلال النخيل تمتد على الرمل الأبيض عند خط الماء.
+- id: palm-jetty-fact-3
+  scene_id: palm-jetty
+  text: Water, palms and an open horizon in the same view
+  caption_en: Water, palms and an open horizon share this beach-level view.
+  caption_ar: مياه ونخيل وأفق مفتوح في مشهد من مستوى الشاطئ.
+pillar_guidance:
+  underwater: Use the visible coastal water colors and clarity. No underwater coral,
+    marine species or snorkeling claims without footage.
+  spa: A shoreline pause and relaxation through visible scenery. No spa facility or
+    treatment claim.
+  guests: Imagine the visible approach and the relationship of villas, water and shoreline.
+    Do not invent guest testimonials or room amenities.
+  local: Show the named Maldives reference location; never label it Hurghada or the
+    Red Sea.
+  offers: Offer a useful planning or comparison prompt. No price, deal, availability
+    or booking promise.

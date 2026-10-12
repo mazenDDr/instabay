@@ -1,0 +1,42 @@
+{
+  "raw_scene_order": [
+    "lagoon-villas",
+    "shoreline",
+    "palm-jetty"
+  ],
+  "edited_scene_order": [
+    "lagoon-villas",
+    "shoreline",
+    "palm-jetty"
+  ],
+  "raw_overlays": [
+    {
+      "en": "A seamless transition from the lagoon to the shore at Reethi Faru Resort, Maldives.",
+      "ar": "الانتقال السلس من البحيرة إلى الشاطئ في فندق ريثي فارو، مالديب."
+    },
+    {
+      "en": "Experience the natural flow from the lagoon to the beach at Reethi Faru Resort, Maldives.",
+      "ar": "تجربة تدفق طبيعي من البحيرة إلى الشاطئ في فندق ريثي فارو، مالديب."
+    },
+    {
+      "en": "Plan your journey from the lagoon to the shore at Reethi Faru Resort.",
+      "ar": "خطط رحلتك من البحيرة إلى الشاطئ في فندق ريثي فارو."
+    }
+  ],
+  "edited_overlays": [
+    {
+      "en": "",
+      "ar": ""
+    },
+    {
+      "en": "",
+      "ar": ""
+    },
+    {
+      "en": "",
+      "ar": ""
+    }
+  ],
+  "policy": "No panels; exact five-second scene holds; opening/closing roles assigned by editor; rotate repeated scene order.",
+  "human_review": "pending"
+}

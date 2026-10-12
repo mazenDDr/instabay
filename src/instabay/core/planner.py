@@ -46,8 +46,23 @@ def plan_week(
     buckets: list[TimeBucket] = list(brand.cadence.windows_cairo)
     preferred_format = max(formats, key=lambda item: scores.format.get(item, 0))
     chosen_formats = [preferred_format] * count
-    for index in range(count - brand.cadence.min_reels, count):
-        chosen_formats[index] = "reel"
+    floors = {
+        "photo": brand.cadence.min_photos,
+        "carousel": brand.cadence.min_carousels,
+        "reel": brand.cadence.min_reels,
+    }
+    required: list[PostFormat] = [
+        format
+        for round_number in range(max(floors.values()))
+        for format in formats
+        if floors[format] > round_number
+    ]
+    # Spread mandatory formats across the week rather than stacking identical formats at its end.
+    if brand.cadence.min_photos or brand.cadence.min_carousels:
+        for index, format in enumerate(required):
+            chosen_formats[index * count // len(required)] = format
+    else:
+        chosen_formats[count - len(required) :] = required
     preferred_hook = max(hooks, key=lambda item: scores.hook_style.get(item, 0))
     preferred_bucket = max(buckets, key=lambda item: scores.time_bucket.get(item, 0))
     segments: tuple[Literal["egyptian", "gcc", "european"], ...] = ("egyptian", "gcc", "european")

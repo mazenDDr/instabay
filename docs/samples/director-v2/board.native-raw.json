@@ -1,0 +1,302 @@
+{
+  "brief": {
+    "angle": "An unhurried moment in a real resort reference photograph",
+    "hook": "Open with a question",
+    "key_message": "Light, shade and time to breathe; no facility or offer claims",
+    "visual_description": "A terracotta arcade framing palms and a courtyard",
+    "photo_uri": "assets/photos/grand_resort_day.jpg",
+    "cta": "Save or share a detail",
+    "must_not": [
+      "invented facilities",
+      "prices",
+      "identifiable faces"
+    ],
+    "reel_concept": {
+      "hook": "Ask about a slower escape",
+      "shots": [
+        "Approved crop of the real-photo terrace: a modest push toward an arch",
+        "Approved palm detail: gentle movement only; do not invent a facility",
+        "Return to the real approved terrace still for the closing moment"
+      ],
+      "overlay_en": "A slower moment.",
+      "overlay_ar": "لحظة على مهل.",
+      "audio": "Human-approved instrumental library track; no track selected yet",
+      "cta": "Save this concept",
+      "cover": "assets/photos/grand_resort_day.jpg"
+    }
+  },
+  "brief_hash": "4922dd0eeae48f160b2eee2aa5bc8db29edf7d81daa6f605e85b995a79149fe6",
+  "plan": {
+    "reel_id": "2026-w42-sun-1",
+    "idea": "A quiet moment in a real resort space, inviting reflection through natural light and stillness.",
+    "viewer_payoff": "The viewer feels a sense of calm and connection to time, space, and nature.",
+    "hook_mechanism": "Start with a question to draw the viewer into a contemplative state.",
+    "bpm": 90,
+    "missing_visuals": [],
+    "beats": [
+      {
+        "id": "beat_01",
+        "object_id": "flowers",
+        "role": "hook",
+        "frames": 40,
+        "purpose": "Open with a subtle, natural detail to spark curiosity and invite reflection — the yellow flowers act as a visual anchor for the question.",
+        "brief_anchor": "hook",
+        "camera": "static",
+        "action": "plant_sway",
+        "action_prompt": "Show a close-up of yellow flowers with a gentle sway in the breeze, captured in natural light, no people or signs.",
+        "overlay": {
+          "en": "What if time slowed?",
+          "ar": "ما إذا تباطأ الوقت؟"
+        },
+        "text_position": "lower"
+      },
+      {
+        "id": "beat_02",
+        "object_id": "water",
+        "role": "detail",
+        "frames": 70,
+        "purpose": "Reveal the reflection of light on water to emphasize the interplay of light and shade, reinforcing the key message of stillness and natural beauty.",
+        "brief_anchor": "visual_description",
+        "camera": "pull_out",
+        "action": "photo_camera",
+        "action_prompt": "Show a wide shot of water with reflected light, framed by the arches, capturing the calm surface and natural glow.",
+        "overlay": {
+          "en": "",
+          "ar": ""
+        },
+        "text_position": "lower"
+      },
+      {
+        "id": "beat_03",
+        "object_id": "palms",
+        "role": "detail",
+        "frames": 70,
+        "purpose": "Highlight the palm canopy as a natural element that frames the space, reinforcing the unhurried atmosphere.",
+        "brief_anchor": "visual_description",
+        "camera": "static",
+        "action": "photo_camera",
+        "action_prompt": "Show the palm canopy in mid-frame, gently framing the courtyard with soft shadows and light.",
+        "overlay": {
+          "en": "",
+          "ar": ""
+        },
+        "text_position": "lower"
+      },
+      {
+        "id": "beat_04",
+        "object_id": "arches",
+        "role": "reveal",
+        "frames": 80,
+        "purpose": "Reveal the terracotta arches as the architectural heart of the space, creating a sense of place and timelessness.",
+        "brief_anchor": "visual_description",
+        "camera": "push_in",
+        "action": "photo_camera",
+        "action_prompt": "Center on the arches with a slight push-in to emphasize their structure and the light falling through them.",
+        "overlay": {
+          "en": "",
+          "ar": ""
+        },
+        "text_position": "lower"
+      },
+      {
+        "id": "beat_05",
+        "object_id": "water",
+        "role": "payoff",
+        "frames": 80,
+        "purpose": "Pay off the opening with a visual of still water reflecting light and the arches — a moment of calm that embodies the key message of breathing in time.",
+        "brief_anchor": "key_message",
+        "camera": "static",
+        "action": "water_ripples",
+        "action_prompt": "Show a subtle ripple in the water, reflecting the arches and sky, to suggest movement within stillness.",
+        "overlay": {
+          "en": "",
+          "ar": ""
+        },
+        "text_position": "lower"
+      },
+      {
+        "id": "beat_06",
+        "object_id": "flowers",
+        "role": "detail",
+        "frames": 60,
+        "purpose": "Return to the flowers as a soft, grounding detail to complete the loop and reinforce the natural, unhurried tone.",
+        "brief_anchor": "angle",
+        "camera": "static",
+        "action": "photo_camera",
+        "action_prompt": "Show a close-up of the yellow flowers again, now in a slightly wider context, with soft light.",
+        "overlay": {
+          "en": "",
+          "ar": ""
+        },
+        "text_position": "lower"
+      },
+      {
+        "id": "beat_07",
+        "object_id": "courtyard",
+        "role": "payoff",
+        "frames": 80,
+        "purpose": "Final reveal of the courtyard architecture, showing the full space and its harmony with light and nature — the visual payoff of stillness and presence.",
+        "brief_anchor": "visual_description",
+        "camera": "pull_out",
+        "action": "photo_camera",
+        "action_prompt": "Show the full courtyard architecture, with palms and sky, in a wide, balanced composition.",
+        "overlay": {
+          "en": "",
+          "ar": ""
+        },
+        "text_position": "lower"
+      },
+      {
+        "id": "beat_08",
+        "object_id": "arches",
+        "role": "cta",
+        "frames": 60,
+        "purpose": "Close with the arches to invite the viewer to save or share a moment of stillness.",
+        "brief_anchor": "cta",
+        "camera": "static",
+        "action": "photo_camera",
+        "action_prompt": "Final static shot of the terracotta arches, softly lit, with the courtyard behind.",
+        "overlay": {
+          "en": "Save or share a detail",
+          "ar": "احفظ أو شارك تفاصيل"
+        },
+        "text_position": "lower"
+      }
+    ]
+  },
+  "catalog": {
+    "resort": "The Grand Resort Hurghada",
+    "objects": [
+      {
+        "id": "water",
+        "label": "Water and reflected light",
+        "observed": "Illuminated water with existing reflected light; no people or signs in crop",
+        "photo": {
+          "uri": "assets/photos/grand_resort_night.jpg",
+          "sha256": "e881b7a4eb45969f8306556044de8088639b04af6b03a09d93b95bec5bf25b00"
+        },
+        "crop": {
+          "x": 100,
+          "y": 1450,
+          "width": 576,
+          "height": 1024
+        },
+        "approved_by": "mazenDDr",
+        "approval_id": "crop-approval-2026-10-12",
+        "faces_checked": true,
+        "attribution": "Ercan.G / CC-BY-3.0 - cropped and animated",
+        "author": "Ercan.G",
+        "license_id": "CC-BY-3.0",
+        "source_page": "https://commons.wikimedia.org/wiki/File:Hotel_Grand_Resort_-_panoramio_(1).jpg",
+        "license_url": "https://creativecommons.org/licenses/by/3.0/",
+        "reference_only": true,
+        "source": "photo",
+        "clip": null
+      },
+      {
+        "id": "flowers",
+        "label": "Yellow flowers",
+        "observed": "Yellow flowers and green leaves in the foreground, no visible people",
+        "photo": {
+          "uri": "assets/photos/grand_resort_exterior.jpg",
+          "sha256": "3e6f7074149430eab815f05881d4c821d82acf24bf45b9b1a206c5221878760c"
+        },
+        "crop": {
+          "x": 650,
+          "y": 0,
+          "width": 630,
+          "height": 1120
+        },
+        "approved_by": "mazenDDr",
+        "approval_id": "crop-approval-2026-10-12",
+        "faces_checked": true,
+        "attribution": "1089hruskapetr / CC-BY-3.0 - cropped and animated",
+        "author": "1089hruskapetr",
+        "license_id": "CC-BY-3.0",
+        "source_page": "https://commons.wikimedia.org/wiki/File:Hotel_The_Grand_resort_-_panoramio.jpg",
+        "license_url": "https://creativecommons.org/licenses/by/3.0/",
+        "reference_only": true,
+        "source": "photo",
+        "clip": null
+      },
+      {
+        "id": "palms",
+        "label": "Palm canopy",
+        "observed": "Palm canopy and upper courtyard in historical daylight photo; bottom guest area excluded",
+        "photo": {
+          "uri": "assets/photos/grand_resort_pool.jpg",
+          "sha256": "4676d8b7fb4830e9f6ee6df0dd43f2c94841880a61ca887ffb4bc12fd2981ad3"
+        },
+        "crop": {
+          "x": 800,
+          "y": 0,
+          "width": 750,
+          "height": 420
+        },
+        "approved_by": "mazenDDr",
+        "approval_id": "crop-approval-2026-10-12",
+        "faces_checked": true,
+        "attribution": "Szombat78 / CC0-1.0 - cropped and animated",
+        "author": "Szombat78",
+        "license_id": "CC0-1.0",
+        "source_page": "https://commons.wikimedia.org/wiki/File:Hurghada_The_Grand_Resort.jpg",
+        "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "reference_only": true,
+        "source": "photo",
+        "clip": null
+      },
+      {
+        "id": "arches",
+        "label": "Terracotta arches",
+        "observed": "Arches, column, wooden shade and a glimpse of water; no identifiable guests",
+        "photo": {
+          "uri": "assets/photos/grand_resort_day.jpg",
+          "sha256": "dc08f600f159b2bd2f51a0bef96a7b91bebe28e33f7d3aec01e5ee4392a8cde8"
+        },
+        "crop": {
+          "x": 1600,
+          "y": 600,
+          "width": 1152,
+          "height": 2048
+        },
+        "approved_by": "mazenDDr",
+        "approval_id": "crop-approval-2026-10-12",
+        "faces_checked": true,
+        "attribution": "Ercan.G / CC-BY-3.0 - cropped and animated",
+        "author": "Ercan.G",
+        "license_id": "CC-BY-3.0",
+        "source_page": "https://commons.wikimedia.org/wiki/File:Hotel_Grand_Resort_-_panoramio.jpg",
+        "license_url": "https://creativecommons.org/licenses/by/3.0/",
+        "reference_only": true,
+        "source": "photo",
+        "clip": null
+      },
+      {
+        "id": "courtyard",
+        "label": "Courtyard architecture",
+        "observed": "Upper courtyard architecture, palm canopy and sky, cropped above guest area",
+        "photo": {
+          "uri": "assets/photos/grand_resort_pool.jpg",
+          "sha256": "4676d8b7fb4830e9f6ee6df0dd43f2c94841880a61ca887ffb4bc12fd2981ad3"
+        },
+        "crop": {
+          "x": 250,
+          "y": 0,
+          "width": 700,
+          "height": 420
+        },
+        "approved_by": "mazenDDr",
+        "approval_id": "crop-approval-2026-10-12",
+        "faces_checked": true,
+        "attribution": "Szombat78 / CC0-1.0 - cropped and animated",
+        "author": "Szombat78",
+        "license_id": "CC0-1.0",
+        "source_page": "https://commons.wikimedia.org/wiki/File:Hurghada_The_Grand_Resort.jpg",
+        "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "reference_only": true,
+        "source": "photo",
+        "clip": null
+      }
+    ]
+  }
+}
