@@ -130,7 +130,12 @@ def test_d3_client_sends_images_and_requires_opt_in(library, monkeypatch):
             200,
             json={
                 "answers": {
-                    "pillar": {"choice": "local", "confidence": 0.7},
+                    "pillar": {
+                        "type": "choice",
+                        "choice": "local",
+                        "confidence": 0.3,
+                        "probabilities": {"local": 0.55, "spa": 0.45},
+                    },
                     "people": {"noul": 0.2},
                 }
             },
@@ -146,10 +151,16 @@ def test_d3_client_sends_images_and_requires_opt_in(library, monkeypatch):
     monkeypatch.setenv("INSTABAY_DECISIONS_ENABLED", "1")
     answers = engine.decide(STATE, questions, [library.path(asset)])
     assert answers["pillar"].choice == "local"
+    assert answers["pillar"].probabilities == {"local": 0.55, "spa": 0.45}
     assert base64.b64decode(seen["images"][0]) == library.path(asset).read_bytes()
     assert seen["model"] == D3_FLASH and seen["revision"] == "r1"
     with pytest.raises(ValueError, match="d3-flash"):
         D3FlashHTTPEngine(config.model_copy(update={"model": "other"}))
+    library.add(jpeg((1, 1, 1)), added_by="o", rights_confirmed=True, note_en="x", note_ar="س")
+    report = classify_assets(library, engine, demo_brand())
+    assert report.classified == 2
+    top = library.get(asset.id)
+    assert top.model_confidence == 0.55 and top.pillar == "local"
 
 
 def test_owner_cadence_pins_exact_weekly_mix(library):

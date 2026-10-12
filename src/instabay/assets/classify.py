@@ -65,6 +65,9 @@ def classify_assets(
             failed.append(asset.id)
             continue
         pillar = answers["pillar"]
+        # d3's own `confidence` runs below its top-option probability; the top probability is
+        # what the owner sees and what the provisional review threshold applies to.
+        top = max(pillar.probabilities.values()) if pillar.probabilities else pillar.confidence
         library.record_classification(
             asset.id,
             engine_id=engine.engine_id,
@@ -72,7 +75,7 @@ def classify_assets(
             questions_hash=questions_hash,
             answers={k: v.model_dump(mode="json") for k, v in answers.items()},
             pillar=None if pillar.abstained else pillar.choice,
-            confidence=pillar.confidence,
+            confidence=top,
             people=answers["people"].noul,
         )
         done += 1

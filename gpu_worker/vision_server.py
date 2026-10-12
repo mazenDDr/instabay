@@ -47,6 +47,19 @@ def enabled() -> None:
         raise HTTPException(403, "Vision service is not enabled")
 
 
+def log(event: str, **fields: Any) -> None:
+    """NFR-03: one JSON line per load/request so measurements can be read back from the log."""
+    print(json.dumps({"event": event, **fields}), flush=True)
+
+
+def gpu_bytes() -> dict[str, int]:
+    torch = importlib.import_module("torch")
+    return {
+        "allocated": torch.cuda.memory_allocated(),
+        "peak": torch.cuda.max_memory_allocated(),
+    }
+
+
 def unload() -> None:
     """NFR-06: free the resident model before loading the other one."""
     if _state["model"] is None:
@@ -106,11 +119,13 @@ def load_d3() -> Any:
             return backbone
 
     runtime.backbone_class = lambda kind: Loader
+    started = time.perf_counter()
     try:
         model = runtime.D3.from_pretrained(str(D3_DIR), device="cuda:0", batch_size=1)
     finally:
         runtime.backbone_class = original
     _state["model"], _state["name"] = model, "d3"
+    log("load", model=D3_MODEL, seconds=round(time.perf_counter() - started, 1), **gpu_bytes())
     return model
 
 
@@ -119,11 +134,13 @@ def load_view() -> Any:
     if _state["name"] == "view":
         return _state["model"]
     unload()
+    started = time.perf_counter()
     torch = importlib.import_module("torch")
     diffusers = importlib.import_module("diffusers")
     pipe = diffusers.Flux2KleinPipeline.from_pretrained(str(VIEW_DIR), torch_dtype=torch.bfloat16)
     pipe.enable_model_cpu_offload()
     _state["model"], _state["name"] = pipe, "view"
+    log("load", model=VIEW_MODEL, seconds=round(time.perf_counter() - started, 1), **gpu_bytes())
     return pipe
 
 
@@ -168,6 +185,14 @@ def systemone(request: SystemOneRequest) -> dict[str, Any]:
         )
     result = dict(result)
     result["elapsed_ms"] = round((time.perf_counter() - started) * 1000, 1)
+    log(
+        "systemone",
+        images=len(images),
+        questions=len(request.questions),
+        ms=result["elapsed_ms"],
+        answers=result.get("answers"),
+        **gpu_bytes(),
+    )
     return result
 
 
@@ -195,9 +220,11 @@ def views(request: ViewRequest) -> dict[str, Any]:
         peak = torch.cuda.max_memory_allocated()
     buffer = io.BytesIO()
     image.save(buffer, format="PNG")
+    seconds = round(time.perf_counter() - started, 2)
+    log("view", preset=recipe.get("preset"), seconds=seconds, size=list(image.size), peak=peak)
     return {
         "image": base64.b64encode(buffer.getvalue()).decode("ascii"),
         "recipe_hash": canonical_hash(recipe),
-        "elapsed_s": round(time.perf_counter() - started, 2),
+        "elapsed_s": seconds,
         "peak_bytes": peak,
     }

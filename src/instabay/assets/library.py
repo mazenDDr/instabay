@@ -18,7 +18,7 @@ from instabay.core.schemas import Boundary, Hash, Identifier
 Origin = Literal["owner", "generated"]
 MAX_UPLOAD_BYTES = 25_000_000
 FORMATS = {"JPEG": ".jpg", "PNG": ".png", "WEBP": ".webp"}
-CONFIDENT = 0.6
+CONFIDENT = 0.5  # provisional: top-pillar probability; re-tune from owner labels (ADR 0013)
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS asset (
