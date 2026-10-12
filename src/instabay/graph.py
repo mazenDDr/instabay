@@ -28,6 +28,9 @@ from instabay.core.schemas import (
     WorkflowResult,
 )
 from instabay.db import SQLiteCallStore
+from instabay.decisions.calibration import CalibrationProfile
+from instabay.decisions.cascade import CheckCascade
+from instabay.decisions.engine import DecisionEngine
 from instabay.llm import LLMService, RunUsage
 from instabay.repository import Repository
 
@@ -70,6 +73,9 @@ class WeekRunner:
         brand_input: BrandInput,
         fixtures: Path = Path("tests/fixtures/llm"),
         preferences: PlanningPreferences | None = None,
+        decision_engine: DecisionEngine | None = None,
+        calibration: CalibrationProfile | None = None,
+        allow_synthetic_decisions: bool = False,
     ) -> None:
         self._stack = ExitStack()
         self.repository = Repository(db)
@@ -79,6 +85,8 @@ class WeekRunner:
         self.service = LLMService(self.fake, self.calls)
         self.brand_input = brand_input
         self.preferences = preferences
+        self.decision_engine, self.calibration = decision_engine, calibration
+        self.allow_synthetic_decisions = allow_synthetic_decisions
         checkpoints.parent.mkdir(parents=True, exist_ok=True)
         saver = self._stack.enter_context(SqliteSaver.from_conn_string(str(checkpoints)))
         self.publisher = DryRunPublisher(self.repository, outbox)
@@ -167,7 +175,12 @@ class WeekRunner:
 
     def _checks(self, state: WeekState) -> dict[str, str]:
         brand = self.repository.brand(state["brand_hash"])
-        judge = Judge(self.service)
+        judge = CheckCascade(
+            Judge(self.service),
+            self.decision_engine,
+            self.calibration,
+            allow_synthetic=state["demo"] and self.allow_synthetic_decisions,
+        )
         for slot in self.repository.slots(state["run_id"]):
             post = self.repository.post(slot.id)
             try:
@@ -175,7 +188,11 @@ class WeekRunner:
             except ValueError:
                 existing = None
             if existing is None or (
-                post.revision == 0 and (not existing.rules.passed or not existing.judge.passed)
+                post.revision == 0
+                and (
+                    not existing.rules.passed
+                    or (existing.judge is not None and not existing.judge.passed)
+                )
             ):
                 checked, review = judge.check_and_refine(
                     post, slot, brand, record_initial=self.repository.save_review

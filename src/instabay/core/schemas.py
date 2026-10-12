@@ -474,9 +474,23 @@ class Review(Boundary):
     post_id: Identifier
     content_hash: Hash
     rules: RuleResult
-    judge: JudgeResult
+    judge: JudgeResult | None
+    check_path: Literal["judge", "system1"] = "judge"
+    decision_trace: dict[str, JsonValue] | None = None
     flagged: bool
     flags: list[str]
+
+    @model_validator(mode="after")
+    def honest_scores(self) -> Self:
+        if self.check_path == "judge" and self.judge is None:
+            raise ValueError("Judge path requires real stored judge samples")
+        if self.check_path == "system1" and (
+            self.judge is not None or self.decision_trace is None or not self.rules.passed
+        ):
+            raise ValueError(
+                "System1-only path requires passing rules and decision evidence, no invented score"
+            )
+        return self
 
 
 class ApprovalRequest(Boundary):

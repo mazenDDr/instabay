@@ -37,6 +37,7 @@ from instabay.core.tables import (
     ArmRow,
     BrandVersionRow,
     CycleRow,
+    DecisionScoreRow,
     GraphJobRow,
     HashtagRow,
     JudgeScoreRow,
@@ -66,6 +67,7 @@ class Repository:
         """FR-10: additive nullable migration preserves legacy hashes and approvals."""
         additions = {
             "post": ("media_json",),
+            "review": ("cascade_json",),
             "publication": (
                 "media_id",
                 "container_id",
@@ -442,7 +444,41 @@ class Repository:
         with Session(self.engine) as session:
             if self._post(session, review.post_id).content_hash != review.content_hash:
                 raise ValueError("Review does not match the current post")
-            for index, sample in enumerate(review.judge.samples):
+            if review.decision_trace is not None:
+                from instabay.decisions.cascade import DecisionTrace
+
+                trace = DecisionTrace.model_validate(review.decision_trace)
+                if trace.content_hash != review.content_hash:
+                    raise ValueError("Decision trace belongs to another snapshot")
+                if review.check_path == "system1" and (
+                    not trace.passed_system1
+                    or trace.judge_called
+                    or not trace.records
+                    or any(r.escalated for r in trace.records)
+                ):
+                    raise ValueError("System1 review requires a non-escalated passing trace")
+                for record in trace.records:
+                    if record.answer is None:
+                        continue
+                    payload = {
+                        "content_hash": trace.content_hash,
+                        "profile_hash": trace.profile_hash,
+                        **record.model_dump(mode="json"),
+                    }
+                    session.merge(
+                        DecisionScoreRow(
+                            id=canonical_hash({"engine": trace.engine_id, **payload}),
+                            post_id=review.post_id,
+                            engine=trace.engine_id,
+                            question_id=f"{record.language}.{record.question_id}",
+                            answer_json=json.dumps(payload, sort_keys=True),
+                            confidence=record.calibrated_confidence
+                            if record.calibrated_confidence is not None
+                            else record.answer.confidence,
+                            escalated=record.escalated,
+                        )
+                    )
+            for index, sample in enumerate(review.judge.samples if review.judge else []):
                 session.merge(
                     JudgeScoreRow(
                         post_id=review.post_id,
@@ -460,6 +496,9 @@ class Repository:
                     violations_json=json.dumps(review.rules.violations),
                     arabic_ratio=review.rules.arabic_ratio,
                     flags_json=json.dumps(review.flags),
+                    cascade_json=json.dumps(review.decision_trace)
+                    if review.decision_trace
+                    else None,
                 )
             )
             session.commit()
@@ -471,6 +510,32 @@ class Repository:
             post = self._post(session, post_id)
             if row is None or row.content_hash != post.content_hash:
                 raise ValueError("Post needs current checks before human approval")
+            if row.cascade_json:
+                from instabay.decisions.cascade import DecisionTrace
+
+                trace = DecisionTrace.model_validate_json(row.cascade_json)
+                if trace.passed_system1 and not trace.judge_called:
+                    if trace.content_hash != post.content_hash or any(
+                        r.escalated for r in trace.records
+                    ):
+                        raise ValueError("Invalid System1-only review")
+                    flags = json.loads(row.flags_json)
+                    return Review(
+                        post_id=post_id,
+                        content_hash=post.content_hash,
+                        rules=RuleResult(
+                            post_id=post_id,
+                            content_hash=post.content_hash,
+                            passed=row.rules_passed,
+                            violations=json.loads(row.violations_json),
+                            arabic_ratio=row.arabic_ratio,
+                        ),
+                        judge=None,
+                        check_path="system1",
+                        decision_trace=json.loads(row.cascade_json),
+                        flagged=bool(flags),
+                        flags=flags,
+                    )
             scores = session.exec(
                 select(JudgeScoreRow)
                 .where(
@@ -490,6 +555,32 @@ class Repository:
                 for score in scores
             ]
             if len(samples) != 3:
+                if not samples and row.cascade_json:
+                    from instabay.decisions.cascade import DecisionTrace
+
+                    trace = DecisionTrace.model_validate_json(row.cascade_json)
+                    if (
+                        not trace.passed_system1
+                        or trace.judge_called
+                        or trace.content_hash != post.content_hash
+                    ):
+                        raise ValueError("Invalid System1-only review")
+                    return Review(
+                        post_id=post_id,
+                        content_hash=post.content_hash,
+                        rules=RuleResult(
+                            post_id=post_id,
+                            content_hash=post.content_hash,
+                            passed=row.rules_passed,
+                            violations=json.loads(row.violations_json),
+                            arabic_ratio=row.arabic_ratio,
+                        ),
+                        judge=None,
+                        check_path="system1",
+                        decision_trace=json.loads(row.cascade_json),
+                        flagged=bool(json.loads(row.flags_json)),
+                        flags=json.loads(row.flags_json),
+                    )
                 raise ValueError("Exactly three judge samples are required")
             average = sum(sample.scores.average for sample in samples) / 3
             brand_row = session.get(BrandVersionRow, post.brand_hash)
@@ -516,6 +607,7 @@ class Repository:
                 content_hash=row.content_hash,
                 rules=rules,
                 judge=judge,
+                decision_trace=json.loads(row.cascade_json) if row.cascade_json else None,
                 flagged=bool(flags),
                 flags=flags,
             )
