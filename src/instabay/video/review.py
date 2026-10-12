@@ -8,7 +8,26 @@ def media_flags(post: Post) -> list[str]:
     if post.media_status == "concept_only":
         return ["Reel concept only: no video has been rendered"]
     if post.photo_artifact:
-        return ["Photo reference only: source fidelity, caption and rights review required"]
+        artifact = post.photo_artifact
+        if artifact.reference_only:
+            return ["Photo reference only: source fidelity, caption and rights review required"]
+        flags = ["Owner photo: check the caption describes what is visible"]
+        if artifact.generated:
+            flags.append("AI camera view included: confirm it still shows the real place")
+        from instabay.content.photos import PhotoRecipe
+
+        sources = PhotoRecipe.model_validate(artifact.render_recipe).sources
+        small = [
+            f"{o.crop.width}x{o.crop.height}"
+            for o in sources
+            if o.crop.width < 1080 or o.crop.height < 1080
+        ]
+        if small:
+            flags.append(
+                f"Low-resolution source ({', '.join(small)}) upscaled: "
+                "use the original photo file before posting"
+            )
+        return flags
     if post.render_artifact:
         flags = []
         if post.render_artifact.qa_status != "passed":

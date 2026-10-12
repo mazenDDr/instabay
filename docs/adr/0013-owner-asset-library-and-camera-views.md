@@ -66,3 +66,28 @@ one rater, so the owner still approves every view. Worst presets: `detail` (mini
 `aerial` from a ground photo (invents a site layout) and `golden_hour` on aerial water.
 Best: `over_shoulder`, `golden_hour` on ground photos, and `guests`. The sample photos come
 from two different resorts and were used only for this test.
+
+## Addendum (2026-10-13): VLM judge, visual pillar wording, owner GUI
+
+- **VLM judge.** When d3's top pillar is under 0.5, `Qwen/Qwen3.5-4B` (bf16, 9.1 GB, loads
+  in 9.3 s) looks at the photo and returns one pillar plus a one-sentence reason. Its label is
+  stored apart from d3's and the owner's (`vlm_pillar`), and each is measured separately
+  against owner corrections. d3 runs over all photos first and the judge afterwards, so the GPU
+  swaps models once.
+- **Pillar wording matters more than the model.** On the owner's 13 Red Sea photos (545×545):
+
+  | Pillar descriptions | d3 median top probability | photos ≥ 0.5 | plausible by eye (1 rater) |
+  |---|---|---|---|
+  | abstract demo wording | 0.51 | 7/13 | about 3/13 (almost all "setting") |
+  | visual wording (template) | 0.76 | 11/13 | about 10/13 |
+
+  The VLM answered 13/13, in 2–5 s each, and agreed with d3 on 10/13. Of the 3 disagreements,
+  d3 was right on 1 (suite interior), the VLM on 1 (night restaurant), and 1 is ambiguous. Both
+  put the beach photo under relaxation. The cascade sorted all 13 photos in 28 s (2 sent to the
+  judge). The template `config/insta-bay-brand.example.yaml` uses the visual wording.
+- **Low-resolution photos** (short side ≥ 400 px) are upscaled to the 1080×1350 feed and
+  flagged at review: "use the original photo file before posting".
+- **Owner GUI** is laid out like Meta Business Suite (Home, Content, Planner, Insights, Media,
+  Settings). Approve/Reject in Content stores the same hash-bound approval as the CLI, and
+  flagged posts need a reason. Insights labels simulator numbers as *Simulated*. Publishing stays
+  a terminal step.

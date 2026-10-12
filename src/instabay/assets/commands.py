@@ -10,6 +10,7 @@ import yaml
 
 from instabay.assets.classify import agreement, classify_assets
 from instabay.assets.export import export_library
+from instabay.assets.judge import HTTPPillarJudge, PillarJudge
 from instabay.assets.library import AssetLibrary
 from instabay.assets.plan import OwnerCadence, load_cadence, save_cadence, suggest_assets
 from instabay.core.planner import plan_week
@@ -45,6 +46,15 @@ def vision_engine(
         raise typer.BadParameter("Engine must be fake or d3")
     config = SystemOneConfig(base_url=origin, revision=D3_REVISION, model=D3_FLASH, timeout_s=60)
     return D3FlashHTTPEngine(config, confirm_external=confirm_external)
+
+
+def pillar_judge(judge: str, origin: str, confirm_external: bool) -> PillarJudge | None:
+    """FR-08: optional VLM second opinion for photos d3-flash is unsure about."""
+    if judge == "none":
+        return None
+    if judge != "vlm":
+        raise typer.BadParameter("Judge must be none or vlm")
+    return HTTPPillarJudge(origin, confirm_external=confirm_external)
 
 
 def register_asset_commands(app: typer.Typer) -> None:
@@ -83,14 +93,17 @@ def register_asset_commands(app: typer.Typer) -> None:
         origin: Annotated[str, typer.Option()] = VISION_ORIGIN,
         confirm_external: Annotated[bool, typer.Option()] = False,
         force: Annotated[bool, typer.Option()] = False,
+        judge: Annotated[str, typer.Option(help="none or vlm (Qwen3.5-4B on gpu-box)")] = "none",
     ) -> None:
-        """FR-08: sort photos into pillars with d3-flash (or the offline fake)."""
+        """FR-08: sort photos into pillars with d3-flash; unsure ones go to the VLM judge."""
         decider = vision_engine(engine, fixtures, origin, confirm_external)
+        second = pillar_judge(judge, origin, confirm_external)
         with AssetLibrary(workspace) as library:
-            report = classify_assets(library, decider, load_brand(brand), force=force)
-            score = agreement(library.all())
+            report = classify_assets(library, decider, load_brand(brand), force=force, judge=second)
+            assets = library.all()
         typer.echo(report.model_dump_json())
-        typer.echo(f"Owner-label agreement: {score.model_dump_json()}")
+        typer.echo(f"d3 vs owner labels: {agreement(assets).model_dump_json()}")
+        typer.echo(f"VLM vs owner labels: {agreement(assets, 'vlm').model_dump_json()}")
 
     @assets.command("review")
     def review(

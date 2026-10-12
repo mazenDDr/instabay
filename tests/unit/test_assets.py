@@ -252,3 +252,31 @@ def test_export_feeds_existing_evidence_contract(library):
     generated = catalog.get(view.id)
     assert not evidence.reference_only and generated.source == "synthetic"
     assert generated.approval_scope == "owner_approved_view" and not generated.reference_only
+
+
+def test_unsure_d3_labels_go_to_the_vlm_judge(library):
+    from instabay.assets.judge import FakePillarJudge, Verdict
+    from instabay.decisions.vision import image_digest
+
+    sure, unsure = owner_photo(library, 11), owner_photo(library, 12)
+    engine = FakeVisionEngine(
+        [
+            fixture_for(library, sure, "spa", 0.9, 0.0),
+            fixture_for(library, unsure, "local", 0.3, 0.0),
+        ]
+    )
+    judge = FakePillarJudge(
+        {image_digest(library.path(unsure)): Verdict(choice="guests", reason="Guests on loungers")}
+    )
+    report = classify_assets(library, engine, demo_brand(), judge=judge)
+    assert (report.classified, report.judged, judge.calls) == (2, 1, 1)
+    assert library.get(sure.id).pillar_source == "d3"
+    judged = library.get(unsure.id)
+    assert (judged.pillar, judged.pillar_source, judged.vlm_reason) == (
+        "guests",
+        "vlm",
+        "Guests on loungers",
+    )
+    library.review(unsure.id, owner_pillar="guests")
+    assert agreement(library.all(), "vlm").accuracy == 1.0
+    assert agreement(library.all()).accuracy == 0.0

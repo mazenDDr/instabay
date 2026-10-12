@@ -25,6 +25,8 @@ from pydantic import BaseModel, Field
 
 D3_DIR = Path(os.environ.get("INSTABAY_D3_DIR", "data/d3-flash"))
 VIEW_DIR = Path(os.environ.get("INSTABAY_VIEW_DIR", "data/flux2-klein-4b"))
+VLM_DIR = Path(os.environ.get("INSTABAY_VLM_DIR", "data/qwen3.5-4b"))
+VLM_MODEL = "Qwen/Qwen3.5-4B"
 D3_MODEL = "vllm-sr/d3-flash"
 VIEW_MODEL = "black-forest-labs/FLUX.2-klein-4B"
 MAX_IMAGE_BYTES = 25_000_000
@@ -144,6 +146,37 @@ def load_view() -> Any:
     return pipe
 
 
+def load_vlm() -> Any:
+    """FR-08: Qwen3.5-4B in bf16 (about 9 GB) as a second-opinion pillar judge."""
+    if _state["name"] == "vlm":
+        return _state["model"]
+    unload()
+    started = time.perf_counter()
+    torch = importlib.import_module("torch")
+    transformers = importlib.import_module("transformers")
+    processor = transformers.AutoProcessor.from_pretrained(str(VLM_DIR))
+    model = transformers.AutoModelForImageTextToText.from_pretrained(
+        str(VLM_DIR), dtype=torch.bfloat16, device_map="cuda:0"
+    ).eval()
+    _state["model"], _state["name"] = (model, processor), "vlm"
+    log("load", model=VLM_MODEL, seconds=round(time.perf_counter() - started, 1), **gpu_bytes())
+    return _state["model"]
+
+
+def parse_verdict(text: str, options: dict[str, str]) -> dict[str, Any]:
+    """FR-08: accept only a JSON object naming one requested option; otherwise abstain."""
+    start, end = text.find("{"), text.rfind("}")
+    try:
+        data = json.loads(text[start : end + 1]) if start >= 0 else {}
+    except ValueError:
+        data = {}
+    choice = data.get("pillar") if isinstance(data, dict) else None
+    reason = str(data.get("reason", "")) if isinstance(data, dict) else ""
+    if choice not in options:
+        return {"choice": None, "reason": "Unparseable answer: " + text[:200]}
+    return {"choice": choice, "reason": reason[:500]}
+
+
 def decode_image(text: str) -> Any:
     image_module = importlib.import_module("PIL.Image")
     ops = importlib.import_module("PIL.ImageOps")
@@ -159,6 +192,13 @@ class SystemOneRequest(BaseModel):
     model: str
     revision: str | None = None
     images: list[str] = Field(default_factory=list, max_length=4)
+
+
+class VLMRequest(BaseModel):
+    model: str
+    image: str
+    instructions: str = Field(max_length=2000)
+    options: dict[str, str] = Field(min_length=2, max_length=12)
 
 
 class ViewRequest(BaseModel):
@@ -229,3 +269,45 @@ def views(request: ViewRequest) -> dict[str, Any]:
         "elapsed_s": seconds,
         "peak_bytes": peak,
     }
+
+
+@app.post("/v1/vlm-choice")
+def vlm_choice(request: VLMRequest) -> dict[str, Any]:
+    enabled()
+    if request.model != VLM_MODEL:
+        raise HTTPException(422, "Only Qwen3.5-4B is served as the judge")
+    image = decode_image(request.image)
+    image.thumbnail((1280, 1280))
+    listing = "\n".join(f"- {key}: {text}" for key, text in request.options.items())
+    prompt = (
+        f"{request.instructions}\n\nPillars:\n{listing}\n\n"
+        'Answer with JSON only: {"pillar": "<one id from the list>", '
+        '"reason": "<one short sentence about what is visible>"}'
+    )
+    torch = importlib.import_module("torch")
+    with _lock:
+        model, processor = load_vlm()
+        started = time.perf_counter()
+        messages = [
+            {
+                "role": "user",
+                "content": [{"type": "image", "image": image}, {"type": "text", "text": prompt}],
+            }
+        ]
+        inputs = processor.apply_chat_template(
+            messages,
+            add_generation_prompt=True,
+            tokenize=True,
+            return_dict=True,
+            return_tensors="pt",
+            enable_thinking=False,
+        ).to(model.device)
+        with torch.inference_mode():
+            output = model.generate(**inputs, max_new_tokens=160, do_sample=False)
+        text = processor.decode(
+            output[0][inputs["input_ids"].shape[1] :], skip_special_tokens=True
+        ).strip()
+    verdict = parse_verdict(text, request.options)
+    ms = round((time.perf_counter() - started) * 1000, 1)
+    log("vlm", ms=ms, verdict=verdict, raw=text[:300], **gpu_bytes())
+    return {"verdict": verdict, "raw": text, "elapsed_ms": ms}

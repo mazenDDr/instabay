@@ -12,6 +12,7 @@ from instabay.assets.commands import (
     BrandFile,
     Workspace,
     load_brand,
+    pillar_judge,
     vision_engine,
 )
 from instabay.assets.library import Asset, AssetLibrary
@@ -37,6 +38,7 @@ def register_dashboard_commands(app: typer.Typer) -> None:
         confirm_external: Annotated[bool, typer.Option()] = False,
         views: Annotated[str, typer.Option(help="none, stub or gpu")] = "none",
         confirm_gpu: Annotated[bool, typer.Option()] = False,
+        judge: Annotated[str, typer.Option(help="none or vlm")] = "none",
     ) -> None:
         """FR-02, FR-04: photos, weekly mix, plan and results at http://127.0.0.1:PORT."""
         import uvicorn
@@ -73,6 +75,7 @@ def register_dashboard_commands(app: typer.Typer) -> None:
             brand=load_brand(brand),
             runs=runs,
             engine=decider,
+            judge=pillar_judge(judge, vision_origin, confirm_external),
             variants=render if backend else None,
             presets={k: v[0] for k, v in PRESETS.items()},
         )

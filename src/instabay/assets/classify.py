@@ -5,7 +5,8 @@ from pathlib import Path
 
 from pydantic import Field
 
-from instabay.assets.library import Asset, AssetLibrary
+from instabay.assets.judge import PillarJudge
+from instabay.assets.library import CONFIDENT, Asset, AssetLibrary
 from instabay.core.schemas import Boundary, BrandConstitution, canonical_hash
 from instabay.decisions.engine import DecisionUnavailableError, Question
 from instabay.decisions.vision import VisionDecisionEngine
@@ -42,6 +43,7 @@ class ClassifyReport(Boundary):
     classified: int = Field(ge=0)
     skipped: int = Field(ge=0)
     failed: list[str] = Field(default_factory=list)
+    judged: int = Field(default=0, ge=0)
 
 
 def classify_assets(
@@ -50,11 +52,17 @@ def classify_assets(
     brand: BrandConstitution,
     *,
     force: bool = False,
+    judge: PillarJudge | None = None,
 ) -> ClassifyReport:
-    """FR-04: unclassified (or all, with force) photos; one failure never blocks the rest."""
+    """FR-04: unclassified (or all, with force) photos; one failure never blocks the rest.
+
+    Photos whose top d3 pillar is below the review threshold go to the VLM judge, if given.
+    """
     questions = asset_questions(brand)
     questions_hash = canonical_hash({k: v.wire() for k, v in questions.items()})
-    done, skipped, failed = 0, 0, []
+    done, skipped, failed, judged = 0, 0, [], 0
+    unsure: list[Asset] = []
+    options = {p.id: p.description for p in brand.pillars}
     for asset in library.all():
         if asset.rejected or (asset.model_pillar and not force):
             skipped += 1
@@ -79,7 +87,18 @@ def classify_assets(
             people=answers["people"].noul,
         )
         done += 1
-    return ClassifyReport(classified=done, skipped=skipped, failed=failed)
+        if pillar.abstained or top < CONFIDENT:
+            unsure.append(asset)
+    # Second pass, so the GPU swaps from d3 to the judge once rather than per photo.
+    for asset in unsure if judge is not None else []:
+        try:
+            verdict = judge.choose(library.path(asset), options)  # type: ignore[union-attr]
+        except RuntimeError as error:
+            library.record_vlm(asset.id, None, str(error))
+            continue
+        library.record_vlm(asset.id, verdict.choice, verdict.reason)
+        judged += 1
+    return ClassifyReport(classified=done, skipped=skipped, failed=failed, judged=judged)
 
 
 class Agreement(Boundary):
@@ -91,9 +110,13 @@ class Agreement(Boundary):
     kappa: float | None = None
 
 
-def agreement(assets: list[Asset]) -> Agreement:
-    """FR-08: Cohen's kappa on assets carrying both an owner and a model pillar."""
-    pairs = [(a.owner_pillar, a.model_pillar) for a in assets if a.owner_pillar and a.model_pillar]
+def agreement(assets: list[Asset], source: str = "d3") -> Agreement:
+    """FR-08: Cohen's kappa of d3 (or the VLM judge) against the owner's pillar labels."""
+    pairs = [
+        (a.owner_pillar, a.model_pillar if source == "d3" else a.vlm_pillar)
+        for a in assets
+        if a.owner_pillar and (a.model_pillar if source == "d3" else a.vlm_pillar)
+    ]
     if not pairs:
         return Agreement(labelled=0, agree=0)
     n = len(pairs)
