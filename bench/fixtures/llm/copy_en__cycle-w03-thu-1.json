@@ -1,0 +1,10 @@
+{
+  "template_name": "copy_en",
+  "slot_id": "cycle-w03-thu-1",
+  "response": {
+    "caption": "Which detail would you take home from Hurghada in a photograph? Light, color, or shade?",
+    "alt_text": "Terracotta arches and palms in a Grand Resort Hurghada reference photo."
+  },
+  "input_tokens": 180,
+  "output_tokens": 75
+}

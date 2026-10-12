@@ -1,0 +1,10 @@
+{
+  "template_name": "copy_en",
+  "slot_id": "cycle-w02-thu-1",
+  "response": {
+    "caption": "What says Hurghada to you: warm colors or palm shadows? Choose your favorite detail.",
+    "alt_text": "Terracotta arches and palms in a Grand Resort Hurghada reference photo."
+  },
+  "input_tokens": 180,
+  "output_tokens": 75
+}

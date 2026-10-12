@@ -1,0 +1,31 @@
+name: Offline fixture benchmark
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.13.0"
+          enable-cache: false
+      - name: Install locked runtime and dependencies
+        run: make setup
+      - name: Run fixture-only benchmark
+        run: make bench
+        env:
+          UV_OFFLINE: "1"
+          INSTABAY_MODE: dry_run
+      - name: Upload results and intermediate evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: offline-fixture-benchmark
+          path: |
+            bench/results.json
+            README.md
+            outputs/bench/content.json
+            outputs/bench/calls.jsonl
+            outputs/bench/seed-checkpoints.jsonl

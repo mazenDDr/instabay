@@ -1,0 +1,1288 @@
+{
+  "schema_version": "bench-v1",
+  "generated_at": "2026-10-12T04:35:23.656531Z",
+  "mode": "offline_fixture",
+  "protocol_hash": "2cb7946e2b7babd94a2907a3f4130577bcd72407c926826cc3e298c7e4d03bc5",
+  "corpus_hash": "eeba5d8539f52ba03614b30d4f430209a4d3ef53ce08f2d3b328e6662ec2f46b",
+  "corpus_posts": 21,
+  "environment": {
+    "python": "3.12.15",
+    "platform": "Darwin",
+    "machine": "arm64",
+    "timing": "cold local fixture replay; varies by host and run"
+  },
+  "brand_consistency": {
+    "judge_mean": {
+      "mean": 4.6,
+      "low": 4.6,
+      "high": 4.6,
+      "n": 21
+    },
+    "hard_rule_pass_rate": {
+      "mean": 1.0,
+      "low": 1.0,
+      "high": 1.0,
+      "n": 21
+    },
+    "negative_control_mean": {
+      "mean": 2.2,
+      "low": 2.2,
+      "high": 2.2,
+      "n": 10
+    },
+    "negative_control_gap": {
+      "mean": 2.3999999999999995,
+      "low": 2.3999999999999995,
+      "high": 2.3999999999999995,
+      "n": 10
+    },
+    "negative_control_clearly_lower": true,
+    "quadratic_weighted_kappa": null,
+    "labeled_posts": 0,
+    "calibration_status": "pending_human",
+    "score_provenance": "illustrative_fake_llm"
+  },
+  "arabic_quality": {
+    "judge_mean": {
+      "mean": 4.666666666666667,
+      "low": 4.666666666666667,
+      "high": 4.666666666666667,
+      "n": 21
+    },
+    "native_mean": null,
+    "mt_mean": null,
+    "native_win_rate": null,
+    "krippendorff_alpha_interval": null,
+    "judge_human_spearman": null,
+    "rated_items": 0,
+    "unique_native_captions": 20,
+    "unique_translation_captions": 20,
+    "paired_posts": 0,
+    "raters": 0,
+    "status": "pending_human",
+    "comparison_provenance": "authored_fixture_translation; not a real MT-provider evaluation"
+  },
+  "optimization_uplift": {
+    "weeks": 12,
+    "posts_per_week": 7,
+    "seeds": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19
+    ],
+    "evaluation_weeks": [
+      9,
+      10,
+      11,
+      12
+    ],
+    "summaries": {
+      "fixed": {
+        "late_engagement_rate": {
+          "mean": 0.048471247650938465,
+          "low": 0.03634905987714437,
+          "high": 0.061920376295916374,
+          "n": 20
+        },
+        "cumulative_regret": {
+          "mean": 4.690155265314877,
+          "low": 3.7229825987318104,
+          "high": 5.809545170404478,
+          "n": 20
+        },
+        "leaked_posts": 0,
+        "learned_posts": 0
+      },
+      "uniform": {
+        "late_engagement_rate": {
+          "mean": 0.049166272690874015,
+          "low": 0.04256689457823302,
+          "high": 0.05641662039610649,
+          "n": 20
+        },
+        "cumulative_regret": {
+          "mean": 4.529576493631198,
+          "low": 3.704213070620049,
+          "high": 5.418816611782029,
+          "n": 20
+        },
+        "leaked_posts": 0,
+        "learned_posts": 0
+      },
+      "thompson": {
+        "late_engagement_rate": {
+          "mean": 0.0815270892091951,
+          "low": 0.07059555369963286,
+          "high": 0.0923256801749657,
+          "n": 20
+        },
+        "cumulative_regret": {
+          "mean": 2.6590896129383985,
+          "low": 2.221675752826157,
+          "high": 3.1726287000125164,
+          "n": 20
+        },
+        "leaked_posts": 0,
+        "learned_posts": 1680
+      },
+      "oracle": {
+        "late_engagement_rate": {
+          "mean": 0.10431447569122959,
+          "low": 0.09195843437088853,
+          "high": 0.11749434021384665,
+          "n": 20
+        },
+        "cumulative_regret": {
+          "mean": 0.0,
+          "low": 0.0,
+          "high": 0.0,
+          "n": 20
+        },
+        "leaked_posts": 0,
+        "learned_posts": 0
+      },
+      "leak_unguarded": {
+        "late_engagement_rate": {
+          "mean": 0.07827640711867,
+          "low": 0.0669137883273493,
+          "high": 0.08921224825070591,
+          "n": 20
+        },
+        "cumulative_regret": {
+          "mean": 2.86827754140835,
+          "low": 2.403266519316132,
+          "high": 3.4133439479090053,
+          "n": 20
+        },
+        "leaked_posts": 301,
+        "learned_posts": 1680
+      },
+      "leak_guarded": {
+        "late_engagement_rate": {
+          "mean": 0.07775364726212966,
+          "low": 0.06661508272920852,
+          "high": 0.08873154036638853,
+          "n": 20
+        },
+        "cumulative_regret": {
+          "mean": 2.951449090644086,
+          "low": 2.44703862605474,
+          "high": 3.5306889998998328,
+          "n": 20
+        },
+        "leaked_posts": 301,
+        "learned_posts": 1379
+      }
+    },
+    "uplift": {
+      "mean": 0.6819680359025508,
+      "low": 0.37774469814883,
+      "high": 1.1414179306411716,
+      "n": 20
+    },
+    "leakage_guard_regret_difference": {
+      "mean": 0.08317154923573566,
+      "low": -0.03895075411363641,
+      "high": 0.2140593390975615,
+      "n": 20
+    },
+    "seed_results": [
+      {
+        "seed": 0,
+        "policy": "fixed",
+        "late_rate": 0.018702213142677986,
+        "cumulative_regret": 5.8094071997826635,
+        "leaked": 0,
+        "learned": 0
+      },
+      {
+        "seed": 0,
+        "policy": "uniform",
+        "late_rate": 0.03922483076273031,
+        "cumulative_regret": 4.737641587979319,
+        "leaked": 0,
+        "learned": 0
+      },
+      {
+        "seed": 0,
+        "policy": "thompson",
+        "late_rate": 0.07401024992606615,
+        "cumulative_regret": 1.683349289435908,
+        "leaked": 0,
+        "learned": 84
+      },
+      {
+        "seed": 0,
+        "policy": "oracle",
+        "late_rate": 0.0863019075237361,
+        "cumulative_regret": 0.0,
+        "leaked": 0,
+        "learned": 0
+      },
+      {
+        "seed": 0,
+        "policy": "leak_unguarded",
+        "late_rate": 0.06139294817611227,
+        "cumulative_regret": 2.0601998610401506,
+        "leaked": 14,
+        "learned": 84
+      },
+      {
+        "seed": 0,
+        "policy": "leak_guarded",
+        "late_rate": 0.06139294817611227,
+        "cumulative_regret": 2.0601998610401506,
+        "leaked": 14,
+        "learned": 70
+      },
+      {
+        "seed": 1,
+        "policy": "fixed",
+        "late_rate": 0.03011959824524426,
+        "cumulative_regret": 2.057204939697069,
+        "leaked": 0,
+        "learned": 0
+      },
+      {
+        "seed": 1,
+        "policy": "uniform",
+        "late_rate": 0.031267437979290894,
+        "cumulative_regret": 1.6386419081634533,
+        "leaked": 0,
+        "learned": 0
+      },
+      {
+        "seed": 1,
+        "policy": "thompson",
+        "late_rate": 0.03670986004404645,
+        "cumulative_regret": 1.4113976607906054,
+        "leaked": 0,
+        "learned": 84
+      },
+      {
+        "seed": 1,
+        "policy": "oracle",
+        "late_rate": 0.054189704339313305,
+        "cumulative_regret": 0.0,
+        "leaked": 0,
+        "learned": 0
+      },
+      {
+        "seed": 1,
+        "policy": "leak_unguarded",
+        "late_rate": 0.03501139885862105,
+        "cumulative_regret": 1.6441663057321256,
+        "leaked": 14,
+        "learned": 84
+      },
+      {
+        "seed": 1,
+        "policy": "leak_guarded",
+        "late_rate": 0.03663923347382545,
+        "cumulative_regret": 1.5786650938903324,
+        "leaked": 14,
+        "learned": 70
+      },
+      {
+        "seed": 2,
+        "policy": "fixed",
+        "late_rate": 0.032200178671426924,
+        "cumulative_regret": 7.71070527723065,
+        "leaked": 0,
+        "learned": 0
+      },
+      {
+        "seed": 2,
+        "policy": "uniform",
+        "late_rate": 0.04571254862678754,
+        "cumulative_regret": 6.590433145346237,
+        "leaked": 0,
+        "learned": 0
+      },
+      {
+        "seed": 2,
+        "policy": "thompson",
+        "late_rate": 0.10629825620000916,
+        "cumulative_regret": 2.135035076667654,
+        "leaked": 0,
+        "learned": 84
+      },
+      {
+        "seed": 2,
+        "policy": "oracle",
+        "late_rate": 0.12473129576682711,
+        "cumulative_regret": 0.0,
+        "leaked": 0,
+        "learned": 0
+      },
+      {
+        "seed": 2,
+        "policy": "leak_unguarded",
+        "late_rate": 0.10665982477402669,
+        "cumulative_regret": 2.104174650578373,
+        "leaked": 21,
+        "learned": 84
+      },
+      {
+        "seed": 2,
+        "policy": "leak_guarded",
+        "late_rate": 0.11781047383065443,
+        "cumulative_regret": 2.593636542176957,
+        "leaked": 21,
+        "learned": 63
+      },
+      {
+        "seed": 3,
+        "policy": "fixed",
+        "late_rate": 0.053766523021619925,
+        "cumulative_regret": 5.791681744179198,
+        "leaked": 0,
+        "learned": 0
+      },
+      {
+        "seed": 3,
+        "policy": "uniform",
+        "late_rate": 0.05713007731304121,
+        "cumulative_regret": 5.649317177273971,
+        "leaked": 0,
+        "learned": 0
+      },
+      {
+        "seed": 3,
+        "policy": "thompson",
+        "late_rate": 0.0886365062146529,
+        "cumulative_regret": 3.585424632221315,
+        "leaked": 0,
+        "learned": 84
+      },
+      {
+        "seed": 3,
+        "policy": "oracle",
+        "late_rate": 0.12102669068080989,
+        "cumulative_regret": 0.0,
+        "leaked": 0,
+        "learned": 0
+      },
+      {
+        "seed": 3,
+        "policy": "leak_unguarded",
+        "late_rate": 0.068496035346812,
+        "cumulative_regret": 5.5151084861027675,
+        "leaked": 21,
+        "learned": 84
+      },
+      {
+        "seed": 3,
+        "policy": "leak_guarded",
+        "late_rate": 0.06910659517154587,
+        "cumulative_regret": 5.397890466007359,
+        "leaked": 21,
+        "learned": 63
+      },
+      {
+        "seed": 4,
+        "policy": "fixed",
+        "late_rate": 0.02837565506245963,
+        "cumulative_regret": 4.948356201103513,
+        "leaked": 0,
+        "learned": 0
+      },
+      {
+        "seed": 4,
+        "policy": "uniform",
+        "late_rate": 0.0596089695426114,
+        "cumulative_regret": 3.1700582685504064,
+        "leaked": 0,
+        "learned": 0
+      },
+      {
+        "seed": 4,
+        "policy": "thompson",
+        "late_rate": 0.06213481873789038,
+        "cumulative_regret": 2.8548107669007172,
+        "leaked": 0,
+        "learned": 84
+      },
+      {
+        "seed": 4,
+        "policy": "oracle",
+        "late_rate": 0.09083970939776286,
+        "cumulative_regret": 0.0,
+        "leaked": 0,
+        "learned": 0
+      },
+      {
+        "seed": 4,
+        "policy": "leak_unguarded",
+        "late_rate": 0.05712296090581839,
+        "cumulative_regret": 2.8429520325982205,
+        "leaked": 14,
+        "learned": 84
+      },
+      {
+        "seed": 4,
+        "policy": "leak_guarded",
+        "late_rate": 0.05684407652036023,
+        "cumulative_regret": 2.890537533263311,
+        "leaked": 14,
+        "learned": 70
+      },
+      {
+        "seed": 5,
+        "policy": "fixed",
+        "late_rate": 0.0332343613359212,
+        "cumulative_regret": 1.8346529029690384,
+        "leaked": 0,
+        "learned": 0
+      },
+      {
+        "seed": 5,
+        "policy": "uniform",
+        "late_rate": 0.028875099877336507,
+        "cumulative_regret": 1.9949162133219,
+        "leaked": 0,
+        "learned": 0
+      },
+      {
+        "seed": 5,
+        "policy": "thompson",
+        "late_rate": 0.04427089646688778,
+        "cumulative_regret": 1.0609261022559269,
+        "leaked": 0,
+        "learned": 84
+      },
+      {
+        "seed": 5,
+        "policy": "oracle",
+        "late_rate": 0.054921149198932234,
+        "cumulative_regret": 0.0,
+        "leaked": 0,
+        "learned": 0
+      },
+      {
+        "seed": 5,
+        "policy": "leak_unguarded",
+        "late_rate": 0.044350263307421964,
+        "cumulative_regret": 1.1937984229661236,
+        "leaked": 14,
+        "learned": 84
+      },
+      {
+        "seed": 5,
+        "policy": "leak_guarded",
+        "late_rate": 0.04286519122941918,
+        "cumulative_regret": 1.4644098095524547,
+        "leaked": 14,
+        "learned": 70
+      },
+      {
+        "seed": 6,
+        "policy": "fixed",
+        "late_rate": 0.08971395905572321,
+        "cumulative_regret": 1.2156691785013587,
+        "leaked": 0,
+        "learned": 0
+      },
+      {
+        "seed": 6,
+        "policy": "uniform",
+        "late_rate": 0.060370688523002654,
+        "cumulative_regret": 3.5423309279738167,
+        "leaked": 0,
+        "learned": 0
+      },
+      {
+        "seed": 6,
+        "policy": "thompson",
+        "late_rate": 0.09186719383667843,
+        "cumulative_regret": 1.94602703096538,
+        "leaked": 0,
+        "learned": 84
+      },
+      {
+        "seed": 6,
+        "policy": "oracle",
+        "late_rate": 0.10358504512919266,
+        "cumulative_regret": 0.0,
+        "leaked": 0,
+        "learned": 0
+      },
+      {
+        "seed": 6,
+        "policy": "leak_unguarded",
+        "late_rate": 0.09344961674446536,
+        "cumulative_regret": 2.0704457028426733,
+        "leaked": 21,
+        "learned": 84
+      },
+      {
+        "seed": 6,
+        "policy": "leak_guarded",
+        "late_rate": 0.09378860220384654,
+        "cumulative_regret": 1.9515860801232452,
+        "leaked": 21,
+        "learned": 63
+      },
+      {
+        "seed": 7,
+        "policy": "fixed",
+        "late_rate": 0.0619473750261369,
+        "cumulative_regret": 4.2458200371104455,
+        "leaked": 0,
+        "learned": 0
+      },
+      {
+        "seed": 7,
+        "policy": "uniform",
+        "late_rate": 0.05727492378413367,
+        "cumulative_regret": 3.3259985367720217,
+        "leaked": 0,
+        "learned": 0
+      },
+      {
+        "seed": 7,
+        "policy": "thompson",
+        "late_rate": 0.07200450479883896,
+        "cumulative_regret": 2.8913839647960415,
+        "leaked": 0,
+        "learned": 84
+      },
+      {
+        "seed": 7,
+        "policy": "oracle",
+        "late_rate": 0.11321907778182334,
+        "cumulative_regret": 0.0,
+        "leaked": 0,
+        "learned": 0
+      },
+      {
+        "seed": 7,
+        "policy": "leak_unguarded",
+        "late_rate": 0.06839351030332842,
+        "cumulative_regret": 3.1277434372497113,
+        "leaked": 21,
+        "learned": 84
+      },
+      {
+        "seed": 7,
+        "policy": "leak_guarded",
+        "late_rate": 0.07625742006606942,
+        "cumulative_regret": 2.55295256583544,
+        "leaked": 21,
+        "learned": 63
+      },
+      {
+        "seed": 8,
+        "policy": "fixed",
+        "late_rate": 0.046514197596134635,
+        "cumulative_regret": 6.050866299931107,
+        "leaked": 0,
+        "learned": 0
+      },
+      {
+        "seed": 8,
+        "policy": "uniform",
+        "late_rate": 0.06026759719948189,
+        "cumulative_regret": 4.708458790280119,
+        "leaked": 0,
+        "learned": 0
+      },
+      {
+        "seed": 8,
+        "policy": "thompson",
+        "late_rate": 0.10910881164823982,
+        "cumulative_regret": 2.6089732127427108,
+        "leaked": 0,
+        "learned": 84
+      },
+      {
+        "seed": 8,
+        "policy": "oracle",
+        "late_rate": 0.12015760959537834,
+        "cumulative_regret": 0.0,
+        "leaked": 0,
+        "learned": 0
+      },
+      {
+        "seed": 8,
+        "policy": "leak_unguarded",
+        "late_rate": 0.10718245900773349,
+        "cumulative_regret": 2.648113935862592,
+        "leaked": 21,
+        "learned": 84
+      },
+      {
+        "seed": 8,
+        "policy": "leak_guarded",
+        "late_rate": 0.10763622185717826,
+        "cumulative_regret": 2.249483210137085,
+        "leaked": 21,
+        "learned": 63
+      },
+      {
+        "seed": 9,
+        "policy": "fixed",
+        "late_rate": 0.08702652923880681,
+        "cumulative_regret": 1.9259000521318193,
+        "leaked": 0,
+        "learned": 0
+      },
+      {
+        "seed": 9,
+        "policy": "uniform",
+        "late_rate": 0.04744653656116429,
+        "cumulative_regret": 4.942533484412155,
+        "leaked": 0,
+        "learned": 0
+      },
+      {
+        "seed": 9,
+        "policy": "thompson",
+        "late_rate": 0.10704051483442022,
+        "cumulative_regret": 1.9107835947645175,
+        "leaked": 0,
+        "learned": 84
+      },
+      {
+        "seed": 9,
+        "policy": "oracle",
+        "late_rate": 0.11045126015840095,
+        "cumulative_regret": 0.0,
+        "leaked": 0,
+        "learned": 0
+      },
+      {
+        "seed": 9,
+        "policy": "leak_unguarded",
+        "late_rate": 0.10641774866957672,
+        "cumulative_regret": 2.3701987759450787,
+        "leaked": 14,
+        "learned": 84
+      },
+      {
+        "seed": 9,
+        "policy": "leak_guarded",
+        "late_rate": 0.10471792340348024,
+        "cumulative_regret": 2.390882415603941,
+        "leaked": 14,
+        "learned": 70
+      },
+      {
+        "seed": 10,
+        "policy": "fixed",
+        "late_rate": 0.07468841317270095,
+        "cumulative_regret": 4.17359301370889,
+        "leaked": 0,
+        "learned": 0
+      },
+      {
+        "seed": 10,
+        "policy": "uniform",
+        "late_rate": 0.04516530741275442,
+        "cumulative_regret": 5.80978365390647,
+        "leaked": 0,
+        "learned": 0
+      },
+      {
+        "seed": 10,
+        "policy": "thompson",
+        "late_rate": 0.09901242579835588,
+        "cumulative_regret": 3.523453075996594,
+        "leaked": 0,
+        "learned": 84
+      },
+      {
+        "seed": 10,
+        "policy": "oracle",
+        "late_rate": 0.1240843025148718,
+        "cumulative_regret": 0.0,
+        "leaked": 0,
+        "learned": 0
+      },
+      {
+        "seed": 10,
+        "policy": "leak_unguarded",
+        "late_rate": 0.10343286176487367,
+        "cumulative_regret": 3.6389244652569923,
+        "leaked": 21,
+        "learned": 84
+      },
+      {
+        "seed": 10,
+        "policy": "leak_guarded",
+        "late_rate": 0.07579980064596567,
+        "cumulative_regret": 4.209217347231909,
+        "leaked": 21,
+        "learned": 63
+      },
+      {
+        "seed": 11,
+        "policy": "fixed",
+        "late_rate": 0.12434276581053308,
+        "cumulative_regret": 2.752051785454609,
+        "leaked": 0,
+        "learned": 0
+      },
+      {
+        "seed": 11,
+        "policy": "uniform",
+        "late_rate": 0.05486782398313943,
+        "cumulative_regret": 8.37581606977854,
+        "leaked": 0,
+        "learned": 0
+      },
+      {
+        "seed": 11,
+        "policy": "thompson",
+        "late_rate": 0.11041766480796182,
+        "cumulative_regret": 3.9446395541484076,
+        "leaked": 0,
+        "learned": 84
+      },
+      {
+        "seed": 11,
+        "policy": "oracle",
+        "late_rate": 0.1559728697381571,
+        "cumulative_regret": 0.0,
+        "leaked": 0,
+        "learned": 0
+      },
+      {
+        "seed": 11,
+        "policy": "leak_unguarded",
+        "late_rate": 0.1204835443639886,
+        "cumulative_regret": 4.250017950188264,
+        "leaked": 14,
+        "learned": 84
+      },
+      {
+        "seed": 11,
+        "policy": "leak_guarded",
+        "late_rate": 0.11614859046019499,
+        "cumulative_regret": 4.761373127524949,
+        "leaked": 14,
+        "learned": 70
+      },
+      {
+        "seed": 12,
+        "policy": "fixed",
+        "late_rate": 0.020239354384577028,
+        "cumulative_regret": 7.151220350232808,
+        "leaked": 0,
+        "learned": 0
+      },
+      {
+        "seed": 12,
+        "policy": "uniform",
+        "late_rate": 0.02174556525839611,
+        "cumulative_regret": 5.992057747426499,
+        "leaked": 0,
+        "learned": 0
+      },
+      {
+        "seed": 12,
+        "policy": "thompson",
+        "late_rate": 0.09524263191690527,
+        "cumulative_regret": 2.7894028944790614,
+        "leaked": 0,
+        "learned": 84
+      },
+      {
+        "seed": 12,
+        "policy": "oracle",
+        "late_rate": 0.10859154547875358,
+        "cumulative_regret": 0.0,
+        "leaked": 0,
+        "learned": 0
+      },
+      {
+        "seed": 12,
+        "policy": "leak_unguarded",
+        "late_rate": 0.09524263191690527,
+        "cumulative_regret": 2.7894028944790614,
+        "leaked": 0,
+        "learned": 84
+      },
+      {
+        "seed": 12,
+        "policy": "leak_guarded",
+        "late_rate": 0.09524263191690527,
+        "cumulative_regret": 2.7894028944790614,
+        "leaked": 0,
+        "learned": 84
+      },
+      {
+        "seed": 13,
+        "policy": "fixed",
+        "late_rate": 0.03411059229473414,
+        "cumulative_regret": 5.315261653942701,
+        "leaked": 0,
+        "learned": 0
+      },
+      {
+        "seed": 13,
+        "policy": "uniform",
+        "late_rate": 0.0433422741619463,
+        "cumulative_regret": 4.219682256654958,
+        "leaked": 0,
+        "learned": 0
+      },
+      {
+        "seed": 13,
+        "policy": "thompson",
+        "late_rate": 0.06246441321934251,
+        "cumulative_regret": 3.4333933734551163,
+        "leaked": 0,
+        "learned": 84
+      },
+      {
+        "seed": 13,
+        "policy": "oracle",
+        "late_rate": 0.09616972009677102,
+        "cumulative_regret": 0.0,
+        "leaked": 0,
+        "learned": 0
+      },
+      {
+        "seed": 13,
+        "policy": "leak_unguarded",
+        "late_rate": 0.06246441321934251,
+        "cumulative_regret": 3.236611646153947,
+        "leaked": 14,
+        "learned": 84
+      },
+      {
+        "seed": 13,
+        "policy": "leak_guarded",
+        "late_rate": 0.053020576823323486,
+        "cumulative_regret": 3.831324352952647,
+        "leaked": 14,
+        "learned": 70
+      },
+      {
+        "seed": 14,
+        "policy": "fixed",
+        "late_rate": 0.03114215745614481,
+        "cumulative_regret": 5.96841094727792,
+        "leaked": 0,
+        "learned": 0
+      },
+      {
+        "seed": 14,
+        "policy": "uniform",
+        "late_rate": 0.05762436116050364,
+        "cumulative_regret": 4.131948052763899,
+        "leaked": 0,
+        "learned": 0
+      },
+      {
+        "seed": 14,
+        "policy": "thompson",
+        "late_rate": 0.0799152089306967,
+        "cumulative_regret": 2.344685042813664,
+        "leaked": 0,
+        "learned": 84
+      },
+      {
+        "seed": 14,
+        "policy": "oracle",
+        "late_rate": 0.09944771260384483,
+        "cumulative_regret": 0.0,
+        "leaked": 0,
+        "learned": 0
+      },
+      {
+        "seed": 14,
+        "policy": "leak_unguarded",
+        "late_rate": 0.06805480399843003,
+        "cumulative_regret": 2.5892331051455715,
+        "leaked": 14,
+        "learned": 84
+      },
+      {
+        "seed": 14,
+        "policy": "leak_guarded",
+        "late_rate": 0.07378744976584345,
+        "cumulative_regret": 2.6302323928352243,
+        "leaked": 14,
+        "learned": 70
+      },
+      {
+        "seed": 15,
+        "policy": "fixed",
+        "late_rate": 0.025917018166453715,
+        "cumulative_regret": 12.026294633062736,
+        "leaked": 0,
+        "learned": 0
+      },
+      {
+        "seed": 15,
+        "policy": "uniform",
+        "late_rate": 0.07212198816299302,
+        "cumulative_regret": 9.530748106272412,
+        "leaked": 0,
+        "learned": 0
+      },
+      {
+        "seed": 15,
+        "policy": "thompson",
+        "late_rate": 0.10615966847032184,
+        "cumulative_regret": 6.443672404002592,
+        "leaked": 0,
+        "learned": 84
+      },
+      {
+        "seed": 15,
+        "policy": "oracle",
+        "late_rate": 0.16808194776893343,
+        "cumulative_regret": 0.0,
+        "leaked": 0,
+        "learned": 0
+      },
+      {
+        "seed": 15,
+        "policy": "leak_unguarded",
+        "late_rate": 0.10615966847032184,
+        "cumulative_regret": 5.8839105246237375,
+        "leaked": 14,
+        "learned": 84
+      },
+      {
+        "seed": 15,
+        "policy": "leak_guarded",
+        "late_rate": 0.10475220694590241,
+        "cumulative_regret": 6.0505351886657746,
+        "leaked": 14,
+        "learned": 70
+      },
+      {
+        "seed": 16,
+        "policy": "fixed",
+        "late_rate": 0.03097795921390298,
+        "cumulative_regret": 3.948246957150447,
+        "leaked": 0,
+        "learned": 0
+      },
+      {
+        "seed": 16,
+        "policy": "uniform",
+        "late_rate": 0.03549360675552853,
+        "cumulative_regret": 3.1511512555632124,
+        "leaked": 0,
+        "learned": 0
+      },
+      {
+        "seed": 16,
+        "policy": "thompson",
+        "late_rate": 0.06795004663560016,
+        "cumulative_regret": 2.2705287763784874,
+        "leaked": 0,
+        "learned": 84
+      },
+      {
+        "seed": 16,
+        "policy": "oracle",
+        "late_rate": 0.07756435569074491,
+        "cumulative_regret": 0.0,
+        "leaked": 0,
+        "learned": 0
+      },
+      {
+        "seed": 16,
+        "policy": "leak_unguarded",
+        "late_rate": 0.06795004663560016,
+        "cumulative_regret": 2.3755234159371015,
+        "leaked": 7,
+        "learned": 84
+      },
+      {
+        "seed": 16,
+        "policy": "leak_guarded",
+        "late_rate": 0.06709716840264468,
+        "cumulative_regret": 2.4041429536461725,
+        "leaked": 7,
+        "learned": 77
+      },
+      {
+        "seed": 17,
+        "policy": "fixed",
+        "late_rate": 0.09642867383738826,
+        "cumulative_regret": 3.5410235836138275,
+        "leaked": 0,
+        "learned": 0
+      },
+      {
+        "seed": 17,
+        "policy": "uniform",
+        "late_rate": 0.09149922743909439,
+        "cumulative_regret": 3.4406435856953306,
+        "leaked": 0,
+        "learned": 0
+      },
+      {
+        "seed": 17,
+        "policy": "thompson",
+        "late_rate": 0.12459983164877846,
+        "cumulative_regret": 2.3262428419329946,
+        "leaked": 0,
+        "learned": 84
+      },
+      {
+        "seed": 17,
+        "policy": "oracle",
+        "late_rate": 0.1390622810909496,
+        "cumulative_regret": 0.0,
+        "leaked": 0,
+        "learned": 0
+      },
+      {
+        "seed": 17,
+        "policy": "leak_unguarded",
+        "late_rate": 0.10321284269924871,
+        "cumulative_regret": 2.718564529997715,
+        "leaked": 21,
+        "learned": 84
+      },
+      {
+        "seed": 17,
+        "policy": "leak_guarded",
+        "late_rate": 0.11002462261726229,
+        "cumulative_regret": 2.8092528169101048,
+        "leaked": 21,
+        "learned": 63
+      },
+      {
+        "seed": 18,
+        "policy": "fixed",
+        "late_rate": 0.02364139636414028,
+        "cumulative_regret": 3.570107470246751,
+        "leaked": 0,
+        "learned": 0
+      },
+      {
+        "seed": 18,
+        "policy": "uniform",
+        "late_rate": 0.03264049208003855,
+        "cumulative_regret": 2.5757086561669635,
+        "leaked": 0,
+        "learned": 0
+      },
+      {
+        "seed": 18,
+        "policy": "thompson",
+        "late_rate": 0.051208260336235885,
+        "cumulative_regret": 1.604191273886068,
+        "leaked": 0,
+        "learned": 84
+      },
+      {
+        "seed": 18,
+        "policy": "oracle",
+        "late_rate": 0.06747039739169067,
+        "cumulative_regret": 0.0,
+        "leaked": 0,
+        "learned": 0
+      },
+      {
+        "seed": 18,
+        "policy": "leak_unguarded",
+        "late_rate": 0.050782087029267106,
+        "cumulative_regret": 1.6127202780598913,
+        "leaked": 7,
+        "learned": 84
+      },
+      {
+        "seed": 18,
+        "policy": "leak_guarded",
+        "late_rate": 0.050782087029267106,
+        "cumulative_regret": 1.6127202780598913,
+        "leaked": 7,
+        "learned": 77
+      },
+      {
+        "seed": 19,
+        "policy": "fixed",
+        "late_rate": 0.026336031922042622,
+        "cumulative_regret": 3.766631078969981,
+        "leaked": 0,
+        "learned": 0
+      },
+      {
+        "seed": 19,
+        "policy": "uniform",
+        "late_rate": 0.04164609723350554,
+        "cumulative_regret": 3.063660448322274,
+        "leaked": 0,
+        "learned": 0
+      },
+      {
+        "seed": 19,
+        "policy": "thompson",
+        "late_rate": 0.041490019711973344,
+        "cumulative_regret": 2.4134716901342106,
+        "leaked": 0,
+        "learned": 84
+      },
+      {
+        "seed": 19,
+        "policy": "oracle",
+        "late_rate": 0.07042093187769803,
+        "cumulative_regret": 0.0,
+        "leaked": 0,
+        "learned": 0
+      },
+      {
+        "seed": 19,
+        "policy": "leak_unguarded",
+        "late_rate": 0.03926847618150563,
+        "cumulative_regret": 2.693740407406905,
+        "leaked": 14,
+        "learned": 84
+      },
+      {
+        "seed": 19,
+        "policy": "leak_guarded",
+        "late_rate": 0.04135912470279186,
+        "cumulative_regret": 2.800536882945705,
+        "leaked": 14,
+        "learned": 70
+      }
+    ],
+    "assumptions": [
+      "Frozen audience-v1; mean of post engagement rates; paired world-seed bootstrap",
+      "Fixed policy repeats that seed's Thompson week-1 plan; optimizer unchanged",
+      "Uniform feasible pillar sequences and reel-constrained formats; weekly hook/window with one alternate exploration slot",
+      "Oracle optimizes this weekly hook/window family with pillar/reel constraints and an alternate first hook/window",
+      "Synthetic leakage: predeclared 20% week-level hook rotation; preserves constraints",
+      "D1-on is an ideal synthetic detector; no real engine calibration claim"
+    ]
+  },
+  "efficiency": {
+    "groups": {
+      "feed": {
+        "posts": 18,
+        "input_tokens": 19440,
+        "output_tokens": 8820,
+        "calls": 108,
+        "actual_spend_usd": 0.0,
+        "paid_list_price_usd": null,
+        "mean_input_tokens": {
+          "mean": 1080.0,
+          "low": 1080.0,
+          "high": 1080.0,
+          "n": 18
+        },
+        "mean_output_tokens": {
+          "mean": 490.0,
+          "low": 490.0,
+          "high": 490.0,
+          "n": 18
+        },
+        "mean_actual_spend_usd": {
+          "mean": 0.0,
+          "low": 0.0,
+          "high": 0.0,
+          "n": 18
+        },
+        "mean_paid_list_price_usd": null,
+        "mean_wall_latency_ms": {
+          "mean": 6.819185167033639,
+          "low": 6.696608507384856,
+          "high": 6.96163333147221,
+          "n": 18
+        },
+        "wall_p50_ms": 6.788458034861833,
+        "wall_p95_ms": 7.334873190848156,
+        "provider_sum_p50_ms": 0.41241501457989216,
+        "provider_sum_p95_ms": 0.6284993316512555
+      },
+      "reel_concept": {
+        "posts": 3,
+        "input_tokens": 3240,
+        "output_tokens": 1470,
+        "calls": 18,
+        "actual_spend_usd": 0.0,
+        "paid_list_price_usd": null,
+        "mean_input_tokens": {
+          "mean": 1080.0,
+          "low": 1080.0,
+          "high": 1080.0,
+          "n": 3
+        },
+        "mean_output_tokens": {
+          "mean": 490.0,
+          "low": 490.0,
+          "high": 490.0,
+          "n": 3
+        },
+        "mean_actual_spend_usd": {
+          "mean": 0.0,
+          "low": 0.0,
+          "high": 0.0,
+          "n": 3
+        },
+        "mean_paid_list_price_usd": null,
+        "mean_wall_latency_ms": {
+          "mean": 7.135555691396196,
+          "low": 6.730500026606023,
+          "high": 7.805250003002584,
+          "n": 3
+        },
+        "wall_p50_ms": 6.870917044579983,
+        "wall_p95_ms": 7.711816707160324,
+        "provider_sum_p50_ms": 0.5093330983072519,
+        "provider_sum_p95_ms": 0.6709207897074521
+      }
+    },
+    "shared_brand_input_tokens": 240,
+    "shared_brand_output_tokens": 500,
+    "shared_brand_actual_spend_usd": 0.0,
+    "benchmark_evaluation_calls": 93,
+    "benchmark_evaluation_input_tokens": 16740,
+    "benchmark_evaluation_output_tokens": 6360,
+    "render_jobs": 0,
+    "price_cards": [],
+    "missing_price_models": [
+      "fake-fixture-v1"
+    ],
+    "provenance": "Cold FakeLLM: fixture tokens, actual spend zero, local wall timing; no video render or real-provider latency"
+  },
+  "autonomy": {
+    "configured_steps": 24,
+    "automatic_steps": 21,
+    "configured_automation_share": 0.875,
+    "observed_completed_automatic_steps": 12,
+    "pending_human_steps": 3,
+    "blocked_downstream_steps": 9,
+    "measured_full_pipeline_automation_share": null,
+    "human_minutes_per_week": null,
+    "first_pass_approval_rate": null,
+    "touchpoints": [],
+    "status": "pending_human_timing"
+  },
+  "human_pending": [
+    "HUMAN: rating packet and blank templates at outputs/bench/human_packet/eeba5d8539f5",
+    "HUMAN: label 20 brand posts for judge kappa; canned scores are uncalibrated",
+    "HUMAN: blind-rate 20 native + 20 comparison captions with at least two Arabic raters",
+    "HUMAN: replace authored comparison fixtures with recorded real MT before claiming native-vs-MT quality",
+    "HUMAN: provide timed first-pass review feedback; bench never stores approvals",
+    "HUMAN: provide verified paid list-price cards for real runs; FakeLLM has no provider"
+  ]
+}

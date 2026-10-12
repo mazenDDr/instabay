@@ -1,0 +1,363 @@
+{
+  "version": "fixed-fixture-21-v2",
+  "brand_hash": "829a6b9b034f403005b25aa09a5abfdd0b05c848edbf4e9031b3b8fef0e8f7a9",
+  "cases": [
+    {
+      "slot": {
+        "id": "cycle-w01-mon-1",
+        "run_id": "cycle-w01",
+        "brand_hash": "829a6b9b034f403005b25aa09a5abfdd0b05c848edbf4e9031b3b8fef0e8f7a9",
+        "scheduled_at": "2026-10-12T21:30:00+03:00",
+        "arm": {
+          "pillar": "underwater",
+          "format": "photo",
+          "time_bucket": "late_21_23",
+          "hook_style": "number"
+        },
+        "segment": "egyptian",
+        "explore": true
+      },
+      "content_signature": "254aa7e8b9c164a3b4d4c1f83049ddc104522f66ca835a5a507cd764c8662a1d"
+    },
+    {
+      "slot": {
+        "id": "cycle-w01-tue-1",
+        "run_id": "cycle-w01",
+        "brand_hash": "829a6b9b034f403005b25aa09a5abfdd0b05c848edbf4e9031b3b8fef0e8f7a9",
+        "scheduled_at": "2026-10-13T08:30:00+03:00",
+        "arm": {
+          "pillar": "spa",
+          "format": "photo",
+          "time_bucket": "morning_08_10",
+          "hook_style": "question"
+        },
+        "segment": "gcc",
+        "explore": false
+      },
+      "content_signature": "472162e47937134f2b59b95271981ba5064a755d92e1c1c8527ff122735cfbe7"
+    },
+    {
+      "slot": {
+        "id": "cycle-w01-wed-1",
+        "run_id": "cycle-w01",
+        "brand_hash": "829a6b9b034f403005b25aa09a5abfdd0b05c848edbf4e9031b3b8fef0e8f7a9",
+        "scheduled_at": "2026-10-14T08:30:00+03:00",
+        "arm": {
+          "pillar": "guests",
+          "format": "photo",
+          "time_bucket": "morning_08_10",
+          "hook_style": "question"
+        },
+        "segment": "european",
+        "explore": false
+      },
+      "content_signature": "eb3e8f473b2280f164a779624bc8ea860ab03bb3d2b5f3f28469f265a6cda5cc"
+    },
+    {
+      "slot": {
+        "id": "cycle-w01-thu-1",
+        "run_id": "cycle-w01",
+        "brand_hash": "829a6b9b034f403005b25aa09a5abfdd0b05c848edbf4e9031b3b8fef0e8f7a9",
+        "scheduled_at": "2026-10-15T08:30:00+03:00",
+        "arm": {
+          "pillar": "local",
+          "format": "photo",
+          "time_bucket": "morning_08_10",
+          "hook_style": "question"
+        },
+        "segment": "egyptian",
+        "explore": false
+      },
+      "content_signature": "c3ad8d06ac1096c9e0e6af3f104c7a7b27e6300ec1e6d45c5f7adaca3da94cde"
+    },
+    {
+      "slot": {
+        "id": "cycle-w01-fri-1",
+        "run_id": "cycle-w01",
+        "brand_hash": "829a6b9b034f403005b25aa09a5abfdd0b05c848edbf4e9031b3b8fef0e8f7a9",
+        "scheduled_at": "2026-10-16T08:30:00+03:00",
+        "arm": {
+          "pillar": "local",
+          "format": "photo",
+          "time_bucket": "morning_08_10",
+          "hook_style": "question"
+        },
+        "segment": "gcc",
+        "explore": false
+      },
+      "content_signature": "c2425e3f8eaa55273c7ed2164d78abf16d7d5f3b57a4d887f0d3d7dedce843e7"
+    },
+    {
+      "slot": {
+        "id": "cycle-w01-sat-1",
+        "run_id": "cycle-w01",
+        "brand_hash": "829a6b9b034f403005b25aa09a5abfdd0b05c848edbf4e9031b3b8fef0e8f7a9",
+        "scheduled_at": "2026-10-17T08:30:00+03:00",
+        "arm": {
+          "pillar": "offers",
+          "format": "photo",
+          "time_bucket": "morning_08_10",
+          "hook_style": "question"
+        },
+        "segment": "european",
+        "explore": false
+      },
+      "content_signature": "b47c5c27c3d2f740469afb453cc4b11bd6cdd7d5c19633afd84aae009efc29b9"
+    },
+    {
+      "slot": {
+        "id": "cycle-w01-sun-1",
+        "run_id": "cycle-w01",
+        "brand_hash": "829a6b9b034f403005b25aa09a5abfdd0b05c848edbf4e9031b3b8fef0e8f7a9",
+        "scheduled_at": "2026-10-18T08:30:00+03:00",
+        "arm": {
+          "pillar": "offers",
+          "format": "reel",
+          "time_bucket": "morning_08_10",
+          "hook_style": "question"
+        },
+        "segment": "egyptian",
+        "explore": false
+      },
+      "content_signature": "8c0e9395a7502977b9b71f486cb44077677a4587bb98df74919eeb013baacafc"
+    },
+    {
+      "slot": {
+        "id": "cycle-w02-mon-1",
+        "run_id": "cycle-w02",
+        "brand_hash": "829a6b9b034f403005b25aa09a5abfdd0b05c848edbf4e9031b3b8fef0e8f7a9",
+        "scheduled_at": "2026-10-19T21:30:00+03:00",
+        "arm": {
+          "pillar": "underwater",
+          "format": "photo",
+          "time_bucket": "late_21_23",
+          "hook_style": "number"
+        },
+        "segment": "egyptian",
+        "explore": true
+      },
+      "content_signature": "030380a2e6e436300f527a622808ffd6a0f5ac6b6348f1bce5b38042d4d35f8c"
+    },
+    {
+      "slot": {
+        "id": "cycle-w02-tue-1",
+        "run_id": "cycle-w02",
+        "brand_hash": "829a6b9b034f403005b25aa09a5abfdd0b05c848edbf4e9031b3b8fef0e8f7a9",
+        "scheduled_at": "2026-10-20T08:30:00+03:00",
+        "arm": {
+          "pillar": "spa",
+          "format": "photo",
+          "time_bucket": "morning_08_10",
+          "hook_style": "question"
+        },
+        "segment": "gcc",
+        "explore": false
+      },
+      "content_signature": "129610644da40269c65e82cab15c6e7a1ab382efbd433f8992f0e52a51a21a25"
+    },
+    {
+      "slot": {
+        "id": "cycle-w02-wed-1",
+        "run_id": "cycle-w02",
+        "brand_hash": "829a6b9b034f403005b25aa09a5abfdd0b05c848edbf4e9031b3b8fef0e8f7a9",
+        "scheduled_at": "2026-10-21T08:30:00+03:00",
+        "arm": {
+          "pillar": "guests",
+          "format": "photo",
+          "time_bucket": "morning_08_10",
+          "hook_style": "question"
+        },
+        "segment": "european",
+        "explore": false
+      },
+      "content_signature": "ffed603080edf204beb506ffefe67749c297283fb1ec4e4b68086b95cfcd43fa"
+    },
+    {
+      "slot": {
+        "id": "cycle-w02-thu-1",
+        "run_id": "cycle-w02",
+        "brand_hash": "829a6b9b034f403005b25aa09a5abfdd0b05c848edbf4e9031b3b8fef0e8f7a9",
+        "scheduled_at": "2026-10-22T08:30:00+03:00",
+        "arm": {
+          "pillar": "local",
+          "format": "photo",
+          "time_bucket": "morning_08_10",
+          "hook_style": "question"
+        },
+        "segment": "egyptian",
+        "explore": false
+      },
+      "content_signature": "a91a49cd90b7dfa4989dbb5e3ebc5ea23c994b4034c02a9b8bac6ae6541008fe"
+    },
+    {
+      "slot": {
+        "id": "cycle-w02-fri-1",
+        "run_id": "cycle-w02",
+        "brand_hash": "829a6b9b034f403005b25aa09a5abfdd0b05c848edbf4e9031b3b8fef0e8f7a9",
+        "scheduled_at": "2026-10-23T08:30:00+03:00",
+        "arm": {
+          "pillar": "local",
+          "format": "photo",
+          "time_bucket": "morning_08_10",
+          "hook_style": "question"
+        },
+        "segment": "gcc",
+        "explore": false
+      },
+      "content_signature": "a466bd2c43cff819d23511cbe6ddeeaefa8b033dae14c9717119c47bdcfd651c"
+    },
+    {
+      "slot": {
+        "id": "cycle-w02-sat-1",
+        "run_id": "cycle-w02",
+        "brand_hash": "829a6b9b034f403005b25aa09a5abfdd0b05c848edbf4e9031b3b8fef0e8f7a9",
+        "scheduled_at": "2026-10-24T08:30:00+03:00",
+        "arm": {
+          "pillar": "offers",
+          "format": "photo",
+          "time_bucket": "morning_08_10",
+          "hook_style": "question"
+        },
+        "segment": "european",
+        "explore": false
+      },
+      "content_signature": "ff097d207df6b08daa44e040d775b0c887cef5c5330cc0309eb17ac8c5d0d4a1"
+    },
+    {
+      "slot": {
+        "id": "cycle-w02-sun-1",
+        "run_id": "cycle-w02",
+        "brand_hash": "829a6b9b034f403005b25aa09a5abfdd0b05c848edbf4e9031b3b8fef0e8f7a9",
+        "scheduled_at": "2026-10-25T08:30:00+03:00",
+        "arm": {
+          "pillar": "offers",
+          "format": "reel",
+          "time_bucket": "morning_08_10",
+          "hook_style": "question"
+        },
+        "segment": "egyptian",
+        "explore": false
+      },
+      "content_signature": "143274fe74e43492f4a2b8869f4de6caa42bdbf2e28f75d6ab99d2ff0fd92001"
+    },
+    {
+      "slot": {
+        "id": "cycle-w03-mon-1",
+        "run_id": "cycle-w03",
+        "brand_hash": "829a6b9b034f403005b25aa09a5abfdd0b05c848edbf4e9031b3b8fef0e8f7a9",
+        "scheduled_at": "2026-10-26T21:30:00+03:00",
+        "arm": {
+          "pillar": "underwater",
+          "format": "photo",
+          "time_bucket": "late_21_23",
+          "hook_style": "number"
+        },
+        "segment": "egyptian",
+        "explore": true
+      },
+      "content_signature": "4d62f4bdc0be69e2a0350b2bd018e2f63284f8c1afe32ae4c27b9c5bf9f8af79"
+    },
+    {
+      "slot": {
+        "id": "cycle-w03-tue-1",
+        "run_id": "cycle-w03",
+        "brand_hash": "829a6b9b034f403005b25aa09a5abfdd0b05c848edbf4e9031b3b8fef0e8f7a9",
+        "scheduled_at": "2026-10-27T08:30:00+03:00",
+        "arm": {
+          "pillar": "spa",
+          "format": "photo",
+          "time_bucket": "morning_08_10",
+          "hook_style": "question"
+        },
+        "segment": "gcc",
+        "explore": false
+      },
+      "content_signature": "8e62e830728c2ad7a52f6596ae05d50d2311607b29ef217685f17c339c9390f1"
+    },
+    {
+      "slot": {
+        "id": "cycle-w03-wed-1",
+        "run_id": "cycle-w03",
+        "brand_hash": "829a6b9b034f403005b25aa09a5abfdd0b05c848edbf4e9031b3b8fef0e8f7a9",
+        "scheduled_at": "2026-10-28T08:30:00+03:00",
+        "arm": {
+          "pillar": "guests",
+          "format": "photo",
+          "time_bucket": "morning_08_10",
+          "hook_style": "question"
+        },
+        "segment": "european",
+        "explore": false
+      },
+      "content_signature": "944d6da85b7b13d0673e7f49919a11ee16c3f85b77529f85f40f46aef6cffac0"
+    },
+    {
+      "slot": {
+        "id": "cycle-w03-thu-1",
+        "run_id": "cycle-w03",
+        "brand_hash": "829a6b9b034f403005b25aa09a5abfdd0b05c848edbf4e9031b3b8fef0e8f7a9",
+        "scheduled_at": "2026-10-29T08:30:00+03:00",
+        "arm": {
+          "pillar": "local",
+          "format": "photo",
+          "time_bucket": "morning_08_10",
+          "hook_style": "question"
+        },
+        "segment": "egyptian",
+        "explore": false
+      },
+      "content_signature": "d56fc1fbff664f0be7f1fe44fa58c00a752e055f1f6ca72c28ee3c83717a57bf"
+    },
+    {
+      "slot": {
+        "id": "cycle-w03-fri-1",
+        "run_id": "cycle-w03",
+        "brand_hash": "829a6b9b034f403005b25aa09a5abfdd0b05c848edbf4e9031b3b8fef0e8f7a9",
+        "scheduled_at": "2026-10-30T08:30:00+02:00",
+        "arm": {
+          "pillar": "local",
+          "format": "photo",
+          "time_bucket": "morning_08_10",
+          "hook_style": "question"
+        },
+        "segment": "gcc",
+        "explore": false
+      },
+      "content_signature": "9f173f0dd2e36111a37feb1b0edd538bd079297b6f8cf818df6a5bece3dd7407"
+    },
+    {
+      "slot": {
+        "id": "cycle-w03-sat-1",
+        "run_id": "cycle-w03",
+        "brand_hash": "829a6b9b034f403005b25aa09a5abfdd0b05c848edbf4e9031b3b8fef0e8f7a9",
+        "scheduled_at": "2026-10-31T08:30:00+02:00",
+        "arm": {
+          "pillar": "offers",
+          "format": "photo",
+          "time_bucket": "morning_08_10",
+          "hook_style": "question"
+        },
+        "segment": "european",
+        "explore": false
+      },
+      "content_signature": "d12ca6018f0b46553e4b8212c2a09087ade06f5a90e68b637ff759d09558e796"
+    },
+    {
+      "slot": {
+        "id": "cycle-w03-sun-1",
+        "run_id": "cycle-w03",
+        "brand_hash": "829a6b9b034f403005b25aa09a5abfdd0b05c848edbf4e9031b3b8fef0e8f7a9",
+        "scheduled_at": "2026-11-01T08:30:00+02:00",
+        "arm": {
+          "pillar": "offers",
+          "format": "reel",
+          "time_bucket": "morning_08_10",
+          "hook_style": "question"
+        },
+        "segment": "egyptian",
+        "explore": false
+      },
+      "content_signature": "ef2eed1007ddc498f9d8adea7cf4cff22ce888d8c02856daee79e36adc8ead13"
+    }
+  ]
+}

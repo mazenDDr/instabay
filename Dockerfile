@@ -8,6 +8,8 @@ ENV UV_PYTHON_DOWNLOADS=never \
     INSTABAY_DB_PATH=/state/demo.sqlite3 \
     INSTABAY_CHECKPOINTS_PATH=/state/checkpoints.sqlite3 \
     INSTABAY_OUTBOX_PATH=/state/outbox \
+    INSTABAY_BENCH_OUTPUT=/state/bench-results.json \
+    INSTABAY_BENCH_ARTIFACTS=/state/bench \
     PATH="/app/.venv/bin:$PATH"
 COPY pyproject.toml uv.lock README.md ./
 COPY src ./src
@@ -16,6 +18,7 @@ RUN uv sync --frozen --no-dev
 COPY tests/fixtures/llm ./tests/fixtures/llm
 COPY config ./config
 COPY assets/photos ./assets/photos
+COPY bench ./bench
 RUN mkdir -p /state && chown 10001:10001 /state
 USER 10001:10001
 ENTRYPOINT ["instabay"]

@@ -1,0 +1,10 @@
+{
+  "template_name": "copy_en",
+  "slot_id": "cycle-w01-mon-1",
+  "response": {
+    "caption": "3 Red Sea daydreams: clear water, soft light, a slower pace. Save your inspiration.",
+    "alt_text": "Terracotta arches and palms in a Grand Resort Hurghada reference photo."
+  },
+  "input_tokens": 180,
+  "output_tokens": 75
+}

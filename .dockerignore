@@ -8,6 +8,8 @@
 .uv-python
 .pre-commit-cache
 outputs
+outbox
+bench/human_ratings/*.csv
 data
 renders
 AGENTS.md

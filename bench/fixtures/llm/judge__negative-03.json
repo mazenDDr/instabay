@@ -1,0 +1,18 @@
+{
+  "template_name": "judge",
+  "slot_id": "negative-03",
+  "response": {
+    "scores": {
+      "voice": 2,
+      "pillar_fit": 1,
+      "caption_visual_match": 2,
+      "hashtag_policy": 5,
+      "format_cta": 1
+    },
+    "fixes": [
+      "Generic hotel copy has no specific pillar angle or relaxed brand voice"
+    ]
+  },
+  "input_tokens": 180,
+  "output_tokens": 65
+}

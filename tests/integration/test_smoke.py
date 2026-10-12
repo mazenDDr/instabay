@@ -25,12 +25,6 @@ def test_smoke_and_replay_use_no_live_provider(tmp_path: Path) -> None:
         assert [row.status for row in store.calls()] == ["success", "success", "cached", "cached"]
 
 
-def test_later_phase_benchmark_command_does_not_claim_success() -> None:
-    result = CliRunner().invoke(app, ["bench"])
-    assert result.exit_code == 2
-    assert "not implemented yet" in result.output
-
-
 def test_network_sockets_are_blocked() -> None:
     with pytest.warns(UserWarning, match="socket.socket"), pytest.raises(SocketBlockedError):
         socket.socket()

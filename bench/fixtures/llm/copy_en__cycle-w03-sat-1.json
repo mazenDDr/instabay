@@ -1,0 +1,10 @@
+{
+  "template_name": "copy_en",
+  "slot_id": "cycle-w03-sat-1",
+  "response": {
+    "caption": "How would you plan a gentler escape? Write down one thing you want more time for.",
+    "alt_text": "Terracotta arches and palms in a Grand Resort Hurghada reference photo."
+  },
+  "input_tokens": 180,
+  "output_tokens": 75
+}
