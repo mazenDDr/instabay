@@ -18,6 +18,7 @@ from instabay.core.schemas import Boundary, Hash, Identifier
 Origin = Literal["owner", "generated"]
 MAX_UPLOAD_BYTES = 25_000_000
 FORMATS = {"JPEG": ".jpg", "PNG": ".png", "WEBP": ".webp"}
+VIEW_OK = 0.8  # min(same_place, photoreal); separated 6 good / 5 bad views by eye, n=12 (ADR 0013)
 CONFIDENT = 0.5  # provisional: top-pillar probability; re-tune from owner labels (ADR 0013)
 
 SCHEMA = """
@@ -101,6 +102,15 @@ class Asset(Boundary):
             return self.owner_pillar
         if self.model_pillar and (self.model_confidence or 0) >= CONFIDENT:
             return self.model_pillar
+        return None
+
+    @property
+    def view_score(self) -> float | None:
+        """Rule 6: the weaker of d3's same-place and photoreal answers for a generated view."""
+        f = self.fidelity or {}
+        same, real = f.get("same_place"), f.get("photoreal")
+        if isinstance(same, float) and isinstance(real, float):
+            return min(same, real)
         return None
 
     @property

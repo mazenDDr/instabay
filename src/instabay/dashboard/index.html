@@ -295,6 +295,7 @@ function card(a) {
   if (a.origin === "generated") {
     const f = a.fidelity || {};
     extra.push(h("p", { class: "note" }, `${a.preset || "camera view"} · same place ${pct(f.same_place)} · photoreal ${pct(f.photoreal)}`));
+    if (a.view_score !== null && !a.view_ok) extra.push(h("span", { class: "chip alert" }, "Likely changed the place: check closely"));
     extra.push(h("div", { class: "row" }, h("button", { class: "btn small" + (a.approved ? "" : " primary"), type: "button", onclick: () => patch(a.id, { approved: !a.approved }) }, a.approved ? "Unapprove" : "Approve view")));
   } else if (state.summary.variants_enabled) {
     const preset = h("select", { "aria-label": "Camera direction" }, ...state.summary.presets.map((p) => h("option", { value: p.id, text: p.label })));

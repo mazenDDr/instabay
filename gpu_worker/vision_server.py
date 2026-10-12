@@ -206,6 +206,7 @@ def views(request: ViewRequest) -> dict[str, Any]:
     torch = importlib.import_module("torch")
     with _lock:
         pipe = load_view()
+        torch.cuda.reset_peak_memory_stats()
         started = time.perf_counter()
         generator = torch.Generator(device="cpu").manual_seed(int(recipe["seed"]))
         image = pipe(

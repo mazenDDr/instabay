@@ -141,3 +141,11 @@ def test_dashboard_upload_review_mix_plan_and_safe_media(library, tmp_path):
         client.post(f"/api/assets/{created['id']}/variants", json={"preset": "aerial"}).status_code
         == 409
     )
+
+
+def test_view_score_is_the_weaker_d3_answer(library):
+    parent = owner_photo(library, 9, "local")
+    view = make_view(library, parent, "aerial", 1, backend=StubViewBackend(), revision="r")
+    assert view.view_score is None
+    library.record_fidelity(view.id, {"same_place": 0.95, "photoreal": 0.49})
+    assert library.get(view.id).view_score == 0.49

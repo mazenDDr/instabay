@@ -20,7 +20,7 @@ from pydantic import Field, JsonValue
 
 from instabay.assets.classify import agreement, classify_assets
 from instabay.assets.export import PROPERTY_KEY
-from instabay.assets.library import Asset, AssetLibrary
+from instabay.assets.library import VIEW_OK, Asset, AssetLibrary
 from instabay.assets.plan import OwnerCadence, load_cadence, save_cadence, suggest_assets
 from instabay.core.planner import plan_week
 from instabay.core.schemas import Boundary, BrandConstitution, canonical_hash
@@ -73,6 +73,8 @@ def asset_view(asset: Asset) -> dict[str, JsonValue]:
         "usable": asset.usable,
         "described": asset.described,
         "preset": (asset.recipe or {}).get("preset"),
+        "view_score": asset.view_score,
+        "view_ok": asset.view_score is not None and asset.view_score >= VIEW_OK,
         "fidelity": asset.fidelity,
         "thumb": f"/media/assets/{asset.id}?w={THUMB}",
         "full": f"/media/assets/{asset.id}",

@@ -41,3 +41,28 @@ returns probabilities for choice/yes-no/score questions and never draws images.
 - One large model is resident at a time; switching between classify and generate reloads.
 - Pillar accuracy is unknown until the owner labels photos. The dashboard shows it and does
   not claim it.
+
+## Measurements (gpu-box RTX 5060 Ti 16 GB, 2026-10-13)
+
+| Step | Result |
+|---|---|
+| d3-flash load / VRAM | 13 s / 14.76 GB (embedding table on CPU, no quantization) |
+| d3-flash, 1 photo, 2 questions | 1.7–3.2 s (median 2.5 s), 0/8 failures |
+| d3-flash, 2 images (fidelity) | about 5.2 s |
+| FLUX.2-klein-4B load | 3.7 s (model CPU offload) |
+| FLUX view 2032x1360 / 1088x1632 | 32–39 s / 26–30 s, peak 9.97 GB |
+
+12 views (6 presets × 2 photos) were judged by eye, by one rater (the agent), and compared
+with min(d3 same_place, d3 photoreal):
+
+| Group | Views | d3 min score |
+|---|---|---|
+| Looked right | 6 | 0.82–0.92 |
+| Changed the place or looked fake | 5 | 0.45–0.72 |
+| Borderline (invented rock in close detail) | 1 | 0.76 |
+
+The dashboard flags views under 0.8 (`VIEW_OK`). The threshold comes from only 12 views and
+one rater, so the owner still approves every view. Worst presets: `detail` (miniature look),
+`aerial` from a ground photo (invents a site layout) and `golden_hour` on aerial water.
+Best: `over_shoulder`, `golden_hour` on ground photos, and `guests`. The sample photos come
+from two different resorts and were used only for this test.
