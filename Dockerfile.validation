@@ -5,6 +5,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends git make ffmpeg
 WORKDIR /app
 ENV UV_PYTHON_DOWNLOADS=never \
     UV_LINK_MODE=copy \
+    PRE_COMMIT_HOME=/app/.pre-commit-cache \
     INSTABAY_MODE=dry_run \
     INSTABAY_DB_PATH=outputs/clone-demo.sqlite3 \
     INSTABAY_CHECKPOINTS_PATH=outputs/clone-checkpoints.sqlite3 \
