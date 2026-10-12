@@ -1,0 +1,14 @@
+{
+  "template_name": "brief_writer",
+  "slot_id": "wk42-tue-1",
+  "input_tokens": 180,
+  "output_tokens": 85,
+  "response": {
+    "angle": "The quiet of the Red Sea in the morning",
+    "hook": "Ask when they last enjoyed real quiet",
+    "key_message": "Turquoise light and a slower morning",
+    "visual": "assets/photos/grand_resort_day.jpg",
+    "cta": "save for your next escape",
+    "must_not": ["prices", "unverified facilities", "faces"]
+  }
+}

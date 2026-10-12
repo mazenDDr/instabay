@@ -1,0 +1,25 @@
+repos:
+  - repo: local
+    hooks:
+      - id: ruff
+        name: ruff check
+        entry: .venv/bin/ruff check
+        language: system
+        types_or: [python, pyi]
+      - id: ruff-format
+        name: ruff format check
+        entry: .venv/bin/ruff format --check
+        language: system
+        types_or: [python, pyi]
+      - id: mypy
+        name: mypy strict
+        entry: .venv/bin/mypy
+        language: system
+        pass_filenames: false
+        types_or: [python, pyi]
+      - id: detect-secrets
+        name: detect secrets
+        entry: .venv/bin/detect-secrets-hook
+        args: [--no-verify]
+        language: system
+        exclude: ^(uv\.lock|assets/photos/manifest\.json)$

@@ -1,0 +1,10 @@
+{
+  "template_name": "copy_en",
+  "slot_id": "wk42-tue-1",
+  "input_tokens": 150,
+  "output_tokens": 55,
+  "response": {
+    "caption": "When did you last hear real silence?\nTurquoise light. A slower morning. 🐠\nSave this for your next escape.",
+    "alt_text": "Turquoise water and soft morning light, used as a fictional resort mood reference"
+  }
+}
