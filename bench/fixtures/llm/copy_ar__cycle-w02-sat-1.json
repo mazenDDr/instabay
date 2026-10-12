@@ -1,0 +1,10 @@
+{
+  "template_name": "copy_ar",
+  "slot_id": "cycle-w02-sat-1",
+  "response": {
+    "caption": "ما أول سؤال تطرحه قبل الحجز؟ اترك مساحة لرحلة تناسب إيقاعك.",
+    "alt_text": "أقواس دافئة ونخيل في صورة مرجعية لمنتجع جراند ريزورت الغردقة."
+  },
+  "input_tokens": 180,
+  "output_tokens": 100
+}

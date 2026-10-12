@@ -27,25 +27,46 @@ def main() -> None:
     )
     digest = canonical_hash(brand)
     cases, translations = [], []
-    literal_hook = {
-        "question": "ما الذي سوف يشعر به هروبك القادم؟",
-        "number": "ثلاثة تفاصيل لتتذوق: الضوء، الظل، الهدوء.",
-    }
-    literal_topic = {
-        "underwater": "أحلام البحر الأحمر أسفل السطح.",
-        "spa": "قائمة أمنيات العافية تبدأ بالهدوء.",
-        "guests": "ذكرى سفرك القادمة تبدأ مع فكرة.",
-        "local": "دع الغردقة تلهم قائمة أمنيات سفرك القادمة.",
-        "offers": "إلهام الحجز: ضع هروباً أبطأ على قائمة أمنياتك.",
-    }
+    native = json.loads((root / "fixtures/authored_native.json").read_text())
+    if len(native) != 21 or len({row["ar"] for row in native}) != 21:
+        raise ValueError("Author exactly 21 unique native benchmark cases")
     for week in range(1, 4):
         slots = plan_week(
             brand, digest, f"cycle-w{week:02d}", date(2026, 10, 12) + timedelta(weeks=week - 1)
         )
         for slot in slots:
             arm = slot.arm.model_dump(mode="json")
-            label = catalog.response("fidelity", slot.id, arm).response
-            cases.append(CorpusCase(slot=slot, content_signature=label["content_signature"]))
+            index = len(cases)
+            brief = catalog.response("brief_writer", slot.id, arm).response
+            en = Copy(
+                caption=native[index]["en"],
+                alt_text="Terracotta arches and palms in a Grand Resort Hurghada reference photo.",
+            )
+            ar = Copy(
+                caption=native[index]["ar"],
+                alt_text="أقواس دافئة ونخيل في صورة مرجعية لمنتجع جراند ريزورت الغردقة.",
+            )
+            signature = canonical_hash(
+                {
+                    "brief": brief,
+                    "en": en.model_dump(mode="json"),
+                    "ar": ar.model_dump(mode="json"),
+                    "format": slot.arm.format,
+                }
+            )
+            cases.append(CorpusCase(slot=slot, content_signature=signature))
+            for template, copy, tokens in (("copy_en", en, 75), ("copy_ar", ar, 100)):
+                recorded = Fixture(
+                    template_name=template,
+                    slot_id=slot.id,
+                    response=copy.model_dump(mode="json"),
+                    input_tokens=180,
+                    output_tokens=tokens,
+                )
+                (fixtures / f"{template}__{slot.id}.json").write_text(
+                    json.dumps(recorded.model_dump(), ensure_ascii=False, indent=2) + "\n",
+                    encoding="utf-8",
+                )
             response = ArabicScores(fluency=5, naturalness=4, brand_voice=5)
             fixture = Fixture(
                 template_name="arabic_judge",
@@ -62,11 +83,10 @@ def main() -> None:
                 translations.append(
                     TranslationCase(
                         post_id=slot.id,
-                        caption=f"{literal_hook[slot.arm.hook_style]}\n"
-                        f"{literal_topic[slot.arm.pillar]}\nاحفظ إلهام السفر هذا.",
+                        caption=native[index]["mt"],
                     )
                 )
-    corpus = Corpus(version="fixed-fixture-21-v1", brand_hash=digest, cases=cases)
+    corpus = Corpus(version="fixed-fixture-21-v2", brand_hash=digest, cases=cases)
     (root / "corpus.json").write_text(corpus.model_dump_json(indent=2) + "\n", encoding="utf-8")
     (root / "fixtures/translations.json").write_text(
         json.dumps([case.model_dump() for case in translations], ensure_ascii=False, indent=2)

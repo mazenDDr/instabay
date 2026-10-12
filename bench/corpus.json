@@ -1,5 +1,5 @@
 {
-  "version": "fixed-fixture-21-v1",
+  "version": "fixed-fixture-21-v2",
   "brand_hash": "829a6b9b034f403005b25aa09a5abfdd0b05c848edbf4e9031b3b8fef0e8f7a9",
   "cases": [
     {
@@ -17,7 +17,7 @@
         "segment": "egyptian",
         "explore": true
       },
-      "content_signature": "aaf795edfd1904366335c66d007cdc2ed845974c93bdb3e47ede0643ab13f2b2"
+      "content_signature": "254aa7e8b9c164a3b4d4c1f83049ddc104522f66ca835a5a507cd764c8662a1d"
     },
     {
       "slot": {
@@ -34,7 +34,7 @@
         "segment": "gcc",
         "explore": false
       },
-      "content_signature": "3a6168907b6e3a7dac50a905a1f73a9ec9681dceab29818a0cf2144fc8906281"
+      "content_signature": "472162e47937134f2b59b95271981ba5064a755d92e1c1c8527ff122735cfbe7"
     },
     {
       "slot": {
@@ -51,7 +51,7 @@
         "segment": "european",
         "explore": false
       },
-      "content_signature": "58e46e93eda3ba54efb78c7d59383a81caf5ee5ade9e9c4911fa824275c673ca"
+      "content_signature": "eb3e8f473b2280f164a779624bc8ea860ab03bb3d2b5f3f28469f265a6cda5cc"
     },
     {
       "slot": {
@@ -68,7 +68,7 @@
         "segment": "egyptian",
         "explore": false
       },
-      "content_signature": "cf5b3fbda40872e358e040e3720f646bc7d2be124fbd4fe68393e563833706f3"
+      "content_signature": "c3ad8d06ac1096c9e0e6af3f104c7a7b27e6300ec1e6d45c5f7adaca3da94cde"
     },
     {
       "slot": {
@@ -85,7 +85,7 @@
         "segment": "gcc",
         "explore": false
       },
-      "content_signature": "cf5b3fbda40872e358e040e3720f646bc7d2be124fbd4fe68393e563833706f3"
+      "content_signature": "c2425e3f8eaa55273c7ed2164d78abf16d7d5f3b57a4d887f0d3d7dedce843e7"
     },
     {
       "slot": {
@@ -102,7 +102,7 @@
         "segment": "european",
         "explore": false
       },
-      "content_signature": "61e2b52ba82328f4b81e862e930d3e6dab46732bd8057763c5b8fde6a04580c6"
+      "content_signature": "b47c5c27c3d2f740469afb453cc4b11bd6cdd7d5c19633afd84aae009efc29b9"
     },
     {
       "slot": {
@@ -119,7 +119,7 @@
         "segment": "egyptian",
         "explore": false
       },
-      "content_signature": "25e95ff7cfc4cfdccb0f74ab315d325c51a36871b93134fd9aed092ae9497f58"
+      "content_signature": "8c0e9395a7502977b9b71f486cb44077677a4587bb98df74919eeb013baacafc"
     },
     {
       "slot": {
@@ -136,7 +136,7 @@
         "segment": "egyptian",
         "explore": true
       },
-      "content_signature": "aaf795edfd1904366335c66d007cdc2ed845974c93bdb3e47ede0643ab13f2b2"
+      "content_signature": "030380a2e6e436300f527a622808ffd6a0f5ac6b6348f1bce5b38042d4d35f8c"
     },
     {
       "slot": {
@@ -153,7 +153,7 @@
         "segment": "gcc",
         "explore": false
       },
-      "content_signature": "3a6168907b6e3a7dac50a905a1f73a9ec9681dceab29818a0cf2144fc8906281"
+      "content_signature": "129610644da40269c65e82cab15c6e7a1ab382efbd433f8992f0e52a51a21a25"
     },
     {
       "slot": {
@@ -170,7 +170,7 @@
         "segment": "european",
         "explore": false
       },
-      "content_signature": "58e46e93eda3ba54efb78c7d59383a81caf5ee5ade9e9c4911fa824275c673ca"
+      "content_signature": "ffed603080edf204beb506ffefe67749c297283fb1ec4e4b68086b95cfcd43fa"
     },
     {
       "slot": {
@@ -187,7 +187,7 @@
         "segment": "egyptian",
         "explore": false
       },
-      "content_signature": "cf5b3fbda40872e358e040e3720f646bc7d2be124fbd4fe68393e563833706f3"
+      "content_signature": "a91a49cd90b7dfa4989dbb5e3ebc5ea23c994b4034c02a9b8bac6ae6541008fe"
     },
     {
       "slot": {
@@ -204,7 +204,7 @@
         "segment": "gcc",
         "explore": false
       },
-      "content_signature": "cf5b3fbda40872e358e040e3720f646bc7d2be124fbd4fe68393e563833706f3"
+      "content_signature": "a466bd2c43cff819d23511cbe6ddeeaefa8b033dae14c9717119c47bdcfd651c"
     },
     {
       "slot": {
@@ -221,7 +221,7 @@
         "segment": "european",
         "explore": false
       },
-      "content_signature": "61e2b52ba82328f4b81e862e930d3e6dab46732bd8057763c5b8fde6a04580c6"
+      "content_signature": "ff097d207df6b08daa44e040d775b0c887cef5c5330cc0309eb17ac8c5d0d4a1"
     },
     {
       "slot": {
@@ -238,7 +238,7 @@
         "segment": "egyptian",
         "explore": false
       },
-      "content_signature": "25e95ff7cfc4cfdccb0f74ab315d325c51a36871b93134fd9aed092ae9497f58"
+      "content_signature": "143274fe74e43492f4a2b8869f4de6caa42bdbf2e28f75d6ab99d2ff0fd92001"
     },
     {
       "slot": {
@@ -255,7 +255,7 @@
         "segment": "egyptian",
         "explore": true
       },
-      "content_signature": "aaf795edfd1904366335c66d007cdc2ed845974c93bdb3e47ede0643ab13f2b2"
+      "content_signature": "4d62f4bdc0be69e2a0350b2bd018e2f63284f8c1afe32ae4c27b9c5bf9f8af79"
     },
     {
       "slot": {
@@ -272,7 +272,7 @@
         "segment": "gcc",
         "explore": false
       },
-      "content_signature": "3a6168907b6e3a7dac50a905a1f73a9ec9681dceab29818a0cf2144fc8906281"
+      "content_signature": "8e62e830728c2ad7a52f6596ae05d50d2311607b29ef217685f17c339c9390f1"
     },
     {
       "slot": {
@@ -289,7 +289,7 @@
         "segment": "european",
         "explore": false
       },
-      "content_signature": "58e46e93eda3ba54efb78c7d59383a81caf5ee5ade9e9c4911fa824275c673ca"
+      "content_signature": "944d6da85b7b13d0673e7f49919a11ee16c3f85b77529f85f40f46aef6cffac0"
     },
     {
       "slot": {
@@ -306,7 +306,7 @@
         "segment": "egyptian",
         "explore": false
       },
-      "content_signature": "cf5b3fbda40872e358e040e3720f646bc7d2be124fbd4fe68393e563833706f3"
+      "content_signature": "d56fc1fbff664f0be7f1fe44fa58c00a752e055f1f6ca72c28ee3c83717a57bf"
     },
     {
       "slot": {
@@ -323,7 +323,7 @@
         "segment": "gcc",
         "explore": false
       },
-      "content_signature": "cf5b3fbda40872e358e040e3720f646bc7d2be124fbd4fe68393e563833706f3"
+      "content_signature": "9f173f0dd2e36111a37feb1b0edd538bd079297b6f8cf818df6a5bece3dd7407"
     },
     {
       "slot": {
@@ -340,7 +340,7 @@
         "segment": "european",
         "explore": false
       },
-      "content_signature": "61e2b52ba82328f4b81e862e930d3e6dab46732bd8057763c5b8fde6a04580c6"
+      "content_signature": "d12ca6018f0b46553e4b8212c2a09087ade06f5a90e68b637ff759d09558e796"
     },
     {
       "slot": {
@@ -357,7 +357,7 @@
         "segment": "egyptian",
         "explore": false
       },
-      "content_signature": "25e95ff7cfc4cfdccb0f74ab315d325c51a36871b93134fd9aed092ae9497f58"
+      "content_signature": "ef2eed1007ddc498f9d8adea7cf4cff22ce888d8c02856daee79e36adc8ead13"
     }
   ]
 }

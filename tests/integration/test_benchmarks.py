@@ -48,7 +48,14 @@ def benchmark(tmp_path_factory):
     ]
     items = [
         BlindItem.model_validate(row)
-        for row in json.loads((root / "artifacts/human_packet/arabic_key_private.json").read_text())
+        for row in json.loads(
+            (
+                root
+                / "artifacts/human_packet"
+                / result.corpus_hash[:12]
+                / "arabic_key_private.json"
+            ).read_text()
+        )
     ]
     calls = [
         CallRecord.model_validate_json(line)
@@ -83,6 +90,10 @@ def test_full_five_metric_protocol_and_missing_human_data(benchmark) -> None:
     assert result.optimization_uplift.evaluation_weeks == [9, 10, 11, 12]
     assert result.optimization_uplift.summaries["oracle"].cumulative_regret.mean == 0
     assert len(content) == 21 and len(items) == 40
+    assert len({row.post.en.caption for row in content}) == 21
+    assert len({row.post.ar.caption for row in content}) == 21
+    assert result.arabic_quality.unique_native_captions == 20
+    assert result.arabic_quality.unique_translation_captions == 20
     assert sum(item.version == "native" for item in items) == 20
     assert len(calls) == 222
     assert result.efficiency.benchmark_evaluation_calls == 93

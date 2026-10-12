@@ -9,14 +9,15 @@ The corpus and all scores are fixture examples, not real model performance.
 
 - `corpus.json`: 21 frozen slots, three seven-post weeks, brand hash and content signatures.
 - `fixtures/llm/`: 21 Arabic evaluator cases and 10 generic-caption rubric cases. The core
-  brief/copy/judge responses come from the explicit cycle catalog. Every judge uses three
+  shared briefs and rubric responses come from the explicit cycle catalog; 21 distinct
+  native EN/AR caption pairs have benchmark-only overrides. Every judge uses three
   requests at temperature zero. FakeLLM supplies all responses; no real independent model
   family is exercised. Real runs must use a judge from a different generator family.
 - `fixtures/negative_controls.json`: ten distinct generic EN/AR captions, paired with the
   first ten corpus posts. The canned score difference is a harness sanity check.
 - `fixtures/translations.json`: twenty **authored literal-translation fixtures**. They
-  have not been recorded from an MT provider. Some canned native captions are repeated;
-  unique caption counts are reported. Do not claim general Arabic quality from this pack.
+  have not been recorded from an MT provider. All 20 native and 20 comparison captions
+  in the blind packet are distinct. Do not claim general Arabic quality from this pack.
 - `rubric.md`: written anchors for the five brand dimensions and three Arabic dimensions.
 
 Intermediate posts, three judge samples, deterministic rules and cold call metadata are
@@ -74,7 +75,8 @@ touchpoint/reason. Feedback never grants application publishing authorization.
 
 ## HUMAN inputs
 
-1. Run `make bench`. Give raters `outputs/bench/human_packet/arabic_blind_items.json` and
+1. Run `make bench`. It prints the corpus-specific packet directory under
+   `outputs/bench/human_packet/CORPUS_ID/`. Give raters `arabic_blind_items.json` there and
    a copy of `arabic_template.csv`. Keep `arabic_key_private.json` away from raters.
    Fill one CSV per Arabic rater (two or more to estimate agreement); use opaque item IDs.
 2. Give brand raters the first 20 posts in `content.json`, this rubric and
@@ -84,7 +86,8 @@ touchpoint/reason. Feedback never grants application publishing authorization.
    measurements only. Use `instabay approve` separately for actual publishing approvals.
 4. Save completed CSVs as `bench/human_ratings/brand_NAME.csv`, `arabic_NAME.csv` and
    `approval_NAME.csv`, or pass a private directory with `instabay bench --ratings PATH`.
-   They are git-ignored. Existing templates are preserved on repeated runs. Blank scores
+   They are git-ignored. Existing templates are preserved on repeated runs, and a changed
+   corpus gets a separate packet directory. Blank scores
    stay pending; partially filled, duplicate, out-of-range and stale rows fail clearly.
 5. # HUMAN: record real MT to replace authored comparisons before a real language claim.
    A `recorded_mt` case must include its model, UTC `recorded_at` and `english_source_hash`

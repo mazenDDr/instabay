@@ -9,6 +9,7 @@ from pydantic import Field, TypeAdapter, model_validator
 
 from instabay.adapters.fake_llm import FakeLLM
 from instabay.adapters.fixture_fidelity import content_signature
+from instabay.adapters.llm import Completion, CompletionRequest
 from instabay.agents.brand_architect import BrandArchitect
 from instabay.agents.brief_writer import BriefWriter
 from instabay.agents.common import agent_inputs, prompt_hashes
@@ -66,6 +67,19 @@ class Corpus(Boundary):
         return self
 
 
+class BenchmarkFixtureLLM:
+    """FR-14: exact benchmark-only text fixtures overlay the original canned agents."""
+
+    def __init__(self, base: Path, overlay: Path) -> None:
+        self.base = FakeLLM(base)
+        self.overlay = FakeLLM(overlay)
+        self.overlay_dir = overlay
+
+    def complete(self, request: CompletionRequest) -> Completion:
+        path = self.overlay_dir / f"{request.template_name}__{request.slot_id}.json"
+        return self.overlay.complete(request) if path.is_file() else self.base.complete(request)
+
+
 def replay_corpus(
     corpus: Corpus,
     inputs: BrandInput,
@@ -74,7 +88,7 @@ def replay_corpus(
     benchmark_fixtures: Path,
 ) -> tuple[BrandConstitution, list[ContentEvidence], list[float]]:
     """FR-14: generate/check drafts only; no repository, approval, resume or publisher calls."""
-    service = LLMService(FakeLLM(fixture_dir), store)
+    service = LLMService(BenchmarkFixtureLLM(fixture_dir, benchmark_fixtures), store)
     evaluator = LLMService(
         FakeLLM(benchmark_fixtures), store, budget=RunBudget(max_calls=150, max_tokens=40000)
     )

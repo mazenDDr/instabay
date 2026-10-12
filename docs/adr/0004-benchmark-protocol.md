@@ -20,9 +20,12 @@ to planned arms. Paired seed intervals report the effect, including a null or ad
 result. No real D1 accuracy is inferred. Complete seed evidence is flushed incrementally
 and resumed only under a code/data/Python protocol fingerprint; no tuning on these seeds.
 
-The fixed 21-post quality corpus reuses the explicit canned cycle cases. Three fixture
+The fixed 21-post quality corpus uses benchmark-only distinct EN/AR text over the canned
+cycle briefs. An input audit found only five unique captions in the initial reused cases;
+those were replaced by 21 distinct caption pairs and 20 distinct comparison texts without
+changing any policy or simulator. Corpus v2 freezes these texts. Three fixture
 judge samples and ten generic negative controls test scoring/reporting wiring, not real
-model quality. Their repeated scores/captions do not establish statistical independence
+model quality. Their repeated canned scores do not establish statistical independence
 or grader calibration. Brand QWK pools anchored 1–5 post/dimension pairs after human-rater
 and judge-sample averaging with half-up rounding. Arabic packets shuffle twenty native
 captions and twenty explicitly authored literal-translation fixtures. Human mean scores,

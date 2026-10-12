@@ -155,6 +155,7 @@ def run_benchmark(
 ) -> BenchmarkResults:
     """FR-14: missing HUMAN data remains null; no API keys, approvals, GPU or live adapters."""
     corpus = Corpus.model_validate_json((root / "bench/corpus.json").read_bytes())
+    corpus_digest = hashlib.sha256((root / "bench/corpus.json").read_bytes()).hexdigest()
     inputs = BrandInput.model_validate(
         yaml.safe_load((root / "config/brand_inputs.example.yaml").read_text())
     )
@@ -182,7 +183,8 @@ def run_benchmark(
         "".join(row.model_dump_json() + "\n" for row in calls), encoding="utf-8"
     )
     packet = blind_packet(content, translations)
-    write_packet(artifacts / "human_packet", content, packet)
+    packet_path = artifacts / "human_packet" / corpus_digest[:12]
+    write_packet(packet_path, content, packet)
     brand_results = brand_metric(content, controls, ratings)
     arabic_results = arabic_metric(content, packet, ratings)
     autonomy = autonomy_metric(content, ratings)
@@ -192,6 +194,7 @@ def run_benchmark(
     )
     optimization = summarize(seed_results)
     pending = []
+    pending.append(f"HUMAN: rating packet and blank templates at {packet_path}")
     if brand_results.calibration_status != "human_labels_available":
         pending.append(
             "HUMAN: label 20 brand posts for judge kappa; canned scores are uncalibrated"
@@ -216,7 +219,7 @@ def run_benchmark(
     result = BenchmarkResults(
         generated_at=datetime.now(UTC),
         protocol_hash=identity,
-        corpus_hash=hashlib.sha256((root / "bench/corpus.json").read_bytes()).hexdigest(),
+        corpus_hash=corpus_digest,
         corpus_posts=len(content),
         environment={
             "python": platform.python_version(),
