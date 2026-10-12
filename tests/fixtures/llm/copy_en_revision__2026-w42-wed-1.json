@@ -1,0 +1,10 @@
+{
+  "template_name": "copy_en_revision",
+  "slot_id": "2026-w42-wed-1",
+  "response": {
+    "caption": "What would your unhurried morning look like?\nTerracotta arches and palm shadows.\nTell us your ideal pace.",
+    "alt_text": "Terracotta arches frame palms and a courtyard in a reference photo of The Grand Resort Hurghada."
+  },
+  "input_tokens": 180,
+  "output_tokens": 75
+}

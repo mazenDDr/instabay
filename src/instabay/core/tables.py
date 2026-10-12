@@ -45,7 +45,6 @@ class SlotRow(SQLModel, table=True):
     __tablename__: ClassVar[str] = "slot"
     id: str = Field(primary_key=True)
     run_id: str = Field(foreign_key="workflow_run.id", index=True)
-    brand_hash: str = Field(foreign_key="brand_version.hash")
     arm_id: str = Field(foreign_key="arm.id")
     scheduled_at: str
     segment: str

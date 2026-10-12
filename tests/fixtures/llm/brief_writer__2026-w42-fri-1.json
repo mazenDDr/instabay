@@ -1,0 +1,20 @@
+{
+  "template_name": "brief_writer",
+  "slot_id": "2026-w42-fri-1",
+  "response": {
+    "angle": "An unhurried moment in a real resort reference photograph",
+    "hook": "Open with a question",
+    "key_message": "Light, shade and time to breathe; no facility or offer claims",
+    "visual_description": "A terracotta arcade framing palms and a courtyard",
+    "photo_uri": "assets/photos/grand_resort_day.jpg",
+    "cta": "Save or share a detail",
+    "must_not": [
+      "invented facilities",
+      "prices",
+      "identifiable faces"
+    ],
+    "reel_concept": null
+  },
+  "input_tokens": 180,
+  "output_tokens": 120
+}

@@ -2,6 +2,7 @@
 
 import json
 from pathlib import Path
+from threading import Lock
 
 from pydantic import BaseModel, ConfigDict, Field, JsonValue
 
@@ -30,6 +31,7 @@ class FakeLLM:
     def __init__(self, fixture_dir: Path) -> None:
         self.fixture_dir = fixture_dir
         self.calls = 0
+        self._lock = Lock()
 
     def complete(self, request: CompletionRequest) -> Completion:
         """NFR-07: select strictly by template name plus slot ID."""
@@ -39,7 +41,8 @@ class FakeLLM:
         fixture = Fixture.model_validate_json(path.read_bytes())
         if (fixture.template_name, fixture.slot_id) != (request.template_name, request.slot_id):
             raise FakeLLMMissingFixture("Fixture identity does not match the requested key")
-        self.calls += 1
+        with self._lock:
+            self.calls += 1
         return Completion(
             model="fake-fixture-v1",
             output_json=json.dumps(fixture.response, ensure_ascii=False),

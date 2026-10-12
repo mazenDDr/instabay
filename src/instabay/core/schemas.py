@@ -142,6 +142,14 @@ class ClaimsPolicy(Boundary):
     banned_terms: list[str]
     emoji_budget: int = Field(default=2, ge=0, le=2)
 
+    @model_validator(mode="after")
+    def source_backed_offers(self) -> Self:
+        if any(
+            not key.strip() or not source.strip() for key, source in self.allowed_offers.items()
+        ):
+            raise ValueError("Every allowed offer requires a nonempty ID and source")
+        return self
+
 
 class BrandConstitution(Boundary):
     """FR-01: a human freezes this object; demo fixtures remain explicitly unfrozen."""
@@ -418,4 +426,4 @@ class WorkflowResult(Boundary):
 
     run_id: Identifier
     post_ids: list[str]
-    status: Literal["approval_pending", "completed"]
+    status: Literal["approval_pending", "in_progress", "completed"]

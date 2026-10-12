@@ -11,6 +11,7 @@ from sqlalchemy import event
 from sqlmodel import Session, SQLModel, col, create_engine, select
 
 from instabay.adapters.storage import OutboxWriter, UnapprovedPublishError
+from instabay.core.rules import check_rules
 from instabay.core.schemas import (
     Approval,
     ApprovalRequest,
@@ -115,6 +116,9 @@ class Repository:
         """FR-03: store arms once and UTC schedule rows separately."""
         with Session(self.engine) as session:
             for slot in slots:
+                run = session.get(RunRow, slot.run_id)
+                if run is None or run.brand_hash != slot.brand_hash:
+                    raise ValueError("Slot must match its stored run and brand")
                 arm = slot.arm
                 if session.get(ArmRow, arm.id) is None:
                     session.add(ArmRow(id=arm.id, **arm.model_dump()))
@@ -122,7 +126,6 @@ class Repository:
                 row = SlotRow(
                     id=slot.id,
                     run_id=slot.run_id,
-                    brand_hash=slot.brand_hash,
                     arm_id=arm.id,
                     scheduled_at=slot.scheduled_at.astimezone(UTC).isoformat(),
                     segment=slot.segment,
@@ -138,6 +141,9 @@ class Repository:
     def slots(self, run_id: str) -> list[Slot]:
         """FR-03: validate persisted arms and convert UTC schedules to Cairo."""
         with Session(self.engine) as session:
+            run = session.get(RunRow, run_id)
+            if run is None:
+                raise KeyError("Unknown run")
             rows = session.exec(
                 select(SlotRow).where(SlotRow.run_id == run_id).order_by(col(SlotRow.scheduled_at))
             ).all()
@@ -151,7 +157,7 @@ class Repository:
                         {
                             "id": row.id,
                             "run_id": row.run_id,
-                            "brand_hash": row.brand_hash,
+                            "brand_hash": run.brand_hash,
                             "scheduled_at": row.scheduled_at,
                             "arm": Arm.model_validate(arm.model_dump(exclude={"id"})),
                             "segment": row.segment,
@@ -171,7 +177,8 @@ class Repository:
 
     def _save_post(self, session: Session, post: Post) -> None:
         slot = session.get(SlotRow, post.slot_id)
-        if slot is None or slot.brand_hash != post.brand_hash:
+        run = session.get(RunRow, slot.run_id) if slot else None
+        if slot is None or run is None or run.brand_hash != post.brand_hash:
             raise ValueError("Post must refer to its stored slot and brand")
         arm = session.get(ArmRow, slot.arm_id)
         if arm is None or arm.format != post.format:
@@ -215,6 +222,9 @@ class Repository:
         arm = session.get(ArmRow, slot.arm_id)
         if arm is None:
             raise ValueError("Broken slot/arm relationship")
+        run = session.get(RunRow, slot.run_id)
+        if run is None:
+            raise ValueError("Broken slot/run relationship")
         tags = session.exec(
             select(HashtagRow)
             .where(HashtagRow.post_id == row.id)
@@ -224,7 +234,7 @@ class Repository:
             {
                 "id": row.id,
                 "slot_id": row.slot_id,
-                "brand_hash": slot.brand_hash,
+                "brand_hash": run.brand_hash,
                 "format": arm.format,
                 "brief": Brief.model_validate_json(row.brief_json),
                 "en": Copy(caption=row.en_caption, alt_text=row.en_alt_text),
@@ -246,7 +256,13 @@ class Repository:
 
     def post_ids(self, run_id: str) -> list[str]:
         """FR-09: preserve the plan's order in the human queue."""
-        return [slot.id for slot in self.slots(run_id)]
+        with Session(self.engine) as session:
+            result = []
+            for slot in self.slots(run_id):
+                post = session.exec(select(PostRow).where(PostRow.slot_id == slot.id)).first()
+                if post is not None:
+                    result.append(post.id)
+            return result
 
     def save_review(self, review: Review) -> None:
         """FR-08: retain each judge sample and deterministic rule details."""
@@ -300,7 +316,9 @@ class Repository:
                 )
                 for score in scores
             ]
-            average = sum(sample.scores.average for sample in samples) / len(samples)
+            if len(samples) != 3:
+                raise ValueError("Exactly three judge samples are required")
+            average = sum(sample.scores.average for sample in samples) / 3
             brand_row = session.get(BrandVersionRow, post.brand_hash)
             if brand_row is None:
                 raise ValueError("Unknown brand version")
@@ -355,9 +373,11 @@ class Repository:
             session.connection().exec_driver_sql("BEGIN IMMEDIATE")
             post = self._post(session, post_id)
             row = session.get(ReviewRow, post_id)
-            if row is None or row.content_hash != post.content_hash:
+            if request.decision != "REJECTED" and (
+                row is None or row.content_hash != post.content_hash
+            ):
                 raise ValueError("Post needs current checks before approval")
-            if json.loads(row.flags_json) and not request.reason.strip():
+            if row is not None and json.loads(row.flags_json) and not request.reason.strip():
                 raise ValueError("Flagged posts need an explicit human reason")
             diff = {}
             if request.decision == "EDITED":
@@ -381,7 +401,10 @@ class Repository:
                         )
                 if not diff:
                     raise ValueError("EDITED decision must actually change a caption")
+                self._check_content(session, post)
                 self._save_post(session, post)
+            elif request.decision == "APPROVED":
+                self._check_content(session, post)
             approval = Approval(
                 id=str(uuid4()),
                 post_id=post_id,
@@ -416,6 +439,7 @@ class Repository:
                 raise UnapprovedPublishError(
                     "Publishing requires a matching stored APPROVED/EDITED decision"
                 )
+            self._check_content(session, post)
             existing = session.exec(
                 select(PublicationRow).where(PublicationRow.post_id == post_id)
             ).first()
@@ -435,6 +459,15 @@ class Repository:
             session.add(PublicationRow(**publication.model_dump(mode="json")))
             session.commit()
             return publication
+
+    @staticmethod
+    def _check_content(session: Session, post: Post) -> None:
+        brand = session.get(BrandVersionRow, post.brand_hash)
+        if brand is None:
+            raise ValueError("Unknown brand version")
+        rules = check_rules(post, BrandConstitution.model_validate_json(brand.constitution_json))
+        if not rules.passed:
+            raise ValueError("Content violates deterministic rules: " + "; ".join(rules.violations))
 
     def publications(self, run_id: str) -> list[Publication]:
         """FR-10: collect dry-run receipts without claiming live Instagram publication."""

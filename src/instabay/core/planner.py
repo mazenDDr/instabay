@@ -54,8 +54,10 @@ def plan_week(
     slots = []
     for index, pillar in enumerate(pillars):
         day = week_start + timedelta(days=index)
-        bucket = buckets[-1] if index == 0 else preferred_bucket
-        hook = hooks[-1] if index == 0 else preferred_hook
+        exploration_bucket = buckets[-1] if buckets[-1] != preferred_bucket else buckets[0]
+        exploration_hook = hooks[-1] if hooks[-1] != preferred_hook else hooks[0]
+        bucket = exploration_bucket if index == 0 else preferred_bucket
+        hook = exploration_hook if index == 0 else preferred_hook
         clock = time.fromisoformat(brand.cadence.windows_cairo[bucket])
         slots.append(
             Slot(

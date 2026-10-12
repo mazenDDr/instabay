@@ -1,0 +1,16 @@
+{
+  "template_name": "judge",
+  "slot_id": "2026-w42-sun-1",
+  "response": {
+    "scores": {
+      "voice": 5,
+      "pillar_fit": 5,
+      "caption_visual_match": 4,
+      "hashtag_policy": 5,
+      "format_cta": 4
+    },
+    "fixes": []
+  },
+  "input_tokens": 180,
+  "output_tokens": 65
+}

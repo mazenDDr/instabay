@@ -1,0 +1,10 @@
+{
+  "template_name": "copy_en",
+  "slot_id": "2026-w42-tue-1",
+  "response": {
+    "caption": "When did you last leave a little space for quiet?\nPalm shadows. No rush.\nSave a slower moment.",
+    "alt_text": "Terracotta arches frame palms and a courtyard in a reference photo of The Grand Resort Hurghada."
+  },
+  "input_tokens": 180,
+  "output_tokens": 75
+}

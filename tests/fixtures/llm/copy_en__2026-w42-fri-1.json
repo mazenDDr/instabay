@@ -1,0 +1,10 @@
+{
+  "template_name": "copy_en",
+  "slot_id": "2026-w42-fri-1",
+  "response": {
+    "caption": "Where would you pause in this scene?\nA quiet arch. A patch of shade.\nPick your favorite detail.",
+    "alt_text": "Terracotta arches frame palms and a courtyard in a reference photo of The Grand Resort Hurghada."
+  },
+  "input_tokens": 180,
+  "output_tokens": 75
+}
