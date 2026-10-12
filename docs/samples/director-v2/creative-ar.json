@@ -1,0 +1,27 @@
+{
+  "first_visual_change_s": 1.3333333333333333,
+  "shot_count": 8,
+  "distinct_subjects": 5,
+  "unique_source_photos": 4,
+  "unique_motion_clips": 2,
+  "repeated_clip_count": 0,
+  "text_fraction": 0.15740740740740738,
+  "has_audio": true,
+  "motion": [
+    {
+      "start_s": 0.0,
+      "seconds": 1.3333333333333333,
+      "median_delta": 0.00587359943977591,
+      "near_static_fraction": 0.0
+    },
+    {
+      "start_s": 0.0,
+      "seconds": 2.6666666666666665,
+      "median_delta": 0.004026610644257703,
+      "near_static_fraction": 0.16129032258064516
+    }
+  ],
+  "flags": [],
+  "human_appeal_review": "pending",
+  "engagement_lift": null
+}

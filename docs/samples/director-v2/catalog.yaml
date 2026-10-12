@@ -1,0 +1,148 @@
+resort: The Grand Resort Hurghada
+objects:
+- id: water
+  label: Water and reflected light
+  observed: Illuminated water with existing reflected light; no people or signs in
+    crop
+  photo:
+    uri: assets/photos/grand_resort_night.jpg
+    sha256: e881b7a4eb45969f8306556044de8088639b04af6b03a09d93b95bec5bf25b00
+  crop:
+    x: 100
+    y: 1450
+    width: 576
+    height: 1024
+  approved_by: mazenDDr
+  approval_id: crop-approval-2026-10-12
+  faces_checked: true
+  attribution: Ercan.G / CC-BY-3.0 - cropped and animated
+  author: Ercan.G
+  license_id: CC-BY-3.0
+  source_page: https://commons.wikimedia.org/wiki/File:Hotel_Grand_Resort_-_panoramio_(1).jpg
+  license_url: https://creativecommons.org/licenses/by/3.0/
+  reference_only: true
+  source: photo
+  clip:
+    uri: docs/samples/director-v2/motion/water/source.mp4
+    sha256: 3d22861fe6cc27c88ab8b9e91b329dc9536c7bb00ef6be189259cec2bf66852c
+    generated: true
+    reference_only: true
+    credit: Ercan.G / CC-BY-3.0 - cropped and animated
+    motion_recipe:
+      uri: docs/samples/director-v2/motion/water/recipe.json
+      sha256: 606e170169f38062db3e7cf55a775f68145677f5a820cf7cdb7a3c3455249873
+    motion_recipe_hash: c27630df22acb12b9f6b0e869c1485c948c64473af5463360f2558e3ad9c562d
+    start_s: 0.0
+  allowed_actions:
+  - photo_camera
+  - water_ripples
+- id: flowers
+  label: Yellow flowers
+  observed: Yellow flowers and green leaves in the foreground, no visible people
+  photo:
+    uri: assets/photos/grand_resort_exterior.jpg
+    sha256: 3e6f7074149430eab815f05881d4c821d82acf24bf45b9b1a206c5221878760c
+  crop:
+    x: 650
+    y: 0
+    width: 630
+    height: 1120
+  approved_by: mazenDDr
+  approval_id: crop-approval-2026-10-12
+  faces_checked: true
+  attribution: 1089hruskapetr / CC-BY-3.0 - cropped and animated
+  author: 1089hruskapetr
+  license_id: CC-BY-3.0
+  source_page: https://commons.wikimedia.org/wiki/File:Hotel_The_Grand_resort_-_panoramio.jpg
+  license_url: https://creativecommons.org/licenses/by/3.0/
+  reference_only: true
+  source: photo
+  clip:
+    uri: docs/samples/director-v2/motion/flowers/source.mp4
+    sha256: 16acdaab697a2094393930cda625687b97effa7a4d26efd6c1c82d7b67da9130
+    generated: true
+    reference_only: true
+    credit: 1089hruskapetr / CC-BY-3.0 - cropped and animated
+    motion_recipe:
+      uri: docs/samples/director-v2/motion/flowers/recipe.json
+      sha256: 1e9246ae0d718b2358e9638e76ae65105b8636ad6841cc938ef8f0408530e63d
+    motion_recipe_hash: 295751d6be449c727f4c9a37d506f7d5f7664198f3d5897aaa45217f5d5a057a
+    start_s: 0.0
+  allowed_actions:
+  - photo_camera
+  - plant_sway
+- id: palms
+  label: Palm canopy
+  observed: Palm canopy and upper courtyard in historical daylight photo; bottom guest
+    area excluded
+  photo:
+    uri: assets/photos/grand_resort_pool.jpg
+    sha256: 4676d8b7fb4830e9f6ee6df0dd43f2c94841880a61ca887ffb4bc12fd2981ad3
+  crop:
+    x: 800
+    y: 0
+    width: 750
+    height: 420
+  approved_by: mazenDDr
+  approval_id: crop-approval-2026-10-12
+  faces_checked: true
+  attribution: Szombat78 / CC0-1.0 - cropped and animated
+  author: Szombat78
+  license_id: CC0-1.0
+  source_page: https://commons.wikimedia.org/wiki/File:Hurghada_The_Grand_Resort.jpg
+  license_url: https://creativecommons.org/publicdomain/zero/1.0/
+  reference_only: true
+  source: photo
+  clip: null
+  allowed_actions:
+  - photo_camera
+  - plant_sway
+- id: arches
+  label: Terracotta arches
+  observed: Arches, column, wooden shade and a glimpse of water; no identifiable guests
+  photo:
+    uri: assets/photos/grand_resort_day.jpg
+    sha256: dc08f600f159b2bd2f51a0bef96a7b91bebe28e33f7d3aec01e5ee4392a8cde8
+  crop:
+    x: 1600
+    y: 600
+    width: 1152
+    height: 2048
+  approved_by: mazenDDr
+  approval_id: crop-approval-2026-10-12
+  faces_checked: true
+  attribution: Ercan.G / CC-BY-3.0 - cropped and animated
+  author: Ercan.G
+  license_id: CC-BY-3.0
+  source_page: https://commons.wikimedia.org/wiki/File:Hotel_Grand_Resort_-_panoramio.jpg
+  license_url: https://creativecommons.org/licenses/by/3.0/
+  reference_only: true
+  source: photo
+  clip: null
+  allowed_actions:
+  - photo_camera
+- id: courtyard
+  label: Courtyard architecture
+  observed: Upper courtyard architecture, palm canopy and sky, cropped above guest
+    area
+  photo:
+    uri: assets/photos/grand_resort_pool.jpg
+    sha256: 4676d8b7fb4830e9f6ee6df0dd43f2c94841880a61ca887ffb4bc12fd2981ad3
+  crop:
+    x: 250
+    y: 0
+    width: 700
+    height: 420
+  approved_by: mazenDDr
+  approval_id: crop-approval-2026-10-12
+  faces_checked: true
+  attribution: Szombat78 / CC0-1.0 - cropped and animated
+  author: Szombat78
+  license_id: CC0-1.0
+  source_page: https://commons.wikimedia.org/wiki/File:Hurghada_The_Grand_Resort.jpg
+  license_url: https://creativecommons.org/publicdomain/zero/1.0/
+  reference_only: true
+  source: photo
+  clip: null
+  allowed_actions:
+  - photo_camera

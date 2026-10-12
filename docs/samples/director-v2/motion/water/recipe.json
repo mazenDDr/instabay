@@ -1,0 +1,198 @@
+{
+  "kind": "experimental-wan-i2v-motion-v1",
+  "spec": {
+    "repo": "Wan-AI/Wan2.2-TI2V-5B-Diffusers",
+    "revision": "b8fff7315c768468a5333511427288870b2e9635",
+    "image": "data/director-water.jpg",
+    "image_sha256": "b90dfc9bbb8e63215a8129fbf7912907b99da435d5f37820c270520b1ee82d88",
+    "prompt": "Animate the exact photographed water. Clearly visible gentle ripples travel across its surface\nfrom the opening moment, moving only reflected light already present in the image. Preserve the\nexisting pool edge, rocks, lighting and colour. Locked camera. No added fountain, waves, animals,\npeople, buildings, sky or architectural reflections. Natural continuous movement, not a still frame.\n\nObserved evidence: Illuminated water with existing reflected light; no people or signs in crop",
+    "negative_prompt": "New facilities, buildings added, new objects, people, faces, hands, signage, text, logos,\nwarped architecture, distorted pillars, camera shake, over-saturated colours, abrupt cuts,\nextra petals, duplicated leaves, boiling texture, flickering, frozen still frame.\n",
+    "seeds": [
+      2401
+    ],
+    "width": 576,
+    "height": 1024,
+    "frames": 61,
+    "fps": 12,
+    "steps": 40,
+    "guidance": 5.0,
+    "shift": 3.0
+  },
+  "weights": {
+    "repo": "Wan-AI/Wan2.2-TI2V-5B-Diffusers",
+    "revision": "b8fff7315c768468a5333511427288870b2e9635",
+    "files": [
+      {
+        "uri": "data/wan-preview/.gitattributes",
+        "sha256": "1041d64f9895fcac65fb31d145d3e49740d8681880bc6dd5f23cccc1a833d11c"
+      },
+      {
+        "uri": "data/wan-preview/README.md",
+        "sha256": "b7120bb210ab14defe6cabd7ac4bf568d0f5fde42f88ea4ac3cfec9516dc2c0c"
+      },
+      {
+        "uri": "data/wan-preview/assets/comp_effic.png",
+        "sha256": "75ee012dcfb08365bec67a3ec7afc126fc2817f79b9f80e38711792d4770e32b"
+      },
+      {
+        "uri": "data/wan-preview/assets/logo.png",
+        "sha256": "96cddc0f667293436d0b9f92a299b6346b65b231d38ee49719a33d46c91fe1e3"
+      },
+      {
+        "uri": "data/wan-preview/assets/moe_2.png",
+        "sha256": "4ea471ccb64349bd08bc9a78f336ae000e9ca3b40da9a652b8028b214a8c6093"
+      },
+      {
+        "uri": "data/wan-preview/assets/moe_arch.png",
+        "sha256": "709510625af90bad3f9509c8c9bb6dc779576cd7f80b9bc95d75fe33f2755079"
+      },
+      {
+        "uri": "data/wan-preview/assets/performance.png",
+        "sha256": "97ef99c13c8ae717a8a11c8d8ec927b69077c647cc6689755d08fc38e7fbb830"
+      },
+      {
+        "uri": "data/wan-preview/assets/vae.png",
+        "sha256": "4aaea5e187f1c5908e15ade5bef24c9fb59882986bc3d2ad75f7fe820f3d772f"
+      },
+      {
+        "uri": "data/wan-preview/examples/i2v_input.JPG",
+        "sha256": "077e3d965090c9028c69c00931675f42e1acc815c6eb450ab291b3b72d211a8e"
+      },
+      {
+        "uri": "data/wan-preview/model_index.json",
+        "sha256": "6a72faeb564b0e894aea8fc4ef27241106eb739e8584e869b61589a65473add7"
+      },
+      {
+        "uri": "data/wan-preview/scheduler/scheduler_config.json",
+        "sha256": "571a3eed68bcd943a61b9fea8efa9e141472216ada59f928c8b5128ce24b32e0"
+      },
+      {
+        "uri": "data/wan-preview/text_encoder/config.json",
+        "sha256": "a2bcb24699f6c009a2427432bdd483ef8b2b42a712abc9503759cdc77d171f07"
+      },
+      {
+        "uri": "data/wan-preview/text_encoder/model-00001-of-00003.safetensors",
+        "sha256": "a8e861969c7433e707cc5a74065d795d36cca07ec96eb6763eb4083df7248f58"
+      },
+      {
+        "uri": "data/wan-preview/text_encoder/model-00002-of-00003.safetensors",
+        "sha256": "d57d948ece4837d850b7a859a4415121d57cacf8b9ee1d4db200c67f592902d7"
+      },
+      {
+        "uri": "data/wan-preview/text_encoder/model-00003-of-00003.safetensors",
+        "sha256": "0da9ee284e21d1406df708788db1d502d95d75f69faa25cd26151bf8829b7c5f"
+      },
+      {
+        "uri": "data/wan-preview/text_encoder/model.safetensors.index.json",
+        "sha256": "31c4c7bcce679eaa0dd4667462394ddb013dc2f748e0bffc893dc9146a320dab"
+      },
+      {
+        "uri": "data/wan-preview/tokenizer/special_tokens_map.json",
+        "sha256": "456b58fd240a06c743a7c2cf8008bec501240d68ebd1fc4018ea569505fea270"
+      },
+      {
+        "uri": "data/wan-preview/tokenizer/spiece.model",
+        "sha256": "e3909a67b780650b35cf529ac782ad2b6b26e6d1f849d3fbb6a872905f452458"
+      },
+      {
+        "uri": "data/wan-preview/tokenizer/tokenizer.json",
+        "sha256": "20a46ac256746594ed7e1e3ef733b83fbc5a6f0922aa7480eda961743de080ef"
+      },
+      {
+        "uri": "data/wan-preview/tokenizer/tokenizer_config.json",
+        "sha256": "1d8d2a216bf8e70ac15b7ddcea566c4dd0433c024b39a58ca5e4c66bd78defbd"
+      },
+      {
+        "uri": "data/wan-preview/transformer/config.json",
+        "sha256": "dc00d9866e72cf77db6b531aaa33be4dc7148fef9338442bd0ae9181f7075e9b"
+      },
+      {
+        "uri": "data/wan-preview/transformer/diffusion_pytorch_model-00001-of-00005.safetensors",
+        "sha256": "511bec832a201caa410d09c5ce7dbbf8ad2708c345d82038f684fc74cce982be"
+      },
+      {
+        "uri": "data/wan-preview/transformer/diffusion_pytorch_model-00002-of-00005.safetensors",
+        "sha256": "7c42724912b1911429125dc50c0e9a49ccbada5a601b657d4ed2e15e7597c193"
+      },
+      {
+        "uri": "data/wan-preview/transformer/diffusion_pytorch_model-00003-of-00005.safetensors",
+        "sha256": "e9c3d0c76de786566382f8258101fea973ae37681c6e9fe0e5fe1fb93b806424"
+      },
+      {
+        "uri": "data/wan-preview/transformer/diffusion_pytorch_model-00004-of-00005.safetensors",
+        "sha256": "a331121771790939678db6f585553fd5184609f7d02593c699a4d241b0d834c5"
+      },
+      {
+        "uri": "data/wan-preview/transformer/diffusion_pytorch_model-00005-of-00005.safetensors",
+        "sha256": "78b655685c47efdb2349f36826bb101264e9f212a16325d584aeb5f53c88e719"
+      },
+      {
+        "uri": "data/wan-preview/transformer/diffusion_pytorch_model.safetensors.index.json",
+        "sha256": "d6c1f72d86fbddef8fb5ef1c03f5b56b2bfdb6ae58032db98c6019fd1dae9021"
+      },
+      {
+        "uri": "data/wan-preview/vae/config.json",
+        "sha256": "d996c340fe9a7df5d7371f76a7d8d6956f6c98256080074d8434fa5eeac11360"
+      },
+      {
+        "uri": "data/wan-preview/vae/diffusion_pytorch_model.safetensors",
+        "sha256": "62cd18f19438e35b32ac63020e2852f566e9b02f46b6cdbd87972a356e3c6f4b"
+      }
+    ]
+  },
+  "runtime": {
+    "python": "3.11.14 (main, Oct 21 2025, 18:31:21) [GCC 11.2.0]",
+    "platform": "Linux-6.18.40.1-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+    "environment": "prepared conda main; no Docker reproducibility claim",
+    "packages": {
+      "torch": "2.10.0",
+      "diffusers": "0.37.1",
+      "transformers": "5.8.1",
+      "accelerate": "1.12.0",
+      "safetensors": "0.7.0",
+      "pillow": "12.1.1",
+      "imageio-ffmpeg": "0.6.0"
+    },
+    "cuda": "12.8",
+    "driver": "591.86",
+    "gpu": "NVIDIA GeForce RTX 5060 Ti",
+    "implementation_sha256": "364a9d8d8e5057c9eb483dd3ceba1482e7e48243544c95fb1913d6aeb025782b"
+  },
+  "pipeline_class": "WanImageToVideoPipeline",
+  "expand_timesteps": true,
+  "scheduler": {
+    "_class_name": "UniPCMultistepScheduler",
+    "_diffusers_version": "0.35.0.dev0",
+    "beta_end": 0.02,
+    "beta_schedule": "linear",
+    "beta_start": 0.0001,
+    "disable_corrector": [],
+    "dynamic_thresholding_ratio": 0.995,
+    "final_sigmas_type": "zero",
+    "flow_shift": 3.0,
+    "lower_order_final": true,
+    "num_train_timesteps": 1000,
+    "predict_x0": true,
+    "prediction_type": "flow_prediction",
+    "rescale_betas_zero_snr": false,
+    "sample_max_value": 1.0,
+    "solver_order": 2,
+    "solver_p": null,
+    "solver_type": "bh2",
+    "steps_offset": 0,
+    "thresholding": false,
+    "time_shift_type": "exponential",
+    "timestep_spacing": "linspace",
+    "trained_betas": null,
+    "use_beta_sigmas": false,
+    "use_dynamic_shifting": false,
+    "use_exponential_sigmas": false,
+    "use_flow_sigmas": true,
+    "use_karras_sigmas": false
+  },
+  "offload": "model_cpu_offload; encode prompts once then unload text encoder",
+  "vae": "float32, tiling enabled",
+  "ai_disclosure": true,
+  "reference_only": true,
+  "determinism": "Stored artifacts only; no repeated-run or cross-machine claim"
+}

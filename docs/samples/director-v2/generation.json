@@ -1,0 +1,76 @@
+{
+  "source": "actual local Qwen direction and two native Wan GPU renders",
+  "llm_calls": [
+    {
+      "model": "Qwen/Qwen3-4B-Instruct-2507@cdbee75f17c01a7cc42f958dc650907174af0554",
+      "prompt_hash": "5951c03819769ffb2b3c75b40f92b8d7c20b670ea629ee68059ec20c632d03ca",
+      "status": "invalid_output",
+      "attempt": 1,
+      "latency_ms": 55950.80124994274,
+      "input_tokens": 1977,
+      "output_tokens": 949,
+      "error_type": "schema_validation"
+    },
+    {
+      "model": "Qwen/Qwen3-4B-Instruct-2507@cdbee75f17c01a7cc42f958dc650907174af0554",
+      "prompt_hash": "5951c03819769ffb2b3c75b40f92b8d7c20b670ea629ee68059ec20c632d03ca",
+      "status": "invalid_output",
+      "attempt": 2,
+      "latency_ms": 51564.97554201633,
+      "input_tokens": 2159,
+      "output_tokens": 1090,
+      "error_type": "schema_validation"
+    },
+    {
+      "model": "Qwen/Qwen3-4B-Instruct-2507@cdbee75f17c01a7cc42f958dc650907174af0554",
+      "prompt_hash": "5951c03819769ffb2b3c75b40f92b8d7c20b670ea629ee68059ec20c632d03ca",
+      "status": "invalid_output",
+      "attempt": 1,
+      "latency_ms": 42539.02908298187,
+      "input_tokens": 1977,
+      "output_tokens": 949,
+      "error_type": "schema_validation"
+    },
+    {
+      "model": "Qwen/Qwen3-4B-Instruct-2507@cdbee75f17c01a7cc42f958dc650907174af0554",
+      "prompt_hash": "5951c03819769ffb2b3c75b40f92b8d7c20b670ea629ee68059ec20c632d03ca",
+      "status": "invalid_output",
+      "attempt": 2,
+      "latency_ms": 55779.114083969034,
+      "input_tokens": 2159,
+      "output_tokens": 1090,
+      "error_type": "schema_validation"
+    },
+    {
+      "model": "Qwen/Qwen3-4B-Instruct-2507@cdbee75f17c01a7cc42f958dc650907174af0554",
+      "prompt_hash": "b771557e7c658d3c74b8cd542e31080fa1a922e834e9665bbac4d0ef5d100ced",
+      "status": "invalid_output",
+      "attempt": 1,
+      "latency_ms": 52772.72508305032,
+      "input_tokens": 2028,
+      "output_tokens": 1137,
+      "error_type": "schema_validation"
+    },
+    {
+      "model": "Qwen/Qwen3-4B-Instruct-2507@cdbee75f17c01a7cc42f958dc650907174af0554",
+      "prompt_hash": "b771557e7c658d3c74b8cd542e31080fa1a922e834e9665bbac4d0ef5d100ced",
+      "status": "success",
+      "attempt": 2,
+      "latency_ms": 58542.67387499567,
+      "input_tokens": 2298,
+      "output_tokens": 1245,
+      "error_type": null
+    }
+  ],
+  "invalid_outputs": 5,
+  "successful_outputs": 1,
+  "native_total_tokens": 19058,
+  "original_board": "board.native-raw.json",
+  "reviewed_board": "board.reviewed.json",
+  "editorial_changes": "editorial-review.json",
+  "post_approved": false,
+  "human_appeal_review": "pending",
+  "engagement_lift": null,
+  "cost_usd_api_fees": 0,
+  "electricity_and_hardware_costs": "not measured"
+}

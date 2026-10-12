@@ -1,0 +1,22 @@
+{
+  "changes": [
+    {
+      "field": "hook.ar",
+      "reason": "Correct awkward literal Arabic; preserve the invitation to slow down."
+    },
+    {
+      "field": "beat_03.camera",
+      "reason": "Use visible photographic camera motion instead of a frozen hold."
+    },
+    {
+      "field": "beat_06.camera",
+      "reason": "Use visible photographic camera motion instead of a frozen hold."
+    },
+    {
+      "field": "beat_08.camera",
+      "reason": "Use visible photographic camera motion instead of a frozen hold."
+    }
+  ],
+  "raw_board": "board.native-raw.json",
+  "post_approved": false
+}
