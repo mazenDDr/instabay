@@ -1,0 +1,72 @@
+{
+  "provenance": "synthetic_contract_fixture",
+  "exchanges": [
+    {
+      "method": "GET",
+      "path": "/3000",
+      "params": {
+        "fields": "media_type,media_product_type"
+      },
+      "response": {
+        "status_code": 200,
+        "body": {
+          "id": "3000",
+          "media_type": "IMAGE",
+          "media_product_type": "FEED"
+        }
+      },
+      "failure": null
+    },
+    {
+      "method": "GET",
+      "path": "/3000/insights",
+      "params": {
+        "metric": "views,reach,likes,comments,saved,shares"
+      },
+      "response": {
+        "status_code": 200,
+        "body": {
+          "data": [
+            {
+              "name": "views",
+              "total_value": {
+                "value": 0
+              }
+            },
+            {
+              "name": "reach",
+              "total_value": {
+                "value": 0
+              }
+            },
+            {
+              "name": "likes",
+              "total_value": {
+                "value": 0
+              }
+            },
+            {
+              "name": "comments",
+              "total_value": {
+                "value": 0
+              }
+            },
+            {
+              "name": "saved",
+              "total_value": {
+                "value": 0
+              }
+            },
+            {
+              "name": "shares",
+              "total_value": {
+                "value": 0
+              }
+            }
+          ]
+        }
+      },
+      "failure": null
+    }
+  ]
+}

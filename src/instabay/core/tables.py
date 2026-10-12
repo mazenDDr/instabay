@@ -68,6 +68,7 @@ class PostRow(SQLModel, table=True):
     offer_id: str | None = None
     media_path: str | None = None
     media_status: str
+    media_json: str | None = None
     idempotency_key: str
 
 
@@ -135,6 +136,12 @@ class PublicationRow(SQLModel, table=True):
     mode: str
     outbox_path: str
     published_at: str
+    media_id: str | None = None
+    container_id: str | None = None
+    account_id: str | None = None
+    api_version: str | None = None
+    payload_hash: str | None = None
+    graph_login: str | None = None
 
 
 class DecisionScoreRow(SQLModel, table=True):
@@ -202,3 +209,21 @@ class RenderJobRow(SQLModel, table=True):
     frame_hashes_json: str
     qa_json: str
     cost_usd: float
+
+
+class GraphJobRow(SQLModel, table=True):
+    """FR-10: durable publishing intent and accepted container IDs across process restarts."""
+
+    __tablename__: ClassVar[str] = "graph_job"
+    id: str = Field(primary_key=True)
+    post_id: str = Field(foreign_key="post.id", index=True)
+    job_json: str
+
+
+class GraphObservationRow(SQLModel, table=True):
+    """FR-11: retain empty/partial insight batches without filling absent counts."""
+
+    __tablename__: ClassVar[str] = "graph_observation"
+    id: str = Field(primary_key=True)
+    post_id: str = Field(foreign_key="post.id", index=True)
+    observation_json: str
