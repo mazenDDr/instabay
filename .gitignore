@@ -21,6 +21,7 @@ outbox/
 data/
 renders/
 *.sqlite*
+bench/human_ratings/*.csv
 
 # Private working notes
 AGENTS.md

@@ -28,6 +28,8 @@ DEFAULT_CHECKPOINTS = Path(
 )
 DEFAULT_OUTBOX = Path(os.environ.get("INSTABAY_OUTBOX_PATH", "outbox/demo"))
 DEFAULT_INPUTS = Path("config/brand_inputs.example.yaml")
+DEFAULT_BENCH_OUTPUT = Path(os.environ.get("INSTABAY_BENCH_OUTPUT", "bench/results.json"))
+DEFAULT_BENCH_ARTIFACTS = Path(os.environ.get("INSTABAY_BENCH_ARTIFACTS", "outputs/bench"))
 
 
 def _brand_input(path: Path) -> BrandInput:
@@ -178,9 +180,36 @@ def brand_freeze(
 
 
 @app.command()
-def bench() -> None:
-    """FR-14: do not report benchmark results before the benchmark phase."""
-    _pending(4, "Benchmark harness")
+def bench(
+    output: Annotated[Path, typer.Option()] = DEFAULT_BENCH_OUTPUT,
+    artifacts: Annotated[Path, typer.Option()] = DEFAULT_BENCH_ARTIFACTS,
+    ratings: Annotated[Path, typer.Option()] = Path("bench/human_ratings"),
+    prices: Annotated[Path | None, typer.Option()] = None,
+    readme: Annotated[Path | None, typer.Option(help="Update one benchmark-marked README")] = None,
+) -> None:
+    """FR-14: offline five-metric benchmark; missing human inputs stay explicitly pending."""
+    from instabay.benchmarks.harness import run_benchmark
+    from instabay.benchmarks.readme import update_readme
+
+    _offline_only()
+    result = run_benchmark(
+        output=output,
+        artifacts=artifacts,
+        ratings=ratings,
+        prices=prices,
+        notify_progress=typer.echo,
+    )
+    if readme:
+        update_readme(readme, output)
+    typer.echo(
+        f"Wrote {output}: {result.corpus_posts} fixture posts; 12 weeks x 7 posts x 20 seeds"
+    )
+    typer.echo(
+        f"Synthetic uplift: {result.optimization_uplift.uplift.mean:.2%}; "
+        "human quality metrics pending if unlabeled"
+    )
+    for item in result.human_pending:
+        typer.echo(f"# {item}")
 
 
 @app.command()

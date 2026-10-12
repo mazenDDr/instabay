@@ -25,9 +25,8 @@ smoke:
 demo:
 	$(UV) run --offline --no-sync instabay demo
 
-# These entry points deliberately fail until their specified phase is implemented.
 bench:
-	$(UV) run --offline --no-sync instabay bench
+	$(UV) run --offline --no-sync instabay bench --readme README.md
 
 record:
 	@echo '# HUMAN: recording real LLM cassettes is implemented in a later phase.'

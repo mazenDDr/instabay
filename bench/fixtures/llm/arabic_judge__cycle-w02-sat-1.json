@@ -1,0 +1,11 @@
+{
+  "template_name": "arabic_judge",
+  "slot_id": "cycle-w02-sat-1",
+  "response": {
+    "fluency": 5,
+    "naturalness": 4,
+    "brand_voice": 5
+  },
+  "input_tokens": 180,
+  "output_tokens": 70
+}
