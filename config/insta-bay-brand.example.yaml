@@ -1,0 +1,109 @@
+# Insta Bay brand TEMPLATE for the owner test run (Red Sea, Hurghada).
+# HUMAN: copy to config/brand.yaml, edit the pillars/voice/facts to the real resort,
+# then freeze it yourself (docs/TEST_RUN.md). Pillar descriptions are what d3-flash and
+# the VLM judge read when sorting photos, so describe what each pillar LOOKS like.
+version: 1
+positioning: Relaxed luxury where the Red Sea is the main character.
+voice:
+  en:
+    do:
+    - short sentences
+    - sensory detail
+    dont:
+    - hard sell
+    - ALL CAPS
+    examples:
+    - Slow mornings. Palm shadows.
+  ar:
+    do:
+    - جمل قصيرة
+    - تفاصيل حسية
+    dont:
+    - لهجة ثقيلة
+    - وعود غير موثقة
+    examples:
+    - صباح على مهل، وظلال النخيل.
+    register: light_msa
+pillars:
+- id: underwater
+  description: 'Red Sea water: the sea, beach or shoreline is the main subject, with
+    its turquoise or deep-blue colours'
+  min_share: 0.1
+  max_share: 0.4
+- id: spa
+  description: 'Relaxation: pools, loungers, daybeds and shaded seating for slow,
+    calm moments'
+  min_share: 0.1
+  max_share: 0.4
+- id: guests
+  description: 'Stay inspiration: rooms, suites, terraces and interiors where guests
+    stay'
+  min_share: 0.1
+  max_share: 0.4
+- id: local
+  description: 'The Hurghada setting: resort buildings, palms, desert-coast architecture
+    and the resort at night'
+  min_share: 0.1
+  max_share: 0.4
+- id: offers
+  description: 'Travel planning: restaurants, bars and dining spaces that help guests
+    plan a trip'
+  min_share: 0.1
+  max_share: 0.3
+hashtags:
+  branded:
+  - '#InstaBay'
+  - '#انستا_باي'
+  place:
+  - '#Hurghada'
+  - '#RedSea'
+  - '#الغردقة'
+  - '#البحر_الأحمر'
+  niche:
+  - '#RedSeaDiving'
+  - '#SnorkelEgypt'
+  broad:
+  - '#TravelEgypt'
+  - '#سياحة_مصر'
+cadence:
+  posts_per_week: 7
+  min_reels: 2
+  min_photos: 3
+  min_carousels: 2
+  windows_cairo:
+    morning_08_10: 08:30
+    noon_12_14: '12:30'
+    evening_19_21: '19:30'
+    late_21_23: '21:30'
+visual:
+  palette_hex:
+  - '#0D8C91'
+  - '#D39B76'
+  - '#E8D9BB'
+  photo_direction: Verified real-photo references, modest motion, no identifiable
+    faces
+  banned:
+  - invented facilities
+  - alcohol imagery
+  - nightlife
+claims_policy:
+  no_invented_facilities: true
+  verified_facilities: []
+  facility_terms:
+  - house reef
+  - private beach
+  - infinity pool
+  - private pool
+  - rooftop bar
+  - أمام غرفتك
+  - شاطئ خاص
+  - مسبح خاص
+  - شعابنا
+  allowed_offers: {}
+  banned_terms:
+  - cheap
+  - buy now
+  - احجز فوراً
+  - أرخص
+  emoji_budget: 2
+judge_threshold: 4.0
