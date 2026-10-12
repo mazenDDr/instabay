@@ -9,13 +9,18 @@ description = "An approval-first bilingual Instagram marketing system"
 readme = "README.md"
 requires-python = ">=3.12,<3.13"
 dependencies = [
+  "arabic-reshaper>=3,<4",
+  "fastapi>=0.115,<1",
   "httpx>=0.28,<1",
   "langgraph>=1,<2",
   "langgraph-checkpoint-sqlite>=3,<4",
   "pydantic>=2.12,<3",
+  "pillow>=11,<13",
+  "python-bidi>=0.6,<1",
   "pyyaml>=6,<7",
   "sqlmodel>=0.0.27,<0.1",
   "typer>=0.20,<1",
+  "uvicorn>=0.34,<1",
 ]
 
 [project.scripts]
@@ -34,7 +39,7 @@ dev = [
 ]
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/instabay", "sim"]
+packages = ["src/instabay", "sim", "gpu_worker"]
 
 [tool.ruff]
 target-version = "py312"
