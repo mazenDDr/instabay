@@ -34,8 +34,9 @@ def resort_object(asset: Asset, property_name: str) -> ResortObject:
         license_id="ai-generated-from-owner-photo" if generated else "owner-supplied",
         source_page="instabay-asset-library",
         license_url="instabay-asset-library",
-        reference_only=generated,
+        reference_only=False,
         source="synthetic" if generated else "photo",
+        approval_scope="owner_approved_view" if generated else "crop",
         allowed_actions=("photo_camera", "scenic_motion"),
         property_name=property_name,
     )
@@ -82,7 +83,7 @@ def export_library(
             )
             for p in brand.pillars
         },
-        reference_only=any(a.origin == "generated" for a in chosen),
+        reference_only=False,
     )
     (output / "evidence.yaml").write_text(
         yaml.safe_dump(evidence.model_dump(mode="json"), allow_unicode=True, sort_keys=False)

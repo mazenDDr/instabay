@@ -113,8 +113,8 @@ class Asset(Boundary):
 
     @property
     def usable(self) -> bool:
-        """FR-04, rule 6: generated views need an explicit owner approval before planning."""
-        if self.rejected or not self.rights_confirmed or self.pillar is None:
+        """FR-04, rule 6: labelled, described and (for generated views) owner-approved."""
+        if self.rejected or not self.rights_confirmed or self.pillar is None or not self.described:
             return False
         return self.origin == "owner" or self.approved
 

@@ -198,6 +198,8 @@ def test_suggestions_prefer_pillar_photos_never_repeat_singles_and_flag_shortfal
         origin="generated",
         parent_id=library.all()[0].id,
         recipe={"preset": "low_waterline"},
+        note_en="Waterline view",
+        note_ar="منظر من مستوى الماء",
     )
     library.review(unapproved.id, owner_pillar=PILLARS[0])
     mix = OwnerCadence(posts_per_week=7, reels_per_week=2, carousels_per_week=2)
@@ -237,4 +239,5 @@ def test_export_feeds_existing_evidence_contract(library):
     library.review(view.id, owner_pillar="local", note_en="Aerial", note_ar="منظر", approved=True)
     evidence, catalog = export_library(library, brand, library.workspace / "export")
     generated = catalog.get(view.id)
-    assert evidence.reference_only and generated.reference_only and generated.source == "synthetic"
+    assert not evidence.reference_only and generated.source == "synthetic"
+    assert generated.approval_scope == "owner_approved_view" and not generated.reference_only

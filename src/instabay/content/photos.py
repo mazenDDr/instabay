@@ -126,6 +126,7 @@ class PhotoStudio:
             render_recipe=recipe.model_dump(mode="json"),
             files=files,
             reference_only=any(s.reference_only for s in recipe.sources),
+            generated=any(s.source == "synthetic" for s in recipe.sources),
         )
         result_file.write_text(result.model_dump_json(indent=2) + "\n")
         return result

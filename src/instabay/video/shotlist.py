@@ -32,7 +32,7 @@ class Keyframe(FileRef):
     scene: Literal["mood", "facility"] = "mood"
     approved_by: str = Field(min_length=1)
     approval_id: str = Field(min_length=1)
-    approval_scope: Literal["crop", "preview_source_use"] = Field(
+    approval_scope: Literal["crop", "preview_source_use", "owner_approved_view"] = Field(
         default="crop", exclude_if=lambda v: v == "crop"
     )
     reference_only: bool = True

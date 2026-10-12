@@ -306,6 +306,7 @@ class WeekRunner:
                     if slot.arm.format == "reel"
                     else "reference",
                     photo_artifact=photo_artifact,
+                    ai_disclosure=bool(photo_artifact and photo_artifact.generated),
                     evidence=EvidenceAttachment(
                         context=context.model_dump(mode="json"),
                         context_hash=canonical_hash(context),

@@ -73,6 +73,7 @@ class Suggestion(Boundary):
     format: PostFormat
     primary: list[str]
     pool: list[str]
+    matching: int
     shortfall: bool
     reason: str
 
@@ -122,6 +123,7 @@ def suggest_assets(slots: list[Slot], assets: list[Asset]) -> dict[str, Suggesti
             format=format,
             primary=primary,
             pool=pool,
+            matching=matching,
             shortfall=shortfall or len(primary) < minimum,
             reason=reason if len(primary) >= minimum else "Not enough usable photos yet",
         )
