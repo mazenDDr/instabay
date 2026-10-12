@@ -26,10 +26,19 @@ class Verdict(Boundary):
     reason: str = Field(max_length=500)
 
 
+class Description(Boundary):
+    """FR-04: visible-content lines that ground captions; empty means the model gave none."""
+
+    en: str = Field(max_length=600)
+    ar: str = Field(max_length=600)
+
+
 class PillarJudge(Protocol):
     judge_id: str
 
     def choose(self, image: Path, options: dict[str, str]) -> Verdict: ...
+
+    def describe(self, image: Path) -> Description: ...
 
 
 class FakePillarJudge:
@@ -37,9 +46,16 @@ class FakePillarJudge:
 
     judge_id = "fake-vlm-v1"
 
-    def __init__(self, answers: dict[str, Verdict]) -> None:
+    def __init__(
+        self, answers: dict[str, Verdict], descriptions: dict[str, Description] | None = None
+    ) -> None:
         self.answers = answers
+        self.descriptions = descriptions or {}
         self.calls = 0
+
+    def describe(self, image: Path) -> Description:
+        self.calls += 1
+        return self.descriptions.get(image_digest(image), Description(en="", ar=""))
 
     def choose(self, image: Path, options: dict[str, str]) -> Verdict:
         self.calls += 1
@@ -94,6 +110,24 @@ class HTTPPillarJudge:
         if verdict.choice is not None and verdict.choice not in options:
             return Verdict(choice=None, reason="Judge answered outside the requested pillars")
         return verdict
+
+    def describe(self, image: Path) -> Description:
+        if not self.confirm_external or os.environ.get("INSTABAY_DECISIONS_ENABLED") != "1":
+            raise RuntimeError("HUMAN: set INSTABAY_DECISIONS_ENABLED=1 and confirm the judge")
+        try:
+            response = self.client.post(
+                self.origin + "/v1/vlm-describe",
+                json={
+                    "model": VLM_MODEL,
+                    "image": base64.b64encode(image.read_bytes()).decode("ascii"),
+                },
+            )
+        except httpx.HTTPError:
+            raise RuntimeError("VLM is unreachable; is the tunnel open?") from None
+        if response.status_code != 200:
+            raise RuntimeError(f"VLM rejected the request (HTTP {response.status_code})")
+        body = response.json()
+        return Description(en=str(body.get("en", ""))[:600], ar=str(body.get("ar", ""))[:600])
 
     def close(self) -> None:
         self.client.close()

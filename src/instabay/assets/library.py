@@ -44,7 +44,8 @@ CREATE TABLE IF NOT EXISTS asset (
   recipe_json TEXT,
   fidelity_json TEXT,
   vlm_pillar TEXT,
-  vlm_reason TEXT
+  vlm_reason TEXT,
+  note_source TEXT
 );
 CREATE TABLE IF NOT EXISTS classification (
   sequence INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -92,6 +93,7 @@ class Asset(Boundary):
     fidelity: dict[str, JsonValue] | None = None
     vlm_pillar: str | None = None
     vlm_reason: str | None = None
+    note_source: str | None = None
 
     @model_validator(mode="after")
     def lineage(self) -> Self:
@@ -186,7 +188,7 @@ class AssetLibrary:
         self.db.execute("PRAGMA foreign_keys = ON")
         self.db.executescript(SCHEMA)
         columns = {row[1] for row in self.db.execute("PRAGMA table_info(asset)")}
-        for name in ("vlm_pillar", "vlm_reason"):
+        for name in ("vlm_pillar", "vlm_reason", "note_source"):
             if name not in columns:
                 self.db.execute(f"ALTER TABLE asset ADD COLUMN {name} TEXT")
         self.db.commit()
@@ -341,6 +343,15 @@ class AssetLibrary:
                 (pillar, reason[:500], asset_id),
             )
 
+    def record_description(self, asset_id: str, en: str, ar: str) -> None:
+        """FR-04: VLM-drafted lines never overwrite text the owner already wrote."""
+        with self.transaction() as db:
+            db.execute(
+                "UPDATE asset SET note_en = ?, note_ar = ?, note_source = 'vlm' "
+                "WHERE id = ? AND (note_source IS NULL OR note_source = 'vlm')",
+                (en.strip()[:600], ar.strip()[:600], asset_id),
+            )
+
     def record_fidelity(self, asset_id: str, result: dict[str, JsonValue]) -> None:
         with self.transaction() as db:
             db.execute(
@@ -370,13 +381,16 @@ class AssetLibrary:
         with self.transaction() as db:
             db.execute(
                 "UPDATE asset SET owner_pillar = ?, note_en = ?, note_ar = ?, approved = ?,"
-                " rejected = ? WHERE id = ?",
+                " rejected = ?, note_source = ? WHERE id = ?",
                 (
                     update["owner_pillar"] or None,
                     update["note_en"],
                     update["note_ar"],
                     int(bool(update["approved"])),
                     int(bool(update["rejected"])),
+                    "owner"
+                    if (update["note_en"], update["note_ar"]) != (asset.note_en, asset.note_ar)
+                    else asset.note_source,
                     asset_id,
                 ),
             )

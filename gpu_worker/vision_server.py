@@ -271,6 +271,40 @@ def views(request: ViewRequest) -> dict[str, Any]:
     }
 
 
+def vlm_answer(image: Any, prompt: str, max_new_tokens: int) -> str:
+    """FR-08: one greedy, thinking-disabled Qwen3.5-4B answer about one image."""
+    torch = importlib.import_module("torch")
+    model, processor = load_vlm()
+    messages = [
+        {
+            "role": "user",
+            "content": [{"type": "image", "image": image}, {"type": "text", "text": prompt}],
+        }
+    ]
+    inputs = processor.apply_chat_template(
+        messages,
+        add_generation_prompt=True,
+        tokenize=True,
+        return_dict=True,
+        return_tensors="pt",
+        enable_thinking=False,
+    ).to(model.device)
+    with torch.inference_mode():
+        output = model.generate(**inputs, max_new_tokens=max_new_tokens, do_sample=False)
+    return str(
+        processor.decode(output[0][inputs["input_ids"].shape[1] :], skip_special_tokens=True)
+    ).strip()
+
+
+def json_object(text: str) -> dict[str, Any]:
+    start, end = text.find("{"), text.rfind("}")
+    try:
+        data = json.loads(text[start : end + 1]) if start >= 0 else {}
+    except ValueError:
+        return {}
+    return data if isinstance(data, dict) else {}
+
+
 @app.post("/v1/vlm-choice")
 def vlm_choice(request: VLMRequest) -> dict[str, Any]:
     enabled()
@@ -284,30 +318,42 @@ def vlm_choice(request: VLMRequest) -> dict[str, Any]:
         'Answer with JSON only: {"pillar": "<one id from the list>", '
         '"reason": "<one short sentence about what is visible>"}'
     )
-    torch = importlib.import_module("torch")
     with _lock:
-        model, processor = load_vlm()
         started = time.perf_counter()
-        messages = [
-            {
-                "role": "user",
-                "content": [{"type": "image", "image": image}, {"type": "text", "text": prompt}],
-            }
-        ]
-        inputs = processor.apply_chat_template(
-            messages,
-            add_generation_prompt=True,
-            tokenize=True,
-            return_dict=True,
-            return_tensors="pt",
-            enable_thinking=False,
-        ).to(model.device)
-        with torch.inference_mode():
-            output = model.generate(**inputs, max_new_tokens=160, do_sample=False)
-        text = processor.decode(
-            output[0][inputs["input_ids"].shape[1] :], skip_special_tokens=True
-        ).strip()
+        text = vlm_answer(image, prompt, 160)
     verdict = parse_verdict(text, request.options)
     ms = round((time.perf_counter() - started) * 1000, 1)
     log("vlm", ms=ms, verdict=verdict, raw=text[:300], **gpu_bytes())
     return {"verdict": verdict, "raw": text, "elapsed_ms": ms}
+
+
+class DescribeRequest(BaseModel):
+    model: str
+    image: str
+
+
+DESCRIBE = (
+    "Describe only what is clearly visible in this resort photograph, for a caption writer. "
+    "One short factual sentence in English and the same sentence in Modern Standard Arabic. "
+    "Do not name the resort, the city or any brand. Do not guess at facilities, services, "
+    "prices or anything that is not visible. "
+    'Answer with JSON only: {"en": "<sentence>", "ar": "<sentence>"}'
+)
+
+
+@app.post("/v1/vlm-describe")
+def vlm_describe(request: DescribeRequest) -> dict[str, Any]:
+    """FR-04: draft EN/AR visible-content lines; the owner can edit them."""
+    enabled()
+    if request.model != VLM_MODEL:
+        raise HTTPException(422, "Only Qwen3.5-4B is served as the describer")
+    image = decode_image(request.image)
+    image.thumbnail((1280, 1280))
+    with _lock:
+        started = time.perf_counter()
+        text = vlm_answer(image, DESCRIBE, 220)
+    data = json_object(text)
+    en, ar = str(data.get("en", "")).strip()[:600], str(data.get("ar", "")).strip()[:600]
+    ms = round((time.perf_counter() - started) * 1000, 1)
+    log("describe", ms=ms, en=en, ar=ar, **gpu_bytes())
+    return {"en": en, "ar": ar, "raw": text, "elapsed_ms": ms}

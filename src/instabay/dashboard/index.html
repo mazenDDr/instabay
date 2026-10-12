@@ -576,6 +576,7 @@ function assetDrawer(a) {
     h("p", { class: "muted", text: `${a.width}×${a.height} px${a.low_res ? " · smaller than 1080 px: posts will be upscaled" : ""} · added by ${a.added_by}` }),
     ...why,
     h("label", { class: "field", style: "margin-top: 12px" }, h("span", { text: "Pillar" }), pillar),
+    a.note_source === "vlm" ? h("div", { class: "flags" }, h("div", { text: "Descriptions written by the VLM from the photo. Captions are built from them: fix anything that is wrong." })) : null,
     h("label", { class: "field" }, h("span", { text: "What is in the photo? (English)" }), en),
     h("label", { class: "field" }, h("span", { text: "ما الذي في الصورة؟ (Arabic)" }), ar),
     h("div", { class: "row" }, h("button", { class: "btn primary", type: "button", onclick: () => save() }, "Save"), h("button", { class: "btn danger", type: "button", onclick: () => save({ rejected: !a.rejected }) }, a.rejected ? "Restore" : "Hide photo")),
@@ -610,8 +611,8 @@ function uploadDrawer() {
   openDrawer(drawerHead("Add photos"), drop, picked, h("label", { class: "row muted", style: "margin: 8px 0 14px" }, rights, "I own these photos and everyone shown agreed to appear."), go);
 }
 async function classify(btn) {
-  btn.disabled = true; btn.textContent = "Sorting… (a few seconds per photo)";
-  try { const r = await api("/api/classify", { method: "POST" }); toast(`${r.classified} sorted by d3${r.judged ? `, ${r.judged} checked by the VLM judge` : ""}${r.failed.length ? `, ${r.failed.length} failed` : ""}`); await refresh(); renderMedia(); }
+  btn.disabled = true; btn.textContent = "Sorting and describing… (about 5 s per photo)";
+  try { const r = await api("/api/classify", { method: "POST" }); toast(`${r.classified} sorted by d3${r.judged ? `, ${r.judged} checked by the VLM judge` : ""}${r.described ? `, ${r.described} described by the VLM` : ""}${r.failed.length ? `, ${r.failed.length} failed` : ""}`); await refresh(); renderMedia(); }
   catch (e) { toast(e.message); } finally { btn.disabled = false; btn.textContent = "Sort into pillars"; }
 }
 

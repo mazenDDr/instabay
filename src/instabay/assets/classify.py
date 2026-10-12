@@ -44,6 +44,7 @@ class ClassifyReport(Boundary):
     skipped: int = Field(ge=0)
     failed: list[str] = Field(default_factory=list)
     judged: int = Field(default=0, ge=0)
+    described: int = Field(default=0, ge=0)
 
 
 def classify_assets(
@@ -56,7 +57,8 @@ def classify_assets(
 ) -> ClassifyReport:
     """FR-04: unclassified (or all, with force) photos; one failure never blocks the rest.
 
-    Photos whose top d3 pillar is below the review threshold go to the VLM judge, if given.
+    Photos whose top d3 pillar is below the review threshold go to the VLM judge, if given, and
+    the judge drafts EN/AR descriptions for photos the owner has not described.
     """
     questions = asset_questions(brand)
     questions_hash = canonical_hash({k: v.wire() for k, v in questions.items()})
@@ -98,7 +100,21 @@ def classify_assets(
             continue
         library.record_vlm(asset.id, verdict.choice, verdict.reason)
         judged += 1
-    return ClassifyReport(classified=done, skipped=skipped, failed=failed, judged=judged)
+    # Third pass: draft the EN/AR visible-content lines the owner did not write.
+    described = 0
+    for asset in library.all() if judge is not None else []:
+        if asset.rejected or asset.described or asset.note_source == "owner":
+            continue
+        try:
+            text = judge.describe(library.path(asset))  # type: ignore[union-attr]
+        except RuntimeError:
+            continue
+        if text.en.strip() and text.ar.strip():
+            library.record_description(asset.id, text.en, text.ar)
+            described += 1
+    return ClassifyReport(
+        classified=done, skipped=skipped, failed=failed, judged=judged, described=described
+    )
 
 
 class Agreement(Boundary):

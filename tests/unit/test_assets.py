@@ -280,3 +280,30 @@ def test_unsure_d3_labels_go_to_the_vlm_judge(library):
     library.review(unsure.id, owner_pillar="guests")
     assert agreement(library.all(), "vlm").accuracy == 1.0
     assert agreement(library.all()).accuracy == 0.0
+
+
+def test_vlm_drafts_missing_descriptions_but_never_overwrites_the_owner(library):
+    from instabay.assets.judge import Description, FakePillarJudge
+    from instabay.decisions.vision import image_digest
+
+    blank, mine = owner_photo(library, 31, note=False), owner_photo(library, 32, note=False)
+    library.review(mine.id, note_en="My pool", note_ar="مسبحي")
+    engine = FakeVisionEngine(
+        [
+            fixture_for(library, blank, "spa", 0.9, 0.0),
+            fixture_for(library, mine, "spa", 0.9, 0.0),
+        ]
+    )
+    text = Description(en="A pool with loungers", ar="مسبح مع كراسي")
+    judge = FakePillarJudge({}, {image_digest(library.path(a)): text for a in (blank, mine)})
+    report = classify_assets(library, engine, demo_brand(), judge=judge)
+    assert report.described == 1
+    drafted = library.get(blank.id)
+    assert (drafted.note_en, drafted.note_source, drafted.described) == (
+        "A pool with loungers",
+        "vlm",
+        True,
+    )
+    assert library.get(mine.id).note_en == "My pool"
+    library.review(blank.id, note_en="Main pool at noon", note_ar="المسبح الرئيسي ظهرا")
+    assert library.get(blank.id).note_source == "owner"
