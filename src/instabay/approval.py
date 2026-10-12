@@ -23,11 +23,15 @@ def show_post(repository: Repository, post_id: str, console: Console) -> None:
     table.add_column("العربية", ratio=1, justify="right")
     table.add_row(Text(post.full_caption("en")), Text(post.full_caption("ar")))
     console.print(table)
-    if review is not None:
+    if review is not None and review.judge is not None:
         console.print(
             f"Judge: {review.judge.average:.2f}/5 (3 stored samples); "
             f"Rules: {'PASS' if review.rules.passed else 'FAIL'}"
         )
+        for flag in review.flags:
+            console.print(f"Flag: {flag}")
+    elif review is not None:
+        console.print("System1 checks passed; no judge rubric score was generated.")
         for flag in review.flags:
             console.print(f"Flag: {flag}")
     else:

@@ -8,6 +8,7 @@ from pydantic import Field, JsonValue, model_validator
 from instabay.core.schemas import Boundary, Hash, canonical_hash
 
 Language = Literal["en", "ar"]
+LANGUAGES: tuple[Language, Language] = ("en", "ar")
 
 
 class Question(Boundary):
@@ -41,10 +42,10 @@ class Answer(Boundary):
     """FR-08: exactly one primitive value and uncalibrated provider confidence."""
 
     choice: str | None = None
-    score: float | None = None
-    noul: float | None = Field(default=None, ge=0, le=1)
-    confidence: float = Field(ge=0, le=1)
-    abstained: bool = False
+    score: float | None = Field(default=None, strict=True)
+    noul: float | None = Field(default=None, ge=0, le=1, strict=True)
+    confidence: float = Field(ge=0, le=1, strict=True)
+    abstained: bool = Field(default=False, strict=True)
 
     @model_validator(mode="after")
     def one_value(self) -> Self:
@@ -79,6 +80,10 @@ def normalize_answers(payload: object, questions: dict[str, Question]) -> dict[s
             for key in ("choice", "score", "noul", "confidence", "abstained")
             if key in value
         }
+        if value.get("abstain") is True or value.get("action") == "abstain":
+            selected["abstained"] = True
+        if value.get("type", question.type) != question.type:
+            raise DecisionProtocolError("Provider primitive type differs from the question")
         if question.type == "noul" and "confidence" not in selected:
             probability = value.get("noul")
             if isinstance(probability, bool) or not isinstance(probability, (float, int)):

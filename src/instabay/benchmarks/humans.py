@@ -231,12 +231,17 @@ def brand_metric(
         grouped[label.post_id].append(label)
     human, judge = [], []
     for post_id, rows in grouped.items():
-        samples = corpus[post_id].review.judge.samples
+        judge_result = corpus[post_id].review.judge
+        if judge_result is None:
+            raise ValueError("Brand benchmark requires judge-only rubric evidence")
+        samples = judge_result.samples
         for dimension in DIMENSIONS:
             # Round halves upward, consistently, on the anchored 1..5 category scale.
             human.append(int(mean(getattr(row, dimension) for row in rows) + 0.5))
             judge.append(int(mean(getattr(sample.scores, dimension) for sample in samples) + 0.5))
-    scores = [row.review.judge.average for row in content]
+    if any(row.review.judge is None for row in content):
+        raise ValueError("Brand benchmark requires judge-only rubric evidence")
+    scores = [row.review.judge.average for row in content if row.review.judge is not None]
     control = bootstrap(negative_scores)
     gap = bootstrap([scores[index] - score for index, score in enumerate(negative_scores)])
     return BrandMetric(

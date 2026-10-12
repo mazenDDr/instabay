@@ -77,6 +77,33 @@ class Judge:
             fixes=list(dict.fromkeys(fix for sample in samples for fix in sample.fixes)),
         )
 
+    def evaluate_cascade(
+        self, post: Post, brand: BrandConstitution, questions: list[str]
+    ) -> JudgeResult:
+        """FR-08: focus escalation context on flagged questions; retain three rubric samples."""
+        language = "ar" if questions and all(q.startswith("ar.") for q in questions) else "en"
+        samples = [
+            self.service.generate(
+                template_name=f"judge_cascade_{language}",
+                slot_id=post.slot_id,
+                inputs=agent_inputs(
+                    post=post, brand=brand, sample=index, escalated_questions=questions
+                ),
+                output_type=JudgeSample,
+                model="fake-judge-fixture-v1",
+                temperature=0,
+            )
+            for index in range(3)
+        ]
+        average = sum(sample.scores.average for sample in samples) / 3
+        return JudgeResult(
+            content_hash=post.content_hash,
+            samples=samples,
+            average=average,
+            passed=average >= brand.judge_threshold,
+            fixes=list(dict.fromkeys(fix for sample in samples for fix in sample.fixes)),
+        )
+
     def check_and_refine(
         self,
         post: Post,

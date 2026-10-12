@@ -106,6 +106,7 @@ class ReviewRow(SQLModel, table=True):
     violations_json: str
     arabic_ratio: float
     flags_json: str
+    cascade_json: str | None = None
 
 
 class ApprovalRow(SQLModel, table=True):
