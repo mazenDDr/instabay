@@ -1,16 +1,41 @@
-"""NFR-07: offline smoke command; future-phase commands fail explicitly."""
+"""FR-09, NFR-07: offline week, explicit human approval and resumable dry-run exports."""
 
+import os
+from datetime import date
 from pathlib import Path
 from typing import Annotated, NoReturn
 
 import typer
+import yaml
+from rich.console import Console
 
 from instabay.adapters.fake_llm import FakeLLM
+from instabay.approval import approval_queue, show_post
 from instabay.core.fixture_schemas import CopyFixture
+from instabay.core.schemas import BrandConstitution, BrandInput, WorkflowInput
 from instabay.db import SQLiteCallStore
+from instabay.graph import ApprovalPendingError, WeekRunner
 from instabay.llm import LLMService
+from instabay.repository import Repository
+from instabay.settings import Settings
 
-app = typer.Typer(no_args_is_help=True)
+app = typer.Typer(no_args_is_help=True, pretty_exceptions_show_locals=False)
+console = Console()
+DEFAULT_DB = Path(os.environ.get("INSTABAY_DB_PATH", "outputs/demo.sqlite3"))
+DEFAULT_CHECKPOINTS = Path(
+    os.environ.get("INSTABAY_CHECKPOINTS_PATH", "outputs/demo-checkpoints.sqlite3")
+)
+DEFAULT_OUTBOX = Path(os.environ.get("INSTABAY_OUTBOX_PATH", "outbox/demo"))
+DEFAULT_INPUTS = Path("config/brand_inputs.example.yaml")
+
+
+def _brand_input(path: Path) -> BrandInput:
+    return BrandInput.model_validate(yaml.safe_load(path.read_text(encoding="utf-8")))
+
+
+def _offline_only() -> None:
+    if Settings.from_env().mode != "dry_run":
+        raise typer.BadParameter("This phase only implements offline dry_run commands")
 
 
 @app.command()
@@ -43,9 +68,112 @@ def _pending(phase: int, feature: str) -> NoReturn:
 
 
 @app.command()
-def demo() -> None:
-    """FR-09: do not simulate an approval loop before Phase 2 is implemented."""
-    _pending(2, "Weekly demo")
+def demo(
+    db: Annotated[Path, typer.Option()] = DEFAULT_DB,
+    checkpoints: Annotated[Path, typer.Option()] = DEFAULT_CHECKPOINTS,
+    outbox: Annotated[Path, typer.Option()] = DEFAULT_OUTBOX,
+    brand_inputs: Annotated[Path, typer.Option()] = DEFAULT_INPUTS,
+    run_id: Annotated[str, typer.Option()] = "2026-w42",
+    week_start: Annotated[str, typer.Option()] = "2026-10-12",
+) -> None:
+    """FR-09: generate one fixture week and stop at a persistent approval interrupt."""
+    _offline_only()
+    request = WorkflowInput(run_id=run_id, week_start=date.fromisoformat(week_start))
+    with WeekRunner(db, checkpoints, outbox, _brand_input(brand_inputs)) as runner:
+        result = runner.start(request)
+        typer.echo("Offline demo: unfrozen fixture brand; judge scores are illustrative.")
+        typer.echo(f"Run {result.run_id}: {result.status}; {len(result.post_ids)} posts")
+        if result.status == "approval_pending":
+            for post_id in result.post_ids:
+                show_post(runner.repository, post_id, console)
+            typer.echo("STOPPED at human approval. No outbox artifacts were published.")
+            typer.echo(f"Next: instabay approve --run-id {run_id} --actor YOUR_NAME")
+            typer.echo(f"Then: instabay resume --run-id {run_id}")
+        else:
+            typer.echo(
+                f"Already completed: {len(runner.repository.publications(run_id))} dry-run exports"
+            )
+
+
+@app.command()
+def approve(
+    actor: Annotated[str, typer.Option(help="Human making the decisions")],
+    db: Annotated[Path, typer.Option()] = DEFAULT_DB,
+    run_id: Annotated[str, typer.Option()] = "2026-w42",
+    post_id: Annotated[str | None, typer.Option(help="Review just one post")] = None,
+) -> None:
+    """FR-09: ask for approve/edit/reject per post; persist elapsed seconds and edit diffs."""
+    repository = Repository(db)
+    try:
+        repository.run(run_id)
+        count = approval_queue(repository, run_id, actor, console, post_id)
+        typer.echo(f"Stored {count} human decisions. Resume is a separate command.")
+    finally:
+        repository.close()
+
+
+@app.command()
+def resume(
+    db: Annotated[Path, typer.Option()] = DEFAULT_DB,
+    checkpoints: Annotated[Path, typer.Option()] = DEFAULT_CHECKPOINTS,
+    outbox: Annotated[Path, typer.Option()] = DEFAULT_OUTBOX,
+    brand_inputs: Annotated[Path, typer.Option()] = DEFAULT_INPUTS,
+    run_id: Annotated[str, typer.Option()] = "2026-w42",
+) -> None:
+    """FR-09: resume only from stored approvals, across independent CLI processes."""
+    _offline_only()
+    with WeekRunner(db, checkpoints, outbox, _brand_input(brand_inputs)) as runner:
+        try:
+            result = runner.resume(run_id)
+        except ApprovalPendingError as error:
+            typer.echo(str(error), err=True)
+            raise typer.Exit(2) from None
+        typer.echo(
+            f"Run {result.run_id}: {result.status}; "
+            f"{len(runner.repository.publications(run_id))} dry-run exports to {outbox}"
+        )
+
+
+@app.command("brand-draft")
+def brand_draft(
+    output: Annotated[Path, typer.Option()] = Path("outputs/brand.draft.yaml"),
+    inputs: Annotated[Path, typer.Option()] = DEFAULT_INPUTS,
+    db: Annotated[Path, typer.Option()] = DEFAULT_DB,
+) -> None:
+    """FR-01: write an LLM draft to outputs, never edit or freeze config/brand.yaml."""
+    from instabay.agents.brand_architect import BrandArchitect
+
+    _offline_only()
+    if output.resolve() == Path("config/brand.yaml").resolve():
+        raise typer.BadParameter("config/brand.yaml is reserved for human editing")
+    with SQLiteCallStore(db) as store:
+        brand = BrandArchitect(LLMService(FakeLLM(Path("tests/fixtures/llm")), store)).draft(
+            _brand_input(inputs)
+        )
+    output.parent.mkdir(parents=True, exist_ok=True)
+    output.write_text(
+        yaml.safe_dump(brand.model_dump(mode="json"), allow_unicode=True, sort_keys=False),
+        encoding="utf-8",
+    )
+    typer.echo(f"Draft only: {output}. # HUMAN: edit config/brand.yaml, then run brand-freeze.")
+
+
+@app.command("brand-freeze")
+def brand_freeze(
+    actor: Annotated[str, typer.Option(help="Human freezing the constitution")],
+    brand: Annotated[Path, typer.Option()] = Path("config/brand.yaml"),
+    db: Annotated[Path, typer.Option()] = DEFAULT_DB,
+) -> None:
+    """FR-01: HUMAN-invoked command stores a hash of an existing human-edited file."""
+    constitution = BrandConstitution.model_validate(
+        yaml.safe_load(brand.read_text(encoding="utf-8"))
+    )
+    repository = Repository(db)
+    try:
+        digest = repository.register_brand(constitution, actor=actor)
+        typer.echo(f"Stored human-frozen brand: {digest}")
+    finally:
+        repository.close()
 
 
 @app.command()

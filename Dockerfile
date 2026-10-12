@@ -5,11 +5,17 @@ WORKDIR /app
 ENV UV_PYTHON_DOWNLOADS=never \
     UV_LINK_MODE=copy \
     INSTABAY_MODE=dry_run \
+    INSTABAY_DB_PATH=/state/demo.sqlite3 \
+    INSTABAY_CHECKPOINTS_PATH=/state/checkpoints.sqlite3 \
+    INSTABAY_OUTBOX_PATH=/state/outbox \
     PATH="/app/.venv/bin:$PATH"
 COPY pyproject.toml uv.lock README.md ./
 COPY src ./src
 RUN uv sync --frozen --no-dev
 COPY tests/fixtures/llm ./tests/fixtures/llm
+COPY config ./config
+COPY assets/photos ./assets/photos
+RUN mkdir -p /state && chown 10001:10001 /state
 USER 10001:10001
 ENTRYPOINT ["instabay"]
-CMD ["smoke", "--db", "/tmp/instabay.sqlite3"]
+CMD ["demo"]
