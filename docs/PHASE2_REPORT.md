@@ -43,6 +43,13 @@ no real LLM, Graph API, GPU, model-weight or video-render call was made.
 The approval regression tests were committed in `c130649` before the publisher existed.
 The publisher implementation followed in a later commit.
 
+GitHub [push CI](https://github.com/mazenDDr/instabay-agent/actions/runs/38198870679)
+and [PR CI](https://github.com/mazenDDr/instabay-agent/actions/runs/38198873175) both passed.
+CI first caught an import-order inconsistency in the test written before the publisher
+existed; explicit first-party package configuration and an uncached Ruff check resolved it.
+[PR #2](https://github.com/mazenDDr/instabay-agent/pull/2) is ready for review, with its author
+and all implementation commits verified as `mazenDDr`.
+
 ## 3. Deviations and ADR
 
 [ADR 0002](adr/0002-phase2-approval-loop.md) records the phase boundaries. Neutral finite
