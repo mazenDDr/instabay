@@ -42,7 +42,9 @@ CREATE TABLE IF NOT EXISTS asset (
   approved INTEGER NOT NULL DEFAULT 0,
   rejected INTEGER NOT NULL DEFAULT 0,
   recipe_json TEXT,
-  fidelity_json TEXT
+  fidelity_json TEXT,
+  vlm_pillar TEXT,
+  vlm_reason TEXT
 );
 CREATE TABLE IF NOT EXISTS classification (
   sequence INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -88,6 +90,8 @@ class Asset(Boundary):
     rejected: bool = False
     recipe: dict[str, JsonValue] | None = None
     fidelity: dict[str, JsonValue] | None = None
+    vlm_pillar: str | None = None
+    vlm_reason: str | None = None
 
     @model_validator(mode="after")
     def lineage(self) -> Self:
@@ -96,13 +100,22 @@ class Asset(Boundary):
         return self
 
     @property
-    def pillar(self) -> str | None:
-        """FR-04: owner label, else a confident model label, else unassigned."""
+    def pillar_source(self) -> Literal["owner", "d3", "vlm"] | None:
+        """FR-04: owner label, else a confident d3 label, else the VLM judge, else none."""
         if self.owner_pillar:
-            return self.owner_pillar
+            return "owner"
         if self.model_pillar and (self.model_confidence or 0) >= CONFIDENT:
-            return self.model_pillar
+            return "d3"
+        if self.vlm_pillar:
+            return "vlm"
         return None
+
+    @property
+    def pillar(self) -> str | None:
+        source = self.pillar_source
+        if source is None:
+            return None
+        return {"owner": self.owner_pillar, "d3": self.model_pillar, "vlm": self.vlm_pillar}[source]
 
     @property
     def view_score(self) -> float | None:
@@ -172,6 +185,11 @@ class AssetLibrary:
         self.db.row_factory = sqlite3.Row
         self.db.execute("PRAGMA foreign_keys = ON")
         self.db.executescript(SCHEMA)
+        columns = {row[1] for row in self.db.execute("PRAGMA table_info(asset)")}
+        for name in ("vlm_pillar", "vlm_reason"):
+            if name not in columns:
+                self.db.execute(f"ALTER TABLE asset ADD COLUMN {name} TEXT")
+        self.db.commit()
 
     def close(self) -> None:
         self.db.close()
@@ -313,6 +331,14 @@ class AssetLibrary:
             db.execute(
                 "UPDATE asset SET model_pillar = ?, model_confidence = ?, people = ? WHERE id = ?",
                 (pillar, confidence, people, asset_id),
+            )
+
+    def record_vlm(self, asset_id: str, pillar: str | None, reason: str) -> None:
+        """FR-08: second-opinion label for photos d3 was unsure about; never an owner label."""
+        with self.transaction() as db:
+            db.execute(
+                "UPDATE asset SET vlm_pillar = ?, vlm_reason = ? WHERE id = ?",
+                (pillar, reason[:500], asset_id),
             )
 
     def record_fidelity(self, asset_id: str, result: dict[str, JsonValue]) -> None:
