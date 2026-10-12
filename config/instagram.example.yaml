@@ -1,0 +1,13 @@
+# HUMAN: verify current version, app login path, permissions, quota and media specs before live use.
+# These SPEC values remain [verify]; Meta documentation could not be accessed for version verification.
+api_version: v25.0
+login: instagram
+publish_cap: 50
+poll_interval_s: 60
+max_poll_checks: 6
+request_timeout_s: 30
+# HUMAN: list only your public immutable media bucket hosts. Empty list blocks all publishing.
+media_hosts: []
+image_max_bytes: 8000000
+# Conservative SPEC cap. Meta's official Postman example differs (1 GB).
+video_max_bytes: 300000000

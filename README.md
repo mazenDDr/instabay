@@ -6,6 +6,8 @@ The intended weekly loop is brand → plan → native EN/AR content → checks �
 
 ## Current status
 
+Phase 5 adds guarded native Instagram publishing, durable retry state and parent-media
+insights, verified with synthetic offline contracts. No live post has been verified.
 Phase 4 implements the five-metric benchmark harness, constrained policy baselines,
 paired seed intervals, human-rating packets and the generated results table.
 Phase 3 adds a frozen seeded audience, factored Thompson sampling, long-format metrics,
@@ -15,7 +17,7 @@ SQLModel/SQLite storage, a constrained code planner, shared briefs, parallel nat
 writers, tiered hashtags, deterministic rules, three judge samples, one revision,
 a timed human approval CLI, guarded dry-run exports, and persistent LangGraph pause/resume.
 The Phase 1 LLM cache, budgets, provenance, lint/type checks, hooks and CI remain in place.
-Real publishing, System-1 engines and video rendering remain in their later
+Production agent wiring, calibrated System-1 engines and video rendering remain in their later
 [specified phases](docs/SPEC.md). Optimization results describe a synthetic audience;
 quality scores are canned fixtures until human calibration. `make render` remains pending.
 
@@ -148,13 +150,25 @@ Actual token/cost overrun is detected after a provider response, recorded, and h
 a provider whose API does not expose preflight usage cannot guarantee an exact spend ceiling.
 
 The default configuration is `dry_run`. Secrets belong in git-ignored `.env` or CI secrets;
-`.env.example` contains empty credential fields. No real-provider adapter exists yet.
+`.env.example` contains empty credential fields. Native Graph publishing and insights adapters
+are available for HUMAN-invoked, prepared non-demo posts; no real LLM adapter exists yet.
 Dry-run publishing requires the **latest stored APPROVED/EDITED decision for the exact
 content hash**. Changing content invalidates approval. SQLite holds a write transaction
 across the guard, artifact write and receipt, so edits cannot race an export. Invalid hard-rule
-edits are rejected. A graph resume payload cannot create approvals. No live adapter exists;
-live environment mode is rejected by the demo/resume commands. System-1 is deferred to
+edits are rejected. A graph resume payload cannot create approvals. The demo/resume/cycle
+commands reject live mode. Explicit native Graph commands require live mode, environment
+credentials, `--confirm-live`, a frozen brand, approved ready media and a matching stored
+approval. [Behavior, retry limits and HUMAN steps](docs/INSTAGRAM.md). System-1 is deferred to
 Phase 6, so every post currently goes through rules and the fixture judge.
+
+## Instagram adapters
+
+Phase 5 adds approval-guarded photo, image-carousel and reel URL publishing, a durable
+SQLite operation journal and parent-media insights. Unknown POST outcomes stop for human
+reconciliation; a known receipt is reused without another request. Empty/partial insight
+batches keep missing values missing. Live counts are stored without updating bandit beliefs.
+The contracts are synthetic and run offline; no live Instagram post has been verified.
+See [usage and limitations](docs/INSTAGRAM.md) and [Phase 5 evidence](docs/PHASE5_REPORT.md).
 
 ## Brand draft and human freeze
 
@@ -171,15 +185,15 @@ does not create, edit or freeze `config/brand.yaml`. Non-demo storage runs requi
 ## Container demo
 
 ```sh
-docker build -t instabay:phase4 .
-docker run --rm --network none -v instabay-demo:/state instabay:phase4
-docker run -it --rm --network none -v instabay-demo:/state instabay:phase4 approve --actor YOUR_NAME
-docker run --rm --network none -v instabay-demo:/state instabay:phase4 resume
+docker build -t instabay:phase5 .
+docker run --rm --network none -v instabay-demo:/state instabay:phase5
+docker run -it --rm --network none -v instabay-demo:/state instabay:phase5 approve --actor YOUR_NAME
+docker run --rm --network none -v instabay-demo:/state instabay:phase5 resume
 # Use a separate named volume for the multi-week cycle.
-docker run --rm --network none -v instabay-cycle:/state instabay:phase4 cycle --weeks 3
-docker run -it --rm --network none -v instabay-cycle:/state instabay:phase4 approve --run-id cycle-w01 --actor YOUR_NAME
-docker run --rm --network none -v instabay-cycle:/state instabay:phase4 cycle --weeks 3
-docker run --rm --network none -v instabay-bench:/state instabay:phase4 bench
+docker run --rm --network none -v instabay-cycle:/state instabay:phase5 cycle --weeks 3
+docker run -it --rm --network none -v instabay-cycle:/state instabay:phase5 approve --run-id cycle-w01 --actor YOUR_NAME
+docker run --rm --network none -v instabay-cycle:/state instabay:phase5 cycle --weeks 3
+docker run --rm --network none -v instabay-bench:/state instabay:phase5 bench
 ```
 
 The image runs as UID 10001. Its `/state` volume preserves the queue, approval rows,

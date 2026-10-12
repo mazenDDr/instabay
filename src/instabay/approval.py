@@ -25,7 +25,7 @@ def show_post(repository: Repository, post_id: str, console: Console) -> None:
     console.print(table)
     if review is not None:
         console.print(
-            f"Judge: {review.judge.average:.2f}/5 (3 fixture samples); "
+            f"Judge: {review.judge.average:.2f}/5 (3 stored samples); "
             f"Rules: {'PASS' if review.rules.passed else 'FAIL'}"
         )
         for flag in review.flags:
@@ -34,8 +34,22 @@ def show_post(repository: Repository, post_id: str, console: Console) -> None:
         console.print(
             "Judge scores belong to the pre-edit content; current copy was edited by a human."
         )
-    console.print(f"Media preview: {post.media_path or 'concept only; no rendered video'}")
-    console.print("Reference property: The Grand Resort Hurghada; fictional Insta Bay demo.")
+    if post.media_manifest is None:
+        console.print(f"Media preview: {post.media_path or 'concept only; no rendered video'}")
+        console.print("Reference property: The Grand Resort Hurghada; fictional Insta Bay demo.")
+    else:
+        manifest = post.media_manifest
+        console.print(Text(f"Media: {post.media_status}; verified by {manifest.verified_by}"))
+        for asset in [*manifest.assets, *([manifest.cover] if manifest.cover else [])]:
+            console.print(
+                Text(f"{asset.url} ({asset.width}x{asset.height}, {asset.size_bytes} bytes)")
+            )
+            console.print(Text(f"SHA-256: {asset.content_sha256}"))
+        if manifest.recipe_hash:
+            console.print(Text(f"Render recipe: {manifest.recipe_hash}"))
+        if manifest.reference_only:
+            console.print("Reference-only media; live publishing is blocked.")
+        console.print("Live caption combines EN and AR with one hashtag list.")
 
 
 def approval_queue(

@@ -1,13 +1,25 @@
 """FR-01 to FR-10: validated domain boundaries for the approval-first weekly loop."""
 
 import hashlib
+import ipaddress
 import json
 import math
+import re
 from datetime import UTC, date, datetime
-from typing import Annotated, Literal, Self
+from typing import Annotated, Literal, Self, cast
+from urllib.parse import urlsplit
 from zoneinfo import ZoneInfo
 
-from pydantic import AfterValidator, AwareDatetime, BaseModel, ConfigDict, Field, model_validator
+from pydantic import (
+    AfterValidator,
+    AwareDatetime,
+    BaseModel,
+    ConfigDict,
+    Field,
+    JsonValue,
+    field_validator,
+    model_validator,
+)
 
 CAIRO = ZoneInfo("Africa/Cairo")
 PostFormat = Literal["photo", "carousel", "reel"]
@@ -261,6 +273,108 @@ class Copy(Boundary):
     alt_text: str = Field(min_length=1)
 
 
+class MediaAsset(Boundary):
+    """FR-07: HUMAN-verified metadata and public immutable bytes bound into approval."""
+
+    url: str
+    content_sha256: Hash
+    kind: Literal["image", "video"]
+    size_bytes: int = Field(gt=0)
+    width: int = Field(gt=0)
+    height: int = Field(gt=0)
+    mime_type: Literal["image/jpeg", "video/mp4", "video/quicktime"]
+    color_space: Literal["sRGB"] | None = None
+    duration_s: float | None = Field(default=None, ge=3, le=900)
+    fps: float | None = Field(default=None, ge=23, le=60)
+    video_codec: Literal["h264", "hevc"] | None = None
+    audio_codec: Literal["aac"] | None = None
+    audio_sample_rate: int | None = Field(default=None, gt=0, le=48000)
+    moov_at_front: bool = False
+
+    @field_validator("url")
+    @classmethod
+    def public_https(cls, value: str) -> str:
+        parsed = urlsplit(value)
+        host = parsed.hostname or ""
+        if (
+            parsed.scheme != "https"
+            or not host
+            or parsed.username
+            or parsed.password
+            or parsed.query
+            or parsed.fragment
+            or parsed.port not in (None, 443)
+            or host == "localhost"
+            or host.endswith((".local", ".internal"))
+        ):
+            raise ValueError("Media needs a public HTTPS URL without credentials/query/fragment")
+        try:
+            address = ipaddress.ip_address(host)
+        except ValueError:
+            if "." not in host:
+                raise ValueError("Media host must be a public domain") from None
+        else:
+            if not address.is_global:
+                raise ValueError("Private/local media IPs are forbidden")
+        return value
+
+    @model_validator(mode="after")
+    def media_spec(self) -> Self:
+        if self.kind == "image":
+            if (
+                self.mime_type != "image/jpeg"
+                or self.color_space != "sRGB"
+                or not 0.8 <= self.width / self.height <= 1.91
+            ):
+                raise ValueError("Images require sRGB JPEG and aspect ratio 4:5 to 1.91:1")
+        elif (
+            self.mime_type == "image/jpeg"
+            or self.width > 1920
+            or self.duration_s is None
+            or self.fps is None
+            or self.video_codec is None
+            or self.audio_codec is None
+            or self.audio_sample_rate is None
+            or not self.moov_at_front
+        ):
+            raise ValueError("Video requires verified codecs, timing, dimensions and fast-start")
+        return self
+
+
+class MediaManifest(Boundary):
+    """FR-07, NFR-03: included in the stored post hash before human approval."""
+
+    format: PostFormat
+    assets: list[MediaAsset] = Field(min_length=1, max_length=10)
+    cover: MediaAsset | None = None
+    reference_only: bool = True
+    verified_by: str = Field(min_length=1)
+    # HUMAN: verify bytes/specs/rights and facility fidelity before attaching this manifest.
+    generated: bool = False
+    recipe_hash: Hash | None = None
+    render_recipe: dict[str, JsonValue] | None = None
+
+    @model_validator(mode="after")
+    def format_spec(self) -> Self:
+        count = len(self.assets)
+        if self.format == "photo" and (count != 1 or self.assets[0].kind != "image"):
+            raise ValueError("Photo requires one image")
+        if self.format == "carousel" and (
+            not 2 <= count <= 10 or any(a.kind != "image" for a in self.assets)
+        ):
+            raise ValueError("This carousel adapter supports 2-10 images")
+        if self.format == "reel":
+            if count != 1 or self.assets[0].kind != "video":
+                raise ValueError("Reel requires one video")
+            if self.render_recipe is None or self.recipe_hash != canonical_hash(
+                cast(dict[str, object], self.render_recipe)
+            ):
+                raise ValueError("Reel needs a stored recipe with its exact canonical hash")
+        if self.cover is not None and (self.format != "reel" or self.cover.kind != "image"):
+            raise ValueError("Only reels may have an image cover")
+        return self
+
+
 class Post(Boundary):
     """FR-04 to FR-10: immutable content snapshot; approval binds its exact hash."""
 
@@ -277,7 +391,8 @@ class Post(Boundary):
     ai_disclosure: bool = False
     offer_id: str | None = None
     media_path: str | None = None
-    media_status: Literal["reference", "concept_only", "rendered"] = "reference"
+    media_status: Literal["reference", "concept_only", "rendered", "ready"] = "reference"
+    media_manifest: MediaManifest | None = Field(default=None, exclude_if=lambda v: v is None)
 
     @property
     def content_hash(self) -> str:
@@ -401,16 +516,41 @@ class Approval(Boundary):
 
 
 class Publication(Boundary):
-    """FR-10: dry-run export receipt; it never claims an Instagram media ID."""
+    """FR-10: export or live receipt; live IDs require explicit remote provenance."""
 
     id: str
     post_id: Identifier
     approval_id: str
     idempotency_key: Hash
     content_hash: Hash
-    mode: Literal["dry_run"] = "dry_run"
+    mode: Literal["dry_run", "live"] = "dry_run"
+    media_id: str | None = None
+    container_id: str | None = None
+    account_id: str | None = None
+    api_version: str | None = None
+    payload_hash: Hash | None = None
+    graph_login: Literal["instagram", "facebook"] | None = None
     outbox_path: str
     published_at: UTCDateTime
+
+    @model_validator(mode="after")
+    def mode_provenance(self) -> Self:
+        remote = (
+            self.media_id,
+            self.container_id,
+            self.account_id,
+            self.api_version,
+            self.payload_hash,
+            self.graph_login,
+        )
+        if self.mode == "live":
+            if not all(remote) or self.outbox_path:
+                raise ValueError("Live receipt needs remote IDs/profile and no outbox path")
+            if any(not re.fullmatch(r"[0-9]+", value or "") for value in remote[:3]):
+                raise ValueError("Live resource IDs must be numeric")
+        elif any(remote):
+            raise ValueError("Dry-run exports cannot claim live Graph provenance")
+        return self
 
 
 class WorkflowInput(Boundary):

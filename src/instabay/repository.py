@@ -37,6 +37,7 @@ from instabay.core.tables import (
     ArmRow,
     BrandVersionRow,
     CycleRow,
+    GraphJobRow,
     HashtagRow,
     JudgeScoreRow,
     LearningRow,
@@ -59,6 +60,30 @@ class Repository:
         event.listen(self.engine, "connect", self._enable_foreign_keys)
         self._migrate_posterior_scope()
         SQLModel.metadata.create_all(self.engine)
+        self._migrate_graph_columns()
+
+    def _migrate_graph_columns(self) -> None:
+        """FR-10: additive nullable migration preserves legacy hashes and approvals."""
+        additions = {
+            "post": ("media_json",),
+            "publication": (
+                "media_id",
+                "container_id",
+                "account_id",
+                "api_version",
+                "payload_hash",
+                "graph_login",
+            ),
+        }
+        with self.engine.begin() as connection:
+            connection.exec_driver_sql("BEGIN IMMEDIATE")
+            for table, names in additions.items():
+                existing = {
+                    row[1] for row in connection.exec_driver_sql(f"PRAGMA table_info({table})")
+                }
+                for name in names:
+                    if name not in existing:
+                        connection.exec_driver_sql(f"ALTER TABLE {table} ADD COLUMN {name} TEXT")
 
     def _migrate_posterior_scope(self) -> None:
         """FR-13: preserve Phase 2 prototype rows in an isolated legacy scope."""
@@ -146,6 +171,8 @@ class Repository:
             ).first()
             if publication is None or publication.content_hash != metrics.content_hash:
                 raise UnapprovedPublishError("Metrics require an authorized stored publication")
+            if publication.mode != "dry_run":
+                raise ValueError("Live bandit learning awaits calibrated Phase 6 fidelity evidence")
             existing = session.get(LearningRow, post.id)
             if existing is not None:
                 previous = LearningRecord.model_validate_json(existing.record_json)
@@ -321,6 +348,16 @@ class Repository:
             if self._post(session, post.id).content_hash != post.content_hash:
                 raise ValueError("Published snapshots cannot be edited")
             return
+        jobs = session.exec(select(GraphJobRow).where(GraphJobRow.post_id == post.id)).all()
+        if (
+            any(
+                (state := json.loads(job.job_json))["phase"] not in {"error", "expired", "prepared"}
+                or (state["phase"] == "prepared" and state["child_ids"])
+                for job in jobs
+            )
+            and self._post(session, post.id).content_hash != post.content_hash
+        ):
+            raise ValueError("An active Graph operation freezes the approved snapshot")
         row = PostRow(
             id=post.id,
             slot_id=post.slot_id,
@@ -335,6 +372,7 @@ class Repository:
             offer_id=post.offer_id,
             media_path=post.media_path,
             media_status=post.media_status,
+            media_json=post.media_manifest.model_dump_json() if post.media_manifest else None,
             idempotency_key=post.idempotency_key,
         )
         session.merge(row)
@@ -380,6 +418,7 @@ class Repository:
                 "offer_id": row.offer_id,
                 "media_path": row.media_path,
                 "media_status": row.media_status,
+                "media_manifest": json.loads(row.media_json) if row.media_json else None,
             }
         )
 
@@ -563,23 +602,14 @@ class Repository:
         """FR-09: approve exact content before any I/O; BEGIN IMMEDIATE prevents edit races."""
         with Session(self.engine) as session:
             session.connection().exec_driver_sql("BEGIN IMMEDIATE")
-            post = self._post(session, post_id)
-            row = self._latest_approval(session, post_id)
-            if (
-                row is None
-                or row.decision not in {"APPROVED", "EDITED"}
-                or row.content_hash != post.content_hash
-            ):
-                raise UnapprovedPublishError(
-                    "Publishing requires a matching stored APPROVED/EDITED decision"
-                )
-            self._check_content(session, post)
+            post, approval = self._authorized_post(session, post_id)
             existing = session.exec(
                 select(PublicationRow).where(PublicationRow.post_id == post_id)
             ).first()
             if existing:
+                if existing.mode != "dry_run":
+                    raise ValueError("Live publication cannot be returned as a dry-run export")
                 return Publication.model_validate(existing.model_dump())
-            approval = self._approval(row)
             location = writer.write(post, approval)
             publication = Publication(
                 id=str(uuid4()),
@@ -593,6 +623,21 @@ class Repository:
             session.add(PublicationRow(**publication.model_dump(mode="json")))
             session.commit()
             return publication
+
+    def _authorized_post(self, session: Session, post_id: str) -> tuple[Post, Approval]:
+        """FR-09: shared exact-snapshot guard executes before any publisher I/O."""
+        post = self._post(session, post_id)
+        row = self._latest_approval(session, post_id)
+        if (
+            row is None
+            or row.decision not in {"APPROVED", "EDITED"}
+            or row.content_hash != post.content_hash
+        ):
+            raise UnapprovedPublishError(
+                "Publishing requires a matching stored APPROVED/EDITED decision"
+            )
+        self._check_content(session, post)
+        return post, self._approval(row)
 
     @staticmethod
     def _check_content(session: Session, post: Post) -> None:
