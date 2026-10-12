@@ -20,8 +20,11 @@ repos:
       - id: detect-secrets
         name: detect secrets
         entry: .venv/bin/detect-secrets-hook
-        # Public SHA-256 fixture/protocol hashes are canonical-content metadata, not credentials.
-        # Exempt only their exact JSON line shape; the rest of each fixture stays scanned.
-        args: [--no-verify, --exclude-lines, '^\s*"(content_signature|brand_hash|protocol_hash|corpus_hash|sha256)": "[a-f0-9]{64}",?$']
+        # Exempt exact canonical hash fields and public model revisions, never credential fields.
+        # Native evidence files retain scanning on every other line.
+        args:
+          - --no-verify
+          - --exclude-lines
+          - '^\s*(?:"(content_signature|brand_hash|protocol_hash|corpus_hash|sha256|recipe_hash|recipe_file_sha256|native_recipe_hash|raw_clip_sha256|file_sha256|raw_copy_sha256|edited_copy_sha256|conditioning_sha256|image_sha256|ffmpeg_sha256|ffprobe_sha256|implementation_sha256|prompt_hash|cache_key)": "[a-f0-9]{64}"|"revision": "[a-f0-9]{40}"),?$'
         language: system
         exclude: ^(uv\.lock|assets/photos/manifest\.json)$

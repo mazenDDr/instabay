@@ -10,6 +10,7 @@ import typer
 from instabay.core.recipe import RenderRecipe
 from instabay.video.backends.base import VideoBackend
 from instabay.video.backends.comfyui import ComfyUIBackend
+from instabay.video.backends.recorded import RecordedMotionBackend
 from instabay.video.backends.stub import StubVideoBackend
 from instabay.video.backends.wan_diffusers import WanDiffusersBackend
 from instabay.video.files import RenderError
@@ -56,7 +57,11 @@ def register_video_commands(app: typer.Typer) -> None:
         adapter: VideoBackend | None = None
         try:
             request = load_recipe(recipe, backend, root)
-            adapter = choose_backend(backend, confirm_gpu, request.model.supports_flf)
+            adapter = (
+                RecordedMotionBackend()
+                if request.post.recorded_motion
+                else choose_backend(backend, confirm_gpu, request.model.supports_flf)
+            )
             result = VideoStudio(db, root, renders, adapter).render(request)
             typer.echo(result.model_dump_json(indent=2, exclude={"frame_hashes"}))
             typer.echo(f"Decoded frame hashes: {len(result.frame_hashes)} (stored in result.json)")
@@ -81,7 +86,11 @@ def register_video_commands(app: typer.Typer) -> None:
     ) -> None:
         """NFR-03: render twice without cache reuse; compare every decoded frame."""
         request = load_recipe(recipe, backend, root)
-        adapter = choose_backend(backend, confirm_gpu, request.model.supports_flf)
+        adapter = (
+            RecordedMotionBackend()
+            if request.post.recorded_motion
+            else choose_backend(backend, confirm_gpu, request.model.supports_flf)
+        )
         output.parent.mkdir(parents=True, exist_ok=True)
         try:
             with TemporaryDirectory(dir=output.parent) as work:

@@ -247,7 +247,12 @@ The user-requested photo pack is tracked separately under `assets/photos/`. It d
 source, author, license, dimensions and SHA-256 in the manifest. Historical reference
 photos do not establish current facilities or offers. See its attribution README before
 using the photos or derivative footage. Phase 7 preserves their original bytes and approval flags;
-the offline video gate uses a synthetic still. Human crop/rights/fidelity review is still required.
+the offline video gate uses a synthetic still. The user approved crops for an unpublished sample
+on 2026-10-12. Original-photo approval flags remain unchanged; derivative crop evidence is separate.
+
+Real local caption generation and a measured photo-conditioned Wan preview are described in
+[NATIVE_PREVIEW.md](docs/NATIVE_PREVIEW.md). These optional runs use gpu-box and remain separate
+from offline demos, calibrated benchmarks, brand freezing and post approval.
 
 ## Human follow-up
 

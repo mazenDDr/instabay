@@ -1,0 +1,240 @@
+{
+  "scope": "Unpublished real-model resort preview; no calibrated judge, marketing fidelity or post approval",
+  "llm": {
+    "model": "Qwen/Qwen3-4B-Instruct-2507@cdbee75f17c01a7cc42f958dc650907174af0554",
+    "successful_calls": 4,
+    "successful_tokens": 3242,
+    "successful_latency_seconds": [
+      23.45503033406567,
+      12.522557375021279,
+      5.5616933749988675,
+      7.865188166964799
+    ],
+    "call_records": [
+      {
+        "id": "3cd756fb-7ee3-48c8-b630-01db22b83950",
+        "created_at": "2026-10-12T09:51:23.849419Z",
+        "template_name": "resort_preview",
+        "slot_id": "real-resort-preview",
+        "model": "Qwen/Qwen3-4B-Instruct-2507@cdbee75f17c01a7cc42f958dc650907174af0554",
+        "prompt_hash": "000f1cbd71a3846c17398489325c411e34d9cc8068c729c20905d2aa90c2dfca",
+        "cache_key": "1d9bcda332b4239429757705d25a34869aac4385411012a4a31bc3f12c97c30e",
+        "status": "provider_error",
+        "attempt": 1,
+        "latency_ms": 0.3825420280918479,
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cost_usd": 0.0,
+        "error_type": "provider_failure",
+        "run_id": null
+      },
+      {
+        "id": "b9da63b3-3bae-4938-8140-030cb7148058",
+        "created_at": "2026-10-12T09:52:52.825728Z",
+        "template_name": "resort_preview",
+        "slot_id": "real-resort-preview",
+        "model": "Qwen/Qwen3-4B-Instruct-2507@cdbee75f17c01a7cc42f958dc650907174af0554",
+        "prompt_hash": "000f1cbd71a3846c17398489325c411e34d9cc8068c729c20905d2aa90c2dfca",
+        "cache_key": "1d9bcda332b4239429757705d25a34869aac4385411012a4a31bc3f12c97c30e",
+        "status": "success",
+        "attempt": 1,
+        "latency_ms": 23455.03033406567,
+        "input_tokens": 655,
+        "output_tokens": 305,
+        "cost_usd": 0.0,
+        "error_type": null,
+        "run_id": null
+      },
+      {
+        "id": "5b80c89c-10fe-4793-8277-9bad12895d66",
+        "created_at": "2026-10-12T09:55:27.286765Z",
+        "template_name": "resort_preview",
+        "slot_id": "real-resort-preview",
+        "model": "Qwen/Qwen3-4B-Instruct-2507@cdbee75f17c01a7cc42f958dc650907174af0554",
+        "prompt_hash": "537c29078e7115b159dc47bff577f28d0ef1d4d1ff2d23d8ce3d6dedb3efdbcc",
+        "cache_key": "9a9ca05bb2b074f20f8eb042ba605d483c0fa4fa1ff07e88506a803148690174",
+        "status": "success",
+        "attempt": 1,
+        "latency_ms": 12522.557375021279,
+        "input_tokens": 792,
+        "output_tokens": 301,
+        "cost_usd": 0.0,
+        "error_type": null,
+        "run_id": null
+      },
+      {
+        "id": "0e357e13-d9c5-49b7-ac11-62a72c70a594",
+        "created_at": "2026-10-12T10:03:01.264399Z",
+        "template_name": "resort_preview",
+        "slot_id": "real-resort-preview",
+        "model": "Qwen/Qwen3-4B-Instruct-2507@cdbee75f17c01a7cc42f958dc650907174af0554",
+        "prompt_hash": "537c29078e7115b159dc47bff577f28d0ef1d4d1ff2d23d8ce3d6dedb3efdbcc",
+        "cache_key": "9a9ca05bb2b074f20f8eb042ba605d483c0fa4fa1ff07e88506a803148690174",
+        "status": "cached",
+        "attempt": 0,
+        "latency_ms": 0.0,
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cost_usd": 0.0,
+        "error_type": null,
+        "run_id": null
+      },
+      {
+        "id": "e6f344b1-b03c-41e2-b364-3538125c67ab",
+        "created_at": "2026-10-12T10:03:06.827525Z",
+        "template_name": "resort_preview_ar",
+        "slot_id": "real-resort-preview-ar",
+        "model": "Qwen/Qwen3-4B-Instruct-2507@cdbee75f17c01a7cc42f958dc650907174af0554",
+        "prompt_hash": "ccfa07e75754560a93fa0e3295c645b0d4afcdba2b2e30584428aa6211dd76cc",
+        "cache_key": "e18a1840ca1e0ac8ec736edfada0e0baeb5272dc760aad65ce6143d8585574da",
+        "status": "success",
+        "attempt": 1,
+        "latency_ms": 5561.6933749988675,
+        "input_tokens": 452,
+        "output_tokens": 98,
+        "cost_usd": 0.0,
+        "error_type": null,
+        "run_id": null
+      },
+      {
+        "id": "7dd1d04f-3e5c-44fb-81b6-79a021c31043",
+        "created_at": "2026-10-12T10:03:53.235155Z",
+        "template_name": "resort_preview",
+        "slot_id": "real-resort-preview",
+        "model": "Qwen/Qwen3-4B-Instruct-2507@cdbee75f17c01a7cc42f958dc650907174af0554",
+        "prompt_hash": "537c29078e7115b159dc47bff577f28d0ef1d4d1ff2d23d8ce3d6dedb3efdbcc",
+        "cache_key": "9a9ca05bb2b074f20f8eb042ba605d483c0fa4fa1ff07e88506a803148690174",
+        "status": "cached",
+        "attempt": 0,
+        "latency_ms": 0.0,
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cost_usd": 0.0,
+        "error_type": null,
+        "run_id": null
+      },
+      {
+        "id": "6851d7a0-4932-4ec5-b3bb-4affa83c9f32",
+        "created_at": "2026-10-12T10:04:01.101489Z",
+        "template_name": "resort_preview_ar",
+        "slot_id": "real-resort-preview-ar",
+        "model": "Qwen/Qwen3-4B-Instruct-2507@cdbee75f17c01a7cc42f958dc650907174af0554",
+        "prompt_hash": "6ce19735ce6b3f610c7a9868cb027d653aba8eb105a23560e19b4f7bbf09872d",
+        "cache_key": "b615f563e6466ff2c91126c8e1f7a0b05c0f6ab689af8bce12a0c0b9228d1df4",
+        "status": "success",
+        "attempt": 1,
+        "latency_ms": 7865.188166964799,
+        "input_tokens": 501,
+        "output_tokens": 138,
+        "cost_usd": 0.0,
+        "error_type": null,
+        "run_id": null
+      }
+    ],
+    "arabic_editorially_corrected": true
+  },
+  "motion": {
+    "recipe_hash": "c7e8210a0d93ea232518eb25f14c4a79e138929842011da86ad8896e4c8c64ba",
+    "seconds": 442.3792997869896,
+    "peak_vram_bytes": 14767928320,
+    "unique_clips": 1,
+    "working_resolution": [
+      576,
+      1024
+    ],
+    "frames": 61,
+    "fps": 12,
+    "steps": 40,
+    "guidance": 5,
+    "shift": 3,
+    "seed": 1701,
+    "raw_clip_sha256": "c6c9b9f837178b7426b91ff1465ef8f395c1818ddf18160e14f1a92ce2f56bfa",
+    "prior_trials": [
+      {
+        "recipe_hash": "9dc109ed289fec04b24c4b6d92373893ccf55f1841e8d7ab9f2156308718d820",
+        "status": "rendered; visual rejection for neon colour shifts and warped architecture",
+        "seconds": 429.5457259090035
+      },
+      {
+        "recipe_hash": "77f2d84ccd3d836d0dcafa0d40032986bdc61fabf9c6f9da07f717094f183d53",
+        "status": "CUDA out of memory during denoiser upload; retained encoder autograd graph fixed before successful same-settings trial"
+      }
+    ]
+  },
+  "post": {
+    "recipe_hash": "30eb90fa25552d99e91bc01c57bce145ef93d77c3c7b57473770aedf1866d52c",
+    "seconds": 10.64772320794873,
+    "file_sha256": "76ca463da550f8c6e9d596389b5515c7248a93147bab03a67c06c3d1f6a7f169",
+    "decoded_frames": 450,
+    "qa": {
+      "spec_ok": true,
+      "width": 1080,
+      "height": 1920,
+      "fps": 30.0,
+      "duration_s": 15.0,
+      "size_bytes": 2889153,
+      "moov_at_front": true,
+      "violations": [
+        "semantic/subject/background/seam/palette QA pending"
+      ],
+      "flicker": 0.00028986426785479295,
+      "visual": null,
+      "status": "needs_review"
+    },
+    "ai_disclosure": true,
+    "reference_only": true,
+    "source_clip_reused": true,
+    "post_approved": false
+  },
+  "validation": {
+    "offline_tests": 268,
+    "strict_mypy_files": 88,
+    "docker_demo": "network disabled; stopped at human approval with seven drafts and no publish"
+  },
+  "assets": [
+    {
+      "uri": "resort-copy.edited.json",
+      "sha256": "4487ad1b48264b8167fd88e0dcaf30e41252707b9388a1903caa152c55a86ec4"
+    },
+    {
+      "uri": "wan-motion-recipe.json",
+      "sha256": "be5ed76c34068814a8cb6f3ff56cc1b86e5bbca40a1b315dc8c4ec2563d1c127"
+    },
+    {
+      "uri": "resort-crop-approval.json",
+      "sha256": "ef24a7c9b5d9895fda572a75d49a10af38698706382f302f8f24b33d55cc4de4"
+    },
+    {
+      "uri": "resort-approved-crop.jpg",
+      "sha256": "8042034d0a5b4c0b319c3d04b8ac613632fa6de93711f95aa649ae2465c7fe36"
+    },
+    {
+      "uri": "resort-ai-motion-captions.json",
+      "sha256": "811b05d2c0318860a56bbc813ccffbe460916f55e0e1a26b5c4bdb3d369d734f"
+    },
+    {
+      "uri": "wan-motion-result.json",
+      "sha256": "c00c0245869f55f44d96ce34dad5816ac91a80dee839ff5131a08a9b1a5714ca"
+    },
+    {
+      "uri": "resort-ai-motion-contact.jpg",
+      "sha256": "b1dd6c0a04e24a219bf59c0334c5a398cc8942f970e8d7b664fd7f6015f4cb83"
+    },
+    {
+      "uri": "resort-ai-motion.mp4",
+      "sha256": "76ca463da550f8c6e9d596389b5515c7248a93147bab03a67c06c3d1f6a7f169"
+    },
+    {
+      "uri": "resort-post-recipe.json",
+      "sha256": "dba17f5d7e3f3aba91df4c1387cba334c98dd4e28bb3af2cf71ce5fadb63041b"
+    },
+    {
+      "uri": "resort-editorial-edits.json",
+      "sha256": "d5cc5ef91126a392201365f0ae65e0f9c17180295d42b35c28cbf22b4379fcd4"
+    },
+    {
+      "uri": "resort-copy.raw.json",
+      "sha256": "5d5a1d917dd98ef235931bd30fb9b508354e426c8b0d03f66e39bcde1b224cfd"
+    }
+  ]
+}

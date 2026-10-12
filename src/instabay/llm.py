@@ -58,6 +58,8 @@ class LLMService:
         store: CallStore,
         prompt_dir: Path | None = None,
         budget: RunBudget | None = None,
+        model_overrides: dict[str, str] | None = None,
+        token_overrides: dict[str, int] | None = None,
     ) -> None:
         self.client = client
         self.store = store
@@ -66,6 +68,8 @@ class LLMService:
         self.usage = RunUsage()
         self.run_id: str | None = None
         self._usage_lock = RLock()
+        self.model_overrides = model_overrides or {}
+        self.token_overrides = token_overrides or {}
 
     def generate[Output: BaseModel](
         self,
@@ -85,7 +89,7 @@ class LLMService:
         request = CompletionRequest(
             template_name=template_name,
             slot_id=slot_id,
-            model=model,
+            model=self.model_overrides.get(template_name, model),
             prompt=prompt_bytes.decode("utf-8"),
             prompt_hash=hashlib.sha256(prompt_bytes).hexdigest(),
             inputs=inputs,
@@ -93,7 +97,7 @@ class LLMService:
                 output_type.model_json_schema()
             ),
             temperature=temperature,
-            max_output_tokens=max_output_tokens,
+            max_output_tokens=self.token_overrides.get(template_name, max_output_tokens),
         )
         cache_key = hashlib.sha256(
             json.dumps(request.model_dump(mode="json"), sort_keys=True, ensure_ascii=False).encode()

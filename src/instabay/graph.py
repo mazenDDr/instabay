@@ -13,6 +13,7 @@ from langsmith import tracing_context
 from pydantic import TypeAdapter
 
 from instabay.adapters.fake_llm import FakeLLM
+from instabay.adapters.llm import LLMClient
 from instabay.adapters.publisher import DryRunPublisher
 from instabay.agents.brand_architect import BrandArchitect
 from instabay.agents.brief_writer import BriefWriter
@@ -83,6 +84,9 @@ class WeekRunner:
         allow_synthetic_decisions: bool = False,
         video_studio: RenderService | None = None,
         approved_stills: list[Keyframe] | None = None,
+        llm_client: LLMClient | None = None,
+        model_overrides: dict[str, str] | None = None,
+        token_overrides: dict[str, int] | None = None,
         render_recipes: dict[str, RenderRecipe] | None = None,
     ) -> None:
         self._stack = ExitStack()
@@ -90,7 +94,12 @@ class WeekRunner:
         self._stack.callback(self.repository.close)
         self.calls = self._stack.enter_context(SQLiteCallStore(db))
         self.fake = FakeLLM(fixtures)
-        self.service = LLMService(self.fake, self.calls)
+        self.service = LLMService(
+            llm_client or self.fake,
+            self.calls,
+            model_overrides=model_overrides,
+            token_overrides=token_overrides,
+        )
         self.brand_input = brand_input
         self.preferences = preferences
         self.decision_engine, self.calibration = decision_engine, calibration

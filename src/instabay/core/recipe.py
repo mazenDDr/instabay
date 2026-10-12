@@ -66,6 +66,16 @@ class MotionSpec(Boundary):
     seeds: list[int] = Field(min_length=3)
 
 
+class RecordedMotion(Boundary):
+    """FR-06: recorded Wan clips preserve conditioning and provenance during CPU post."""
+
+    backend: Literal["wan"] = "wan"
+    recipe: FileRef
+    recipe_hash: Hash
+    conditioning_sha256: Hash
+    clips: list[FileRef] = Field(min_length=3, max_length=10)
+
+
 class PostSpec(Boundary):
     """NFR-08: font and optional LUT/audio bytes participate in the recipe hash."""
 
@@ -79,6 +89,9 @@ class PostSpec(Boundary):
     continuity_threshold: float = Field(default=0.9, ge=0, le=1)
     flicker_threshold: float = Field(default=0.08, ge=0, le=1)
     palette: list[str] = Field(default_factory=list)
+    preview_label: str | None = Field(default=None, max_length=80)
+    credit: str | None = Field(default=None, max_length=100)
+    recorded_motion: RecordedMotion | None = None
 
 
 class RenderRecipe(Boundary):
@@ -95,6 +108,13 @@ class RenderRecipe(Boundary):
     @model_validator(mode="after")
     def complete(self) -> Self:
         count = len(self.shots.shots)
+        recorded = self.post.recorded_motion
+        if recorded and (
+            self.backend != "stub"
+            or len(recorded.clips) != count
+            or any(s.keyframe.sha256 != recorded.conditioning_sha256 for s in self.shots.shots)
+        ):
+            raise ValueError("Recorded CPU post requires matching clips and approved conditioning")
         if len(self.motion.frames) != count or len(self.motion.seeds) != count:
             raise ValueError("Every shot needs its frame count and seed")
         for shot, frames, seed in zip(
@@ -136,10 +156,14 @@ class RenderRecipe(Boundary):
 
     @property
     def generated(self) -> bool:
-        return self.backend != "stub" or any(
-            s.keyframe.source == "generated" for s in self.shots.shots
+        return (
+            self.backend != "stub"
+            or self.post.recorded_motion is not None
+            or any(s.keyframe.source == "generated" for s in self.shots.shots)
         )
 
     @property
     def reference_only(self) -> bool:
-        return any(s.keyframe.reference_only for s in self.shots.shots)
+        return self.post.recorded_motion is not None or any(
+            s.keyframe.reference_only for s in self.shots.shots
+        )
