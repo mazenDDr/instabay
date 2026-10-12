@@ -20,7 +20,13 @@ from instabay.agents.common import prompt_hashes
 from instabay.agents.judge import Judge, write_bilingual
 from instabay.core.hashtags import select_hashtags
 from instabay.core.planner import plan_week
-from instabay.core.schemas import BrandInput, Post, WorkflowInput, WorkflowResult
+from instabay.core.schemas import (
+    BrandInput,
+    PlanningPreferences,
+    Post,
+    WorkflowInput,
+    WorkflowResult,
+)
 from instabay.db import SQLiteCallStore
 from instabay.llm import LLMService, RunUsage
 from instabay.repository import Repository
@@ -63,6 +69,7 @@ class WeekRunner:
         outbox: Path,
         brand_input: BrandInput,
         fixtures: Path = Path("tests/fixtures/llm"),
+        preferences: PlanningPreferences | None = None,
     ) -> None:
         self._stack = ExitStack()
         self.repository = Repository(db)
@@ -71,6 +78,7 @@ class WeekRunner:
         self.fake = FakeLLM(fixtures)
         self.service = LLMService(self.fake, self.calls)
         self.brand_input = brand_input
+        self.preferences = preferences
         checkpoints.parent.mkdir(parents=True, exist_ok=True)
         saver = self._stack.enter_context(SqliteSaver.from_conn_string(str(checkpoints)))
         self.publisher = DryRunPublisher(self.repository, outbox)
@@ -115,12 +123,16 @@ class WeekRunner:
         return {"brand_hash": digest}
 
     def _plan(self, state: WeekState) -> dict[str, str]:
+        if self.repository.slots(state["run_id"]):
+            return {"status": "planned"}
         request = WorkflowInput.model_validate(
             {"run_id": state["run_id"], "week_start": state["week_start"], "demo": state["demo"]}
         )
         brand = self.repository.brand(state["brand_hash"])
         self.repository.save_slots(
-            plan_week(brand, state["brand_hash"], request.run_id, request.week_start)
+            plan_week(
+                brand, state["brand_hash"], request.run_id, request.week_start, self.preferences
+            )
         )
         return {"status": "planned"}
 

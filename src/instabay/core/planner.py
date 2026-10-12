@@ -1,4 +1,4 @@
-"""FR-02, FR-03: constrained code planner; no optimizer or simulator in Phase 2."""
+"""FR-02, FR-03: constrained code planner using supplied factor scores."""
 
 import math
 from datetime import date, datetime, time, timedelta
