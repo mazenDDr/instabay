@@ -33,8 +33,7 @@ record:
 	@exit 2
 
 render:
-	$(UV) run --offline --no-sync instabay render --recipe "$(RECIPE)" --backend "$(BACKEND)"
+	$(UV) run --offline --no-sync instabay render --recipe "$(RECIPE)" --backend "$(or $(BACKEND),stub)"
 
 golden:
-	@echo '# HUMAN: golden GPU render checks are implemented in Phase 7.'
-	@exit 2
+	$(UV) run --offline --no-sync instabay golden --recipe "$(RECIPE)" --backend "$(or $(BACKEND),stub)"

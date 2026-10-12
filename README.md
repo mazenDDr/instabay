@@ -6,6 +6,10 @@ The intended weekly loop is brand → plan → native EN/AR content → checks �
 
 ## Current status
 
+Phase 7 adds an offline Video Studio: complete recipe/hash cache, Ken Burns previews,
+Arabic overlays, actual MP4 spec checks, contact sheets and the approval-queue render node.
+Private-worker/Wan/ComfyUI code is opt-in; native GPU quality, FLF and semantic QA remain
+HUMAN spike work. [Video usage and limits](docs/VIDEO.md), [Phase 7 gate](docs/PHASE7_REPORT.md).
 Phase 6 adds typed decision adapters, grouped calibration and an approval-safe check cascade.
 Real gold labels and GPU/hosted-model validation remain HUMAN work; default checks stay judge-only.
 Phase 5 adds guarded native Instagram publishing, durable retry state and parent-media
@@ -19,9 +23,10 @@ SQLModel/SQLite storage, a constrained code planner, shared briefs, parallel nat
 writers, tiered hashtags, deterministic rules, three judge samples, one revision,
 a timed human approval CLI, guarded dry-run exports, and persistent LangGraph pause/resume.
 The Phase 1 LLM cache, budgets, provenance, lint/type checks, hooks and CI remain in place.
-Production agent/provider wiring, real calibration evidence and video rendering remain in their later
-[specified phases](docs/SPEC.md). Optimization results describe a synthetic audience;
-quality scores are canned fixtures until human calibration. `make render` remains pending.
+Production provider validation, real calibration evidence and native GPU measurements remain
+HUMAN work under the [specification](docs/SPEC.md). Optimization results describe a synthetic
+audience; quality scores are canned fixtures until human calibration. `make render` supports
+the offline stub; native adapters require explicit human setup and opt-in.
 
 ## Run locally
 
@@ -60,9 +65,21 @@ not calibrated ratings or real model measurements. A new week uses 43 fixture re
 requires no new generation. Automated acceptance tests use marked synthetic approval
 inputs in temporary databases; they never approve the normal demo's queue.
 
-The reel outbox item is a **concept**, with shot descriptions, EN/AR overlays, audio intent,
-CTA and cover reference. No video is rendered. All outbox items are dry-run intents marked
+The default reel outbox item is a **concept**, with shot descriptions, EN/AR overlays, audio intent,
+CTA and cover reference. `instabay demo --render-reels` additionally renders a clearly marked
+synthetic preview before checks and human approval. All outbox items are dry-run intents marked
 as reference-only and not ready for live media publishing.
+
+For a standalone offline preview and uncached decoded-frame comparison:
+
+```sh
+make render RECIPE=config/recipes/stub.shotlist.json BACKEND=stub
+make golden RECIPE=config/recipes/stub.shotlist.json BACKEND=stub
+```
+
+Install ffmpeg/ffprobe first. Every artifact directory stores its complete recipe, result,
+decoded-frame hashes and contact sheet. Missing semantic/continuity evidence stays flagged.
+The supplied still is abstract fixture art; source-resort photos still need human crop approval.
 
 ## Multi-week synthetic cycle
 
@@ -195,15 +212,15 @@ does not create, edit or freeze `config/brand.yaml`. Non-demo storage runs requi
 ## Container demo
 
 ```sh
-docker build -t instabay:phase6 .
-docker run --rm --network none -v instabay-demo:/state instabay:phase6
-docker run -it --rm --network none -v instabay-demo:/state instabay:phase6 approve --actor YOUR_NAME
-docker run --rm --network none -v instabay-demo:/state instabay:phase6 resume
+docker build -t instabay:phase7 .
+docker run --rm --network none -v instabay-demo:/state instabay:phase7
+docker run -it --rm --network none -v instabay-demo:/state instabay:phase7 approve --actor YOUR_NAME
+docker run --rm --network none -v instabay-demo:/state instabay:phase7 resume
 # Use a separate named volume for the multi-week cycle.
-docker run --rm --network none -v instabay-cycle:/state instabay:phase6 cycle --weeks 3
-docker run -it --rm --network none -v instabay-cycle:/state instabay:phase6 approve --run-id cycle-w01 --actor YOUR_NAME
-docker run --rm --network none -v instabay-cycle:/state instabay:phase6 cycle --weeks 3
-docker run --rm --network none -v instabay-bench:/state instabay:phase6 bench
+docker run --rm --network none -v instabay-cycle:/state instabay:phase7 cycle --weeks 3
+docker run -it --rm --network none -v instabay-cycle:/state instabay:phase7 approve --run-id cycle-w01 --actor YOUR_NAME
+docker run --rm --network none -v instabay-cycle:/state instabay:phase7 cycle --weeks 3
+docker run --rm --network none -v instabay-bench:/state instabay:phase7 bench
 ```
 
 The image runs as UID 10001. Its `/state` volume preserves the queue, approval rows,
@@ -215,7 +232,8 @@ The user-requested photo pack is tracked separately under `assets/photos/`. It d
 **The Grand Resort Hurghada**, not an actual property named Insta Bay. Each asset has its
 source, author, license, dimensions and SHA-256 in the manifest. Historical reference
 photos do not establish current facilities or offers. See its attribution README before
-using the photos or derivative footage. Video rendering and shot approval arrive in Phase 7.
+using the photos or derivative footage. Phase 7 preserves their original bytes and approval flags;
+the offline video gate uses a synthetic still. Human crop/rights/fidelity review is still required.
 
 ## Human follow-up
 

@@ -69,6 +69,7 @@ class PostRow(SQLModel, table=True):
     media_path: str | None = None
     media_status: str
     media_json: str | None = None
+    render_json: str | None = None
     idempotency_key: str
 
 

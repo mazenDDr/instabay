@@ -375,6 +375,33 @@ class MediaManifest(Boundary):
         return self
 
 
+class RenderAttachment(Boundary):
+    """FR-07, NFR-03: local preview evidence participates in the approval hash."""
+
+    recipe_hash: Hash
+    render_recipe: dict[str, JsonValue]
+    file: str
+    file_sha256: Hash
+    contact_sheet: str
+    contact_sha256: Hash
+    qa_status: Literal["passed", "needs_review", "failed"]
+    generated: bool
+    reference_only: bool
+
+    @model_validator(mode="after")
+    def provenance(self) -> Self:
+        from instabay.core.recipe import RenderRecipe
+
+        recipe = RenderRecipe.model_validate(self.render_recipe)
+        if (
+            self.recipe_hash != recipe.recipe_hash
+            or self.generated != recipe.generated
+            or self.reference_only != recipe.reference_only
+        ):
+            raise ValueError("Render attachment must match the complete recipe")
+        return self
+
+
 class Post(Boundary):
     """FR-04 to FR-10: immutable content snapshot; approval binds its exact hash."""
 
@@ -393,6 +420,17 @@ class Post(Boundary):
     media_path: str | None = None
     media_status: Literal["reference", "concept_only", "rendered", "ready"] = "reference"
     media_manifest: MediaManifest | None = Field(default=None, exclude_if=lambda v: v is None)
+    render_artifact: RenderAttachment | None = Field(default=None, exclude_if=lambda v: v is None)
+
+    @model_validator(mode="after")
+    def local_render(self) -> Self:
+        if self.render_artifact is not None and (
+            self.format != "reel"
+            or self.media_path != self.render_artifact.file
+            or self.ai_disclosure != self.render_artifact.generated
+        ):
+            raise ValueError("Rendered reel must bind its preview and generated-footage disclosure")
+        return self
 
     @property
     def content_hash(self) -> str:

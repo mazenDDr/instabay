@@ -20,6 +20,7 @@ from instabay.core.schemas import (
 from instabay.decisions.calibration import CalibrationProfile
 from instabay.decisions.engine import LANGUAGES, Answer, DecisionEngine, Language, normalize_answers
 from instabay.decisions.questions import acceptable, decision_state, questions_for
+from instabay.video.review import media_flags
 
 
 class DecisionRecord(Boundary):
@@ -169,8 +170,7 @@ class CheckCascade:
         flags = [*rules.violations, *adverse]
         if result is not None and not result.passed:
             flags.append("Judge score below brand threshold")
-        if post.media_status == "concept_only":
-            flags.append("Reel concept only: no video has been rendered")
+        flags.extend(media_flags(post))
         return Review(
             post_id=post.id,
             content_hash=post.content_hash,
@@ -195,7 +195,7 @@ class CheckCascade:
         review = self.check(post, slot, brand)
         if record_initial:
             record_initial(review)
-        failures = [f for f in review.flags if not f.startswith("Reel concept only")]
+        failures = [f for f in review.flags if f not in media_flags(post)]
         if failures and post.revision == 0:
             fixes = failures + (review.judge.fixes if review.judge else [])
             en, ar = write_bilingual(self.judge.service, slot, brand, post.brief, post, fixes)

@@ -66,7 +66,7 @@ class Repository:
     def _migrate_graph_columns(self) -> None:
         """FR-10: additive nullable migration preserves legacy hashes and approvals."""
         additions = {
-            "post": ("media_json",),
+            "post": ("media_json", "render_json"),
             "review": ("cascade_json",),
             "publication": (
                 "media_id",
@@ -375,6 +375,7 @@ class Repository:
             media_path=post.media_path,
             media_status=post.media_status,
             media_json=post.media_manifest.model_dump_json() if post.media_manifest else None,
+            render_json=post.render_artifact.model_dump_json() if post.render_artifact else None,
             idempotency_key=post.idempotency_key,
         )
         session.merge(row)
@@ -421,6 +422,7 @@ class Repository:
                 "media_path": row.media_path,
                 "media_status": row.media_status,
                 "media_manifest": json.loads(row.media_json) if row.media_json else None,
+                "render_artifact": json.loads(row.render_json) if row.render_json else None,
             }
         )
 

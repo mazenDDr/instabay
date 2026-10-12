@@ -2,6 +2,7 @@ FROM ghcr.io/astral-sh/uv:0.13.0@sha256:cdc6093146eb3ff6a40107b38f008b789e050e77
 FROM python:3.12-slim@sha256:a6e34c598f2467ed0e9a8d349809fcd8b5c603269512df273a0bb1784edc11b1
 COPY --from=uv /uv /usr/local/bin/uv
 WORKDIR /app
+RUN apt-get update && apt-get install -y --no-install-recommends ffmpeg && rm -rf /var/lib/apt/lists/*
 ENV UV_PYTHON_DOWNLOADS=never \
     UV_LINK_MODE=copy \
     INSTABAY_MODE=dry_run \
@@ -13,11 +14,14 @@ ENV UV_PYTHON_DOWNLOADS=never \
     PATH="/app/.venv/bin:$PATH"
 COPY pyproject.toml uv.lock README.md ./
 COPY src ./src
+COPY gpu_worker ./gpu_worker
 COPY sim ./sim
 RUN uv sync --frozen --no-dev
 COPY tests/fixtures/llm ./tests/fixtures/llm
 COPY config ./config
 COPY assets/photos ./assets/photos
+COPY assets/fonts ./assets/fonts
+COPY assets/keyframes ./assets/keyframes
 COPY bench ./bench
 RUN mkdir -p /state && chown 10001:10001 /state
 USER 10001:10001

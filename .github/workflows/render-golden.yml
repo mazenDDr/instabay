@@ -1,0 +1,32 @@
+name: Human-enabled GPU golden frames
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 2 * * *'
+permissions:
+  contents: read
+jobs:
+  golden:
+    if: vars.INSTABAY_GPU_GOLDEN_ENABLED == '1'
+    runs-on: [self-hosted, gpu-box]
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run two uncached renders with the human-prepared runtime
+        # HUMAN: provision the private runner, pinned environment and read-only weight volume.
+        # HUMAN: a measured recipe must match this runtime; never use pull-request inputs here.
+        env:
+          INSTABAY_VIDEO_ENABLED: '1'
+          RECIPE_PATH: ${{ vars.INSTABAY_GPU_GOLDEN_RECIPE }}
+          VIDEO_BACKEND: ${{ vars.INSTABAY_GPU_GOLDEN_BACKEND }}
+          INSTABAY_WORKER_IMAGE_DIGEST: ${{ vars.INSTABAY_GPU_IMAGE_DIGEST }}
+          INSTABAY_GPU_DRIVER: ${{ vars.INSTABAY_GPU_DRIVER }}
+        run: |
+          test -n "$RECIPE_PATH"
+          test -n "$VIDEO_BACKEND"
+          ~/miniconda3/envs/main/bin/python -m instabay golden --recipe "$RECIPE_PATH" --backend "$VIDEO_BACKEND" --confirm-gpu
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: golden-frame-evidence
+          path: outputs/golden.json
