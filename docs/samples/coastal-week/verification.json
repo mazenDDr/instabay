@@ -40,5 +40,9 @@
   },
   "human_appeal_review": "pending",
   "semantic_fidelity_review": "pending",
-  "engagement_lift": null
+  "engagement_lift": null,
+  "actual_carousel_sizes": [
+    3,
+    2
+  ]
 }

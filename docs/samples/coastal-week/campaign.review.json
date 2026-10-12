@@ -1283,11 +1283,11 @@
         "reel_concept": null
       },
       "en": {
-        "caption": "Reethi Faru in three perspectives.\n\n1. Thatched villas follow a wooden jetty through turquoise water.\n2. Turquoise shallows meet a curve of white sand.\n\nCompare these views: villas, shoreline or palm-lined jetty?",
+        "caption": "Reethi Faru: above the lagoon, beside the shore.\n\n1. Thatched villas follow a wooden jetty through turquoise water.\n2. Turquoise shallows meet a curve of white sand.\n\nCompare these views: villas, shoreline or palm-lined jetty?",
         "alt_text": "Thatched villas follow a wooden jetty through turquoise water. Turquoise shallows meet a curve of white sand."
       },
       "ar": {
-        "caption": "ريثي فارو من ثلاث زوايا.\n\n1. فلل بسقوف من القش على امتداد رصيف خشبي وسط مياه فيروزية.\n2. مياه فيروزية تلتقي بانحناءة من الرمل الأبيض.\n\nقارن الإطلالات: الفلل أم الشاطئ أم الرصيف المحاط بالنخيل؟",
+        "caption": "ريثي فارو: من أعلى البحيرة الساحلية إلى الشاطئ.\n\n1. فلل بسقوف من القش على امتداد رصيف خشبي وسط مياه فيروزية.\n2. مياه فيروزية تلتقي بانحناءة من الرمل الأبيض.\n\nقارن الإطلالات: الفلل أم الشاطئ أم الرصيف المحاط بالنخيل؟",
         "alt_text": "فلل بسقوف من القش على امتداد رصيف خشبي وسط مياه فيروزية. مياه فيروزية تلتقي بانحناءة من الرمل الأبيض."
       },
       "hashtags": [
@@ -1307,7 +1307,7 @@
         "grounded_copy_en": "a86f9f5be4dad60647691ea46cb5855559f95b3c39a2d5608d7a386148af680f",
         "grounded_copy_ar": "5e549da0e03c3efbeecd1ed6b48bf00f2ce9b513fa3ddb1bf59241116151c37f"
       },
-      "revision": 1,
+      "revision": 2,
       "ai_disclosure": false,
       "offer_id": null,
       "media_path": "/Users/mazenkhaled/Task/outputs/place-led/sample-photos/23de828e571e5711527fcd57ea94ab73900f6173e7974cefd2382d73c3ba9d7d/photo-1.jpg",

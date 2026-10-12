@@ -20,7 +20,7 @@ The visual brief selects ordered source scenes and explains their connection to 
 
 The sample's underwater pillar concerns visible water colors, not unseen marine life; relaxation concerns shade and space, not an invented spa; guest inspiration contains no fake testimonial; travel planning contains no fabricated offer. These are separate reference-campaign descriptions. The frozen `config/brand.yaml` remains unchanged.
 
-Minimum format counts belong to the cadence configuration. The reference week has three single photographs, two three-image carousels and two reels. Existing configurations default the new photo/carousel floors to zero, preserving their previous planner behavior. Every media artifact, selected source, factual clause and caption participates in the post approval snapshot.
+Minimum format counts belong to the cadence configuration. The reference week has three single photographs, two carousels (three and two images) and two reels. Existing configurations default the new photo/carousel floors to zero, preserving their previous planner behavior. Every media artifact, selected source, factual clause and caption participates in the post approval snapshot.
 
 ## Real generation and limits
 

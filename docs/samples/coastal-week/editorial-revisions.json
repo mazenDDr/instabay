@@ -109,7 +109,7 @@
   },
   {
     "post_id": "reference-w42-fri-1",
-    "reason": "Remove repetitive framing and awkward Arabic; retain source-compiled factual body and alt text. No publication approval.",
+    "reason": "Remove repetitive framing and awkward Arabic; retain source-compiled factual body and alt text. No publication approval. Album has two photographs; opening names those two perspectives.",
     "raw_copy": {
       "en": {
         "caption": "A wooden jetty bridges the lagoon to the shore.\n\n1. Thatched villas follow a wooden jetty through turquoise water.\n2. Turquoise shallows meet a curve of white sand.\n\nCompare the connection between the villas and the shoreline",
@@ -122,16 +122,16 @@
     },
     "revised_copy": {
       "en": {
-        "caption": "Reethi Faru in three perspectives.\n\n1. Thatched villas follow a wooden jetty through turquoise water.\n2. Turquoise shallows meet a curve of white sand.\n\nCompare these views: villas, shoreline or palm-lined jetty?",
+        "caption": "Reethi Faru: above the lagoon, beside the shore.\n\n1. Thatched villas follow a wooden jetty through turquoise water.\n2. Turquoise shallows meet a curve of white sand.\n\nCompare these views: villas, shoreline or palm-lined jetty?",
         "alt_text": "Thatched villas follow a wooden jetty through turquoise water. Turquoise shallows meet a curve of white sand."
       },
       "ar": {
-        "caption": "ريثي فارو من ثلاث زوايا.\n\n1. فلل بسقوف من القش على امتداد رصيف خشبي وسط مياه فيروزية.\n2. مياه فيروزية تلتقي بانحناءة من الرمل الأبيض.\n\nقارن الإطلالات: الفلل أم الشاطئ أم الرصيف المحاط بالنخيل؟",
+        "caption": "ريثي فارو: من أعلى البحيرة الساحلية إلى الشاطئ.\n\n1. فلل بسقوف من القش على امتداد رصيف خشبي وسط مياه فيروزية.\n2. مياه فيروزية تلتقي بانحناءة من الرمل الأبيض.\n\nقارن الإطلالات: الفلل أم الشاطئ أم الرصيف المحاط بالنخيل؟",
         "alt_text": "فلل بسقوف من القش على امتداد رصيف خشبي وسط مياه فيروزية. مياه فيروزية تلتقي بانحناءة من الرمل الأبيض."
       }
     },
     "raw_copy_sha256": "caa0dea1afc63a7bc443c6e31375af445280231a58f9087e7e4a7c80c8220067",
-    "edited_copy_sha256": "3ded73d17aa961da089772f20cd71864cdb3647bfebd05bfe405e79d3b8a2667",
+    "edited_copy_sha256": "c77465cd1f84a37bba16fa6967e4a0d4ffd20e4995e5804d3c5c302cebba131f",
     "human_review": "pending"
   },
   {

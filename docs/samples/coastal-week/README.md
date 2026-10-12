@@ -2,7 +2,7 @@
 
 Open the [mixed-format gallery](review/index.html). Watch [the stay-inspiration reel](reference-w42-wed-1/reel.mp4)
 or [the travel-planning reel](reference-w42-sat-1/reel.mp4).
-The gallery has **3 single photographs, 2 three-image carousels and 2 scenic reels**, with
+The gallery has **3 single photographs, 2 carousels (three and two images) and 2 scenic reels**, with
 English and Arabic captions, actual album navigation and source links.
 
 These are historical reference photographs of **Reethi Faru Resort, Maldives**, by Moosa
