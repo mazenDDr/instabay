@@ -23,9 +23,10 @@ SQLModel/SQLite storage, a constrained code planner, shared briefs, parallel nat
 writers, tiered hashtags, deterministic rules, three judge samples, one revision,
 a timed human approval CLI, guarded dry-run exports, and persistent LangGraph pause/resume.
 The Phase 1 LLM cache, budgets, provenance, lint/type checks, hooks and CI remain in place.
-Production agent/provider wiring, real calibration evidence and video rendering remain in their later
-[specified phases](docs/SPEC.md). Optimization results describe a synthetic audience;
-quality scores are canned fixtures until human calibration. `make render` remains pending.
+Production provider validation, real calibration evidence and native GPU measurements remain
+HUMAN work under the [specification](docs/SPEC.md). Optimization results describe a synthetic
+audience; quality scores are canned fixtures until human calibration. `make render` supports
+the offline stub; native adapters require explicit human setup and opt-in.
 
 ## Run locally
 
