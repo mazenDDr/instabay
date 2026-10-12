@@ -24,7 +24,8 @@ facilities: the human checks visual fidelity and usage rights before approval.
 The native verifier checks HTTP 200, MIME, byte count and content SHA-256, with bounded
 streaming and redirects disabled. Verification runs before creation and again immediately
 before publishing, so changed public bytes stop the operation. Codec, color-space, dimensions, timing and fast-start
-metadata are **human verified** in this phase; automatic render/probe QA comes in Phase 7.
+metadata are **human verified** at this native manifest boundary. The local Video Studio now
+provides automatic render/probe QA; its preview attachment is not a public live manifest.
 A media edit changes the content hash and requires new checks and approval. Old judge scores
 cannot be relabeled as fresh checks. The production drafting/decision workflow is pending;
 these adapters consume already prepared non-demo database posts through the repository API.
@@ -93,7 +94,8 @@ conflicting observations fail atomically.
 
 Real batches have a distinct typed boundary from the simulator's exclusive bounded counts.
 This phase does **not** update live bandit beliefs. Calibrated content-bound fidelity and an
-explicit real reward definition are required before live learning is wired in Phase 6.
+explicit real reward definition are required before live learning is wired. Phase 6 provides
+calibrated fidelity interfaces, but a reviewed live reward/learning path is still pending.
 
 ## Sources and verification limits
 

@@ -25,3 +25,15 @@ jobs:
           INSTABAY_MODE: dry_run
       - name: Scan tracked files and verify hooks
         run: uv run --offline --no-sync pre-commit run --all-files
+  clone-gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Prepare validation image from a clean checkout
+        run: docker build -f Dockerfile.validation -t instabay:validation .
+      - name: Run setup, persistent approval stop and tests without network
+        run: docker run --rm --network none instabay:validation
