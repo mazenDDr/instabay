@@ -422,7 +422,7 @@ class PhotoRenderAttachment(Boundary):
     recipe_hash: Hash
     render_recipe: dict[str, JsonValue]
     files: list[LocalPhotoPreview] = Field(min_length=1, max_length=5)
-    generated: Literal[False] = False
+    generated: bool = False
     reference_only: bool = True
     qa_status: Literal["needs_review"] = "needs_review"
 
@@ -431,8 +431,10 @@ class PhotoRenderAttachment(Boundary):
         from instabay.content.photos import PhotoRecipe
 
         recipe = PhotoRecipe.model_validate(self.render_recipe)
-        if len(recipe.sources) != len(self.files) or self.reference_only != any(
-            s.reference_only for s in recipe.sources
+        if (
+            len(recipe.sources) != len(self.files)
+            or self.reference_only != any(s.reference_only for s in recipe.sources)
+            or self.generated != any(s.source == "synthetic" for s in recipe.sources)
         ):
             raise ValueError("Photo attachment scope and count must match the source recipe")
         if canonical_hash(dict(self.render_recipe)) != self.recipe_hash:
@@ -504,7 +506,7 @@ class Post(Boundary):
             or self.media_path != self.photo_artifact.files[0].file
             or (self.format == "photo" and len(self.photo_artifact.files) != 1)
             or (self.format == "carousel" and len(self.photo_artifact.files) < 2)
-            or self.ai_disclosure
+            or self.ai_disclosure != self.photo_artifact.generated
         ):
             raise ValueError("A photo/carousel must bind its ordered photographic preview")
         return self

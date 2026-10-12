@@ -1,0 +1,396 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Insta Bay Studio</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 16 16%22%3E%3Ccircle cx=%228%22 cy=%228%22 r=%227%22 fill=%22%230d6b70%22/%3E%3C/svg%3E">
+<style>
+:root {
+  --bg: #f4f5f3; --surface: #ffffff; --sunk: #eceeeb; --line: #dcdfda;
+  --ink: #17201f; --muted: #5d6865; --sea: #0d6b70; --sea-ink: #ffffff; --sea-soft: #dcefee;
+  --coral: #b4492d; --coral-soft: #f8e4dc; --sand: #8a6a2f; --sand-soft: #f3ead6;
+  --reel: #0d6b70; --carousel: #c08a2c; --photo: #6b7d8f;
+  --radius: 10px; --shadow: 0 1px 2px rgb(20 30 30 / .06), 0 4px 16px rgb(20 30 30 / .05);
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #101514; --surface: #182120; --sunk: #121a19; --line: #2a3533;
+    --ink: #e7edeb; --muted: #9aa8a5; --sea: #4fb3b5; --sea-ink: #062224; --sea-soft: #173a3b;
+    --coral: #f08b6c; --coral-soft: #3b2119; --sand: #d9b46a; --sand-soft: #33291a;
+    --reel: #4fb3b5; --carousel: #d9b46a; --photo: #93a6b8;
+    --shadow: none; color-scheme: dark;
+  }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink);
+  font: 15px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+button, input, select, textarea { font: inherit; color: inherit; }
+header { position: sticky; top: 0; z-index: 5; background: var(--surface); border-bottom: 1px solid var(--line); }
+.bar { max-width: 1180px; margin: 0 auto; padding: 12px 20px; display: flex; gap: 18px; align-items: center; flex-wrap: wrap; }
+.brand { font-weight: 650; letter-spacing: -.01em; display: flex; gap: 10px; align-items: center; }
+.brand i { width: 22px; height: 22px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #5fd0cc, var(--sea) 70%); display: inline-block; }
+.brand small { color: var(--muted); font-weight: 450; }
+nav { display: flex; gap: 4px; margin-left: auto; overflow-x: auto; max-width: 100%; }
+nav button { white-space: nowrap; }
+@media (max-width: 520px) { nav { margin-left: 0; width: 100%; } }
+nav button { border: 0; background: none; padding: 7px 12px; border-radius: 8px; cursor: pointer; color: var(--muted); }
+nav button[aria-current="page"] { background: var(--sea-soft); color: var(--ink); font-weight: 600; }
+main { max-width: 1180px; margin: 0 auto; padding: 22px 20px 60px; }
+section[hidden] { display: none; }
+h2 { font-size: 20px; margin: 0 0 4px; letter-spacing: -.01em; }
+h3 { font-size: 15px; margin: 0 0 10px; }
+.lede { color: var(--muted); margin: 0 0 18px; max-width: 70ch; }
+.grid { display: grid; gap: 14px; }
+.stats { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); margin-bottom: 14px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; box-shadow: var(--shadow); min-width: 0; }
+.stat b { display: block; font-size: 26px; font-variant-numeric: tabular-nums; letter-spacing: -.02em; }
+.stat span { color: var(--muted); font-size: 13px; }
+.two { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); }
+@media (max-width: 860px) { .two { grid-template-columns: 1fr; } }
+.row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.field { display: grid; gap: 4px; margin-bottom: 12px; }
+.field > span { font-size: 13px; color: var(--muted); }
+input[type=text], input[type=date], textarea, select { width: 100%; border: 1px solid var(--line); background: var(--surface); border-radius: 8px; padding: 8px 10px; }
+textarea { resize: vertical; min-height: 54px; }
+input[type=range] { width: 100%; accent-color: var(--sea); }
+.btn { border: 1px solid var(--line); background: var(--surface); border-radius: 8px; padding: 8px 14px; cursor: pointer; }
+.btn.primary { background: var(--sea); color: var(--sea-ink); border-color: var(--sea); font-weight: 600; }
+.btn:disabled { opacity: .5; cursor: default; }
+.btn.small { padding: 4px 10px; font-size: 13px; }
+.stepper { display: inline-flex; align-items: center; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+.stepper button { border: 0; background: var(--sunk); width: 34px; height: 34px; cursor: pointer; font-size: 18px; }
+.stepper output { min-width: 44px; text-align: center; font-weight: 650; font-variant-numeric: tabular-nums; }
+.mix { display: flex; height: 34px; border-radius: 8px; overflow: hidden; margin: 6px 0 8px; background: var(--sunk); }
+.mix div { display: grid; place-items: center; color: #fff; font-size: 13px; font-weight: 600; min-width: 0; transition: flex-grow .2s; white-space: nowrap; overflow: hidden; }
+.legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: 13px; color: var(--muted); }
+.dot { width: 10px; height: 10px; border-radius: 3px; display: inline-block; margin-right: 6px; vertical-align: -1px; }
+.pillar-row { display: grid; grid-template-columns: 150px 1fr 70px; gap: 10px; align-items: center; margin: 8px 0; font-size: 14px; }
+@media (max-width: 520px) { .pillar-row { grid-template-columns: 1fr 64px; } .pillar-row .track { grid-column: 1 / -1; grid-row: 2; } }
+.track { height: 10px; background: var(--sunk); border-radius: 6px; overflow: hidden; }
+.track i { display: block; height: 100%; background: var(--sea); border-radius: 6px; }
+.pillar-row b { text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; }
+.note { font-size: 13px; color: var(--muted); }
+.warn { color: var(--coral); }
+.chip { display: inline-flex; align-items: center; gap: 6px; padding: 2px 9px; border-radius: 999px; font-size: 12px; font-weight: 600; background: var(--sunk); color: var(--muted); white-space: nowrap; }
+.chip.reel { background: var(--sea-soft); color: var(--sea); }
+.chip.carousel { background: var(--sand-soft); color: var(--sand); }
+.chip.alert { background: var(--coral-soft); color: var(--coral); }
+.chip.ok { background: var(--sea-soft); color: var(--sea); }
+.filters { display: flex; gap: 6px; flex-wrap: wrap; margin: 4px 0 14px; }
+.filters button { border: 1px solid var(--line); background: var(--surface); border-radius: 999px; padding: 4px 12px; cursor: pointer; font-size: 13px; }
+.filters button[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.photos { grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); }
+.photo { padding: 0; overflow: hidden; display: flex; flex-direction: column; }
+.photo .img { aspect-ratio: 4 / 3; background: var(--sunk); position: relative; }
+.photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.photo .img .chip { position: absolute; top: 8px; left: 8px; background: rgb(0 0 0 / .62); color: #fff; }
+.photo .body { padding: 12px; display: grid; gap: 8px; }
+.photo .meta { display: flex; justify-content: space-between; gap: 6px; align-items: center; font-size: 12px; color: var(--muted); }
+.photo textarea { min-height: 44px; font-size: 13px; }
+.drop { display: block; margin-bottom: 8px; border: 2px dashed var(--line); border-radius: var(--radius); padding: 22px; text-align: center; color: var(--muted); cursor: pointer; background: var(--sunk); }
+.drop.over { border-color: var(--sea); background: var(--sea-soft); }
+.slots { display: grid; gap: 10px; }
+.slot { display: grid; grid-template-columns: 120px 140px 1fr; gap: 14px; align-items: center; }
+@media (max-width: 760px) { .slot { grid-template-columns: 1fr; } }
+.slot .when b { display: block; }
+.thumbs { display: flex; gap: 6px; flex-wrap: wrap; }
+.thumbs img { width: 76px; height: 58px; object-fit: cover; border-radius: 6px; display: block; }
+.thumbs img.alt { opacity: .45; }
+.empty { padding: 26px; text-align: center; color: var(--muted); }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th, td { text-align: left; padding: 8px 6px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-size: 12px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .04em; }
+td.num { text-align: right; font-variant-numeric: tabular-nums; }
+.scroll { overflow-x: auto; }
+.post-media { display: flex; gap: 4px; }
+.post-media img, .post-media video { width: 56px; height: 70px; object-fit: cover; border-radius: 6px; background: var(--sunk); }
+[dir=rtl] { text-align: right; }
+.toast { position: fixed; bottom: 18px; left: 50%; transform: translateX(-50%); background: var(--ink); color: var(--bg); padding: 10px 16px; border-radius: 8px; font-size: 14px; max-width: calc(100% - 32px); }
+.toast[hidden] { display: none; }
+:focus-visible { outline: 2px solid var(--sea); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<header>
+  <div class="bar">
+    <div class="brand"><i aria-hidden="true"></i><span id="property">Insta Bay</span> <small>content studio</small></div>
+    <nav aria-label="Sections">
+      <button data-tab="overview" aria-current="page">Overview</button>
+      <button data-tab="photos">Photos</button>
+      <button data-tab="plan">Weekly plan</button>
+      <button data-tab="results">Results</button>
+    </nav>
+  </div>
+</header>
+<main>
+  <section id="overview">
+    <h2>This week at a glance</h2>
+    <p class="lede">Set how many posts go out each week and how many of them are reels. The planner keeps your pillar limits and picks photos from your library for every slot.</p>
+    <div class="grid stats" id="stats"></div>
+    <div class="grid two">
+      <div class="card">
+        <h3>Weekly mix</h3>
+        <div class="row" style="justify-content: space-between; margin-bottom: 10px">
+          <span>Posts per week</span>
+          <span class="stepper"><button type="button" data-step="posts" data-d="-1" aria-label="Fewer posts">−</button><output id="posts">7</output><button type="button" data-step="posts" data-d="1" aria-label="More posts">+</button></span>
+        </div>
+        <label class="field"><span>Reels: <b id="reels-label"></b></span><input type="range" id="reels" min="1" max="7"></label>
+        <label class="field"><span>Carousels: <b id="carousels-label"></b></span><input type="range" id="carousels" min="0" max="6"></label>
+        <div class="mix" id="mix" aria-hidden="true"></div>
+        <div class="legend"><span><i class="dot" style="background: var(--reel)"></i>Reels</span><span><i class="dot" style="background: var(--carousel)"></i>Carousels</span><span><i class="dot" style="background: var(--photo)"></i>Single photos</span></div>
+        <div class="row" style="margin-top: 14px; justify-content: space-between">
+          <span class="note" id="mix-note"></span>
+          <button class="btn primary" id="save-mix" type="button">Save mix</button>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Photos per pillar</h3>
+        <div id="pillars"></div>
+        <p class="note" id="agreement"></p>
+      </div>
+    </div>
+  </section>
+
+  <section id="photos" hidden>
+    <h2>Photo library</h2>
+    <p class="lede">Add real photos of the resort. Each photo is sorted into a pillar automatically; correct it if it is wrong. Your corrections are used to measure how often the classifier is right.</p>
+    <div class="grid two" style="margin-bottom: 16px">
+      <form class="card" id="upload">
+        <h3>Add photos</h3>
+        <label class="drop" id="drop" tabindex="0">Drop photos here or click to choose (JPEG, PNG, WebP up to 25 MB)<input type="file" id="files" accept="image/jpeg,image/png,image/webp" multiple hidden></label>
+        <p class="note" id="picked"></p>
+        <label class="field"><span>Your name</span><input type="text" id="by" required maxlength="80" autocomplete="name"></label>
+        <label class="field"><span>What is in the photo? (English, optional)</span><textarea id="note-en" maxlength="600" placeholder="Infinity pool facing the sea at sunset"></textarea></label>
+        <label class="field"><span>ما الذي في الصورة؟ (اختياري)</span><textarea id="note-ar" maxlength="600" dir="rtl" lang="ar"></textarea></label>
+        <label class="row note" style="margin-bottom: 12px"><input type="checkbox" id="rights"> I own these photos and everyone shown agreed to appear.</label>
+        <button class="btn primary" type="submit">Upload</button>
+      </form>
+      <div class="card">
+        <h3>Sort into pillars</h3>
+        <p class="note" id="engine-note"></p>
+        <div class="row"><button class="btn primary" id="classify" type="button">Classify new photos</button><button class="btn" id="reclassify" type="button">Re-check all</button></div>
+        <p class="note" id="classify-result"></p>
+      </div>
+    </div>
+    <div class="filters" id="filters"></div>
+    <div class="grid photos" id="library"></div>
+  </section>
+
+  <section id="plan" hidden>
+    <h2>Weekly plan</h2>
+    <p class="lede">The planner's slots for the chosen week and the photos it suggests. Faded photos are alternatives the writer may pick instead.</p>
+    <div class="row" style="margin-bottom: 14px"><label class="row">Week of <input type="date" id="week" style="width: auto"></label></div>
+    <div class="slots" id="slots"></div>
+  </section>
+
+  <section id="results" hidden>
+    <h2>Results</h2>
+    <p class="lede">Every generated week, its review state and, once Instagram is connected, the real numbers per post.</p>
+    <div class="grid stats" id="run-stats"></div>
+    <div class="card"><div class="row" style="justify-content: space-between; margin-bottom: 8px"><h3 style="margin: 0">Posts</h3><select id="run-pick" style="width: auto; max-width: 100%"></select></div><div class="scroll" id="run-posts"></div></div>
+  </section>
+</main>
+<div class="toast" id="toast" role="status" hidden></div>
+<script>
+const $ = (s) => document.querySelector(s);
+const h = (tag, attrs = {}, ...kids) => {
+  const el = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs)) {
+    if (v === null || v === undefined || v === false) continue;
+    if (k === "class") el.className = v; else if (k.startsWith("on")) el.addEventListener(k.slice(2), v);
+    else if (k === "text") el.textContent = v; else el.setAttribute(k, v === true ? "" : v);
+  }
+  for (const kid of kids.flat()) if (kid !== null && kid !== undefined && kid !== false) el.append(kid instanceof Node ? kid : document.createTextNode(String(kid)));
+  return el;
+};
+const api = async (path, options = {}) => {
+  const res = await fetch(path, { headers: { "content-type": "application/json" }, ...options });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(typeof body.detail === "string" ? body.detail : "Request failed (" + res.status + ")");
+  return body;
+};
+let toastTimer;
+const toast = (text) => { const t = $("#toast"); t.textContent = text; t.hidden = false; clearTimeout(toastTimer); toastTimer = setTimeout(() => (t.hidden = true), 3200); };
+const state = { summary: null, assets: [], filter: "all", mix: null, runs: [] };
+const fmt = { reel: "Reel", carousel: "Carousel", photo: "Photo" };
+
+document.querySelectorAll("nav button").forEach((b) => b.addEventListener("click", () => show(b.dataset.tab)));
+function show(tab) {
+  document.querySelectorAll("nav button").forEach((b) => (b.dataset.tab === tab ? b.setAttribute("aria-current", "page") : b.removeAttribute("aria-current")));
+  document.querySelectorAll("main > section").forEach((s) => (s.hidden = s.id !== tab));
+  if (tab === "plan") loadPlan(); if (tab === "results") loadRuns(); if (tab === "photos") loadAssets();
+  try { localStorage.setItem("tab", tab); } catch (e) {}
+}
+
+async function loadSummary() {
+  const s = (state.summary = await api("/api/summary"));
+  $("#property").textContent = s.property;
+  const a = s.assets, g = s.agreement;
+  $("#stats").replaceChildren(
+    stat(a.usable, "photos ready for planning"),
+    stat(a.needs_review, "need a pillar or description"),
+    stat(a.generated, "generated camera views"),
+    stat(g.labelled ? Math.round(g.accuracy * 100) + "%" : "—", g.labelled ? `classifier agrees with you (${g.agree}/${g.labelled})` : "classifier agreement: label a few photos"),
+  );
+  state.mix = state.mix || { ...s.cadence };
+  renderMix();
+  const need = (p) => Math.ceil(p.min_share * state.mix.posts_per_week);
+  const top = Math.max(4, ...s.pillars.map((p) => p.photos));
+  $("#pillars").replaceChildren(...s.pillars.map((p) => h("div", { class: "pillar-row", title: p.description },
+    h("span", { text: p.name }), h("div", { class: "track" }, h("i", { style: `width:${(100 * p.photos) / top}%` })),
+    h("b", { class: p.photos < Math.max(1, need(p)) ? "warn" : "" , text: p.photos + " photo" + (p.photos === 1 ? "" : "s") }))));
+  $("#agreement").textContent = g.labelled ? `Owner labels: ${g.labelled}. Cohen's κ = ${g.kappa === null ? "n/a" : g.kappa.toFixed(2)} (1 is perfect, 0 is chance).` : "";
+  $("#engine-note").textContent = s.engine ? (s.engine_synthetic ? "Running with the offline test classifier (fixtures only)." : "Classifier: d3-flash on gpu-box. Labels under 60% confidence wait for you.") : "No classifier connected. Start the dashboard with --engine d3.";
+  $("#classify").disabled = $("#reclassify").disabled = !s.engine;
+}
+const stat = (value, label) => h("div", { class: "card stat" }, h("b", { text: value }), h("span", { text: label }));
+
+function renderMix() {
+  const m = state.mix;
+  m.reels_per_week = Math.min(Math.max(1, m.reels_per_week), m.posts_per_week);
+  m.carousels_per_week = Math.min(m.carousels_per_week, m.posts_per_week - m.reels_per_week);
+  const photos = m.posts_per_week - m.reels_per_week - m.carousels_per_week;
+  $("#posts").textContent = m.posts_per_week;
+  Object.assign($("#reels"), { max: m.posts_per_week, value: m.reels_per_week });
+  Object.assign($("#carousels"), { max: m.posts_per_week - m.reels_per_week, value: m.carousels_per_week });
+  $("#reels-label").textContent = m.reels_per_week;
+  $("#carousels-label").textContent = m.carousels_per_week;
+  const part = (n, color, label) => h("div", { style: `flex-grow:${n};background:${color}`, text: n ? `${n} ${label}` : "" });
+  $("#mix").replaceChildren(part(m.reels_per_week, "var(--reel)", "reels"), part(m.carousels_per_week, "var(--carousel)", "carousels"), part(photos, "var(--photo)", "photos"));
+  const ratio = m.reels_per_week / m.posts_per_week;
+  $("#mix-note").textContent = `${Math.round(ratio * 100)}% reels · ${m.posts_per_week - m.reels_per_week} feed posts`;
+}
+document.querySelectorAll("[data-step]").forEach((b) => b.addEventListener("click", () => {
+  state.mix.posts_per_week = Math.min(7, Math.max(1, state.mix.posts_per_week + Number(b.dataset.d))); renderMix();
+}));
+$("#reels").addEventListener("input", (e) => { state.mix.reels_per_week = Number(e.target.value); renderMix(); });
+$("#carousels").addEventListener("input", (e) => { state.mix.carousels_per_week = Number(e.target.value); renderMix(); });
+$("#save-mix").addEventListener("click", async () => {
+  const { posts_per_week, reels_per_week, carousels_per_week } = state.mix;
+  try { await api("/api/cadence", { method: "PUT", body: JSON.stringify({ posts_per_week, reels_per_week, carousels_per_week }) }); toast("Weekly mix saved"); state.mix = null; loadSummary(); }
+  catch (e) { toast(e.message); }
+});
+
+async function loadAssets() {
+  state.assets = await api("/api/assets");
+  const pillars = state.summary ? state.summary.pillars : [];
+  const options = [["all", "All"], ["review", "Needs review"], ...pillars.map((p) => [p.id, p.name]), ["generated", "Generated views"]];
+  $("#filters").replaceChildren(...options.map(([id, label]) => h("button", { type: "button", "aria-pressed": String(state.filter === id), onclick: () => { state.filter = id; loadAssets(); } }, label)));
+  const shown = state.assets.filter((a) => state.filter === "all" || (state.filter === "review" ? a.needs_review : state.filter === "generated" ? a.origin === "generated" : a.pillar === state.filter));
+  $("#library").replaceChildren(...(shown.length ? shown.map(card) : [h("div", { class: "card empty" }, state.assets.length ? "Nothing in this filter." : "No photos yet. Add the first ones above.")]));
+}
+function card(a) {
+  const pillars = state.summary.pillars;
+  const select = h("select", { "aria-label": "Pillar", onchange: (e) => patch(a.id, { owner_pillar: e.target.value }) },
+    h("option", { value: "", text: a.model_pillar ? "Suggested: " + name(a.model_pillar) + ` (${Math.round(100 * (a.model_confidence || 0))}%)` : "Choose pillar…" }),
+    ...pillars.map((p) => h("option", { value: p.id, selected: a.owner_pillar === p.id, text: p.name })));
+  const en = h("textarea", { "aria-label": "English description", placeholder: "What is in the photo? (English)", maxlength: 600 }); en.value = a.note_en;
+  const ar = h("textarea", { "aria-label": "Arabic description", placeholder: "ما الذي في الصورة؟", dir: "rtl", lang: "ar", maxlength: 600 }); ar.value = a.note_ar;
+  const save = h("button", { class: "btn small", type: "button", onclick: () => patch(a.id, { note_en: en.value, note_ar: ar.value }) }, "Save text");
+  const status = a.rejected ? h("span", { class: "chip alert" }, "Hidden") : a.needs_review ? h("span", { class: "chip alert" }, a.pillar ? "Needs description" : "Needs pillar") : a.usable ? h("span", { class: "chip ok" }, "Ready") : h("span", { class: "chip" }, "Awaiting approval");
+  const extra = [];
+  if (a.origin === "generated") {
+    const f = a.fidelity || {};
+    extra.push(h("p", { class: "note" }, `${a.preset || "camera view"} · same place ${pct(f.same_place)} · photoreal ${pct(f.photoreal)}`));
+    if (a.view_score !== null && !a.view_ok) extra.push(h("span", { class: "chip alert" }, "Likely changed the place: check closely"));
+    extra.push(h("div", { class: "row" }, h("button", { class: "btn small" + (a.approved ? "" : " primary"), type: "button", onclick: () => patch(a.id, { approved: !a.approved }) }, a.approved ? "Unapprove" : "Approve view")));
+  } else if (state.summary.variants_enabled) {
+    const preset = h("select", { "aria-label": "Camera direction" }, ...state.summary.presets.map((p) => h("option", { value: p.id, text: p.label })));
+    extra.push(h("div", { class: "row" }, preset, h("button", { class: "btn small", type: "button", onclick: (e) => variant(a.id, preset.value, e.target) }, "New camera view")));
+  }
+  return h("article", { class: "card photo" },
+    h("div", { class: "img" }, h("img", { src: a.thumb, alt: a.note_en || "Resort photo", loading: "lazy" }), a.origin === "generated" ? h("span", { class: "chip" }, "AI view") : null),
+    h("div", { class: "body" },
+      h("div", { class: "meta" }, status, h("span", { text: `${a.width}×${a.height}${a.people !== null && a.people > 0.5 ? " · people" : ""}` })),
+      select, en, ar, h("div", { class: "row", style: "justify-content: space-between" }, save,
+        h("button", { class: "btn small", type: "button", onclick: () => patch(a.id, { rejected: !a.rejected }) }, a.rejected ? "Restore" : "Hide")),
+      ...extra));
+}
+const name = (id) => (state.summary.pillars.find((p) => p.id === id) || { name: id }).name;
+const pct = (v) => (typeof v === "number" ? Math.round(v * 100) + "%" : "—");
+async function patch(id, body) {
+  try { await api("/api/assets/" + id, { method: "PATCH", body: JSON.stringify(body) }); toast("Saved"); await loadSummary(); await loadAssets(); }
+  catch (e) { toast(e.message); }
+}
+async function variant(id, preset, button) {
+  button.disabled = true; button.textContent = "Generating…";
+  try { await api(`/api/assets/${id}/variants`, { method: "POST", body: JSON.stringify({ preset }) }); toast("New view added. Review and approve it."); state.filter = "generated"; await loadSummary(); await loadAssets(); }
+  catch (e) { toast(e.message); button.disabled = false; button.textContent = "New camera view"; }
+}
+
+const drop = $("#drop"), files = $("#files");
+drop.addEventListener("click", () => files.click());
+drop.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); files.click(); } });
+["dragover", "dragenter"].forEach((t) => drop.addEventListener(t, (e) => { e.preventDefault(); drop.classList.add("over"); }));
+["dragleave", "drop"].forEach((t) => drop.addEventListener(t, () => drop.classList.remove("over")));
+drop.addEventListener("drop", (e) => { e.preventDefault(); files.files = e.dataTransfer.files; picked(); });
+files.addEventListener("change", picked);
+function picked() { $("#picked").textContent = files.files.length ? `${files.files.length} photo(s) selected` : ""; }
+try { $("#by").value = localStorage.getItem("by") || ""; } catch (e) {}
+$("#upload").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  if (!files.files.length) return toast("Choose at least one photo");
+  if (!$("#rights").checked) return toast("Please confirm you own the photos");
+  try { localStorage.setItem("by", $("#by").value); } catch (err) {}
+  let ok = 0;
+  for (const file of files.files) {
+    const data = await new Promise((resolve, reject) => { const r = new FileReader(); r.onload = () => resolve(r.result); r.onerror = reject; r.readAsDataURL(file); });
+    try { await api("/api/assets", { method: "POST", body: JSON.stringify({ name: file.name, data_base64: data, note_en: $("#note-en").value, note_ar: $("#note-ar").value, rights_confirmed: true, added_by: $("#by").value }) }); ok++; }
+    catch (err) { toast(`${file.name}: ${err.message}`); }
+  }
+  files.value = ""; picked(); toast(`${ok} photo(s) added`); state.filter = "all"; await loadSummary(); await loadAssets();
+});
+for (const [id, force] of [["#classify", false], ["#reclassify", true]]) $(id).addEventListener("click", async (e) => {
+  e.target.disabled = true;
+  try { const r = await api("/api/classify?force=" + force, { method: "POST" }); $("#classify-result").textContent = `${r.classified} classified, ${r.skipped} already done${r.failed.length ? `, ${r.failed.length} failed` : ""}.`; await loadSummary(); await loadAssets(); }
+  catch (err) { toast(err.message); } finally { e.target.disabled = false; }
+});
+
+async function loadPlan() {
+  const week = $("#week").value;
+  const p = await api("/api/plan" + (week ? "?week_start=" + week : ""));
+  $("#week").value = p.week_start;
+  $("#slots").replaceChildren(...p.slots.map((s) => h("div", { class: "card slot" },
+    h("div", { class: "when" }, h("b", { text: s.day }), h("span", { class: "note", text: s.time + " Cairo" + (s.explore ? " · test slot" : "") })),
+    h("div", { class: "row" }, h("span", { class: "chip " + s.format, text: fmt[s.format] }), h("span", { text: s.pillar_name })),
+    h("div", {}, h("div", { class: "thumbs" }, ...s.primary.map((a) => h("img", { src: a.thumb, alt: a.note_en || "Suggested photo", title: a.note_en })), ...s.alternatives.map((a) => h("img", { class: "alt", src: a.thumb, alt: "Alternative: " + (a.note_en || "photo"), title: "Alternative: " + a.note_en }))),
+      h("p", { class: "note" + (s.shortfall ? " warn" : ""), style: "margin: 6px 0 0", text: !s.primary.length ? "No usable photos yet: add, label and describe photos first" : s.shortfall ? `Only ${s.matching} ${s.pillar_name} photo${s.matching === 1 ? "" : "s"}: borrowing from other pillars` : `${s.matching} ${s.pillar_name} photos to choose from` })))));
+}
+$("#week").addEventListener("change", loadPlan);
+
+async function loadRuns() {
+  state.runs = await api("/api/runs");
+  const pick = $("#run-pick");
+  if (!state.runs.length) { $("#run-stats").replaceChildren(); $("#run-posts").replaceChildren(h("div", { class: "empty" }, "No generated weeks yet. Run instabay generate --assets data/workspace.")); pick.replaceChildren(); return; }
+  const current = pick.value;
+  pick.replaceChildren(...state.runs.map((r) => h("option", { value: r.id, selected: r.id === current, text: `${r.run_id} · ${r.id}` })));
+  renderRun();
+}
+$("#run-pick").addEventListener("change", renderRun);
+function renderRun() {
+  const r = state.runs.find((x) => x.id === $("#run-pick").value) || state.runs[0];
+  const f = r.formats;
+  $("#run-stats").replaceChildren(stat(r.posts.length, "posts this week"), stat(`${f.reel || 0} / ${(f.carousel || 0) + (f.photo || 0)}`, "reels / feed posts"), stat(`${r.approved}/${r.posts.length}`, "approved by you"), stat(r.published_count, "published"), stat(r.flagged, "flagged for review"));
+  const metricNames = [...new Set(r.posts.flatMap((p) => Object.keys(p.metrics)))].slice(0, 4);
+  $("#run-posts").replaceChildren(h("table", {},
+    h("thead", {}, h("tr", {}, h("th", { text: "Post" }), h("th", { text: "Format" }), h("th", { text: "Pillar" }), h("th", { text: "Hook" }), h("th", { text: "Status" }), ...(metricNames.length ? metricNames.map((m) => h("th", { class: "num", text: m })) : [h("th", { text: "Instagram" })]))),
+    h("tbody", {}, ...r.posts.map((p) => h("tr", {},
+      h("td", {}, h("div", { class: "post-media" }, ...p.media.slice(0, 3).map((m) => /\.(mp4|mov|webm)$/i.test(m) ? h("video", { src: m, muted: true, preload: "metadata" }) : h("img", { src: m, alt: "", loading: "lazy" })))),
+      h("td", {}, h("span", { class: "chip " + p.format, text: fmt[p.format] })),
+      h("td", { text: name(p.pillar) }),
+      h("td", { text: p.hook }),
+      h("td", {}, p.published ? h("span", { class: "chip ok" }, "Published") : p.decision ? h("span", { class: "chip ok" }, p.decision.toLowerCase()) : h("span", { class: "chip" + (p.flagged ? " alert" : "") }, p.flagged ? "Needs review" : "Waiting")),
+      ...(metricNames.length ? metricNames.map((m) => h("td", { class: "num", text: p.metrics[m] ?? "—" })) : [h("td", { class: "note", text: "Not connected" })]))))));
+}
+
+(async () => {
+  try { await loadSummary(); } catch (e) { toast(e.message); }
+  let tab = "overview"; try { tab = localStorage.getItem("tab") || tab; } catch (e) {}
+  show(tab);
+})();
+</script>
+</body>
+</html>

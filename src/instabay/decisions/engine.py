@@ -46,6 +46,7 @@ class Answer(Boundary):
     noul: float | None = Field(default=None, ge=0, le=1, strict=True)
     confidence: float = Field(ge=0, le=1, strict=True)
     abstained: bool = Field(default=False, strict=True)
+    probabilities: dict[str, float] | None = Field(default=None, exclude_if=lambda v: v is None)
 
     @model_validator(mode="after")
     def one_value(self) -> Self:
@@ -77,7 +78,7 @@ def normalize_answers(payload: object, questions: dict[str, Question]) -> dict[s
             raise DecisionProtocolError("Decision answer is not an object")
         selected = {
             key: value[key]
-            for key in ("choice", "score", "noul", "confidence", "abstained")
+            for key in ("choice", "score", "noul", "confidence", "abstained", "probabilities")
             if key in value
         }
         if value.get("abstain") is True or value.get("action") == "abstain":

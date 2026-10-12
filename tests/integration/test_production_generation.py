@@ -116,3 +116,38 @@ def test_generation_cli_cannot_use_live_mode(command, monkeypatch):
     }
     result = CliRunner().invoke(app, [command, *extra[command]])
     assert result.exit_code != 0 and "dry_run" in result.output
+
+
+def test_asset_pools_reach_the_writer_and_restrict_its_choices(tmp_path):
+    brand, evidence, catalog, _ = campaign()
+    ids = [o.id for o in catalog.objects]
+    args = dict(
+        brand=brand,
+        evidence=evidence,
+        catalog=catalog,
+        root=ROOT,
+        run_id="reference-w42",
+        week_start=date(2026, 10, 12),
+        model="fake-fixture-v1",
+        budget=RunBudget(max_tokens=100000),
+        draft_only=True,
+    )
+    output = tmp_path / "pooled"
+    freeze_test_brand(output, brand)
+    result = generate_week(
+        output=output,
+        client=FakeLLM(ROOT / "tests/fixtures/llm"),
+        asset_pools=lambda slots: {s.id: ids for s in slots},
+        **args,
+    )
+    pools = json.loads((output / "campaign.json").read_text())["asset_pools"]
+    assert result.status == "approval_pending" and len(pools) == len(result.post_ids)
+    narrowed = tmp_path / "narrowed"
+    freeze_test_brand(narrowed, brand)
+    with pytest.raises(ValueError):
+        generate_week(
+            output=narrowed,
+            client=FakeLLM(ROOT / "tests/fixtures/llm"),
+            asset_pools=lambda slots: {s.id: ["not-in-catalog"] for s in slots},
+            **args,
+        )

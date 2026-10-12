@@ -32,14 +32,20 @@ class VisualBriefWriter:
         catalog: ObjectCatalog,
         previous_angles: list[str],
         used_photo_scenes: list[str] | None = None,
+        pool: list[str] | None = None,
     ) -> EvidenceBrief:
-        """FR-04: distinct weekly angles, an ordered carousel and no unsupported facility claims."""
+        """FR-04: distinct weekly angles, an ordered carousel and no unsupported facility claims.
+
+        ``pool`` is the code-ranked asset suggestion for this slot; the writer orders and tells
+        the story but may only choose among those images.
+        """
         inputs = agent_inputs(slot=slot, evidence=evidence, previous_angles=previous_angles)
+        candidates = [o for o in catalog.objects if not pool or o.id in pool]
         available = [
             o
-            for o in catalog.objects
+            for o in candidates
             if slot.arm.format != "photo" or o.id not in (used_photo_scenes or [])
-        ] or catalog.objects
+        ] or candidates
         allowed = [o.id for o in available]
         inputs["scenes"] = [
             {"id": o.id, "photo_uri": o.photo.uri, "observed": o.observed} for o in available

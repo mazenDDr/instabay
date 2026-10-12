@@ -52,7 +52,7 @@ class ResortObject(Boundary):
     clip: SourceClip | None = None
     allowed_actions: tuple[SceneAction, ...] = ("photo_camera",)
     property_name: str | None = Field(default=None, exclude_if=lambda v: v is None)
-    approval_scope: Literal["crop", "preview_source_use"] = Field(
+    approval_scope: Literal["crop", "preview_source_use", "owner_approved_view"] = Field(
         default="crop", exclude_if=lambda v: v == "crop"
     )
     must_include: list[CropBox] = Field(default_factory=list, exclude_if=lambda v: not v)
@@ -65,8 +65,11 @@ class ResortObject(Boundary):
             or self.conditioning.crop_hash != canonical_hash(self.crop)
         ):
             raise ValueError("Conditioning crop belongs to a different source or composition")
+        if self.approval_scope == "owner_approved_view" and self.source != "synthetic":
+            raise ValueError("Only an AI view can carry an owner view approval")
         if (
-            self.approval_scope == "preview_source_use" or self.source == "synthetic"
+            self.approval_scope == "preview_source_use"
+            or (self.source == "synthetic" and self.approval_scope != "owner_approved_view")
         ) and not self.reference_only:
             raise ValueError("Preview source use cannot certify production property imagery")
         return self

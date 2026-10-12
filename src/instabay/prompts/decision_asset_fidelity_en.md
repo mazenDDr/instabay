@@ -1,0 +1,1 @@
+The first image is the real resort photograph. The second image is a new camera view generated from it. Does the second image keep the same place: the same buildings, structures, pools, jetties, furniture style and coastline, without adding any building, pool, facility or landmark that is not in the first image? People, lighting and camera position may change.

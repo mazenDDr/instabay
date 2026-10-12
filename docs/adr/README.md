@@ -10,6 +10,7 @@
 | [0006](0006-calibrated-cascade-and-evidence.md) | Scoped calibration and honest score-free fast paths. |
 | [0007](0007-recipe-cache-and-video-evidence.md) | Verified render cache and pending native video evidence. |
 | [0008](0008-documentation-and-clone-gate.md) | Fresh-clone acceptance and separation of build gates from production readiness. |
+| [0013](0013-owner-asset-library-and-camera-views.md) | Owner photo library, d3-flash pillar labels, owner weekly mix and approved AI camera views. |
 
 `0000-spikes.md` is deliberately absent. # HUMAN: record actual GPU/Laya/FLF results there;
 no synthetic measurements or copied vendor claims should impersonate a completed spike.
