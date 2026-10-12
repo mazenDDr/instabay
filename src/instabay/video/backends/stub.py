@@ -35,11 +35,12 @@ class StubVideoBackend:
         spec = recipe.motion
         count = spec.frames[shot.index]
         progress = f"on/{max(1, count - 1)}"
+        strength = item.motion_strength
         zoom = {
             "static": "1.0",
-            "push_in": f"1+0.06*{progress}",
-            "pull_out": f"1.06-0.06*{progress}",
-        }.get(item.camera, "1.06")
+            "push_in": f"1+{strength}*{progress}",
+            "pull_out": f"1+{strength}-{strength}*{progress}",
+        }.get(item.camera, str(1 + strength))
         x, y = "(iw-iw/zoom)/2", "(ih-ih/zoom)/2"
         if item.camera in {"pan_left", "pan_right"}:
             x = f"(iw-iw/zoom)*{'1-' if item.camera == 'pan_left' else ''}{progress}"

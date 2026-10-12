@@ -1,0 +1,144 @@
+{
+  "template_name": "video_director",
+  "slot_id": "2026-w42-sun-1",
+  "response": {
+    "reel_id": "2026-w42-sun-1",
+    "idea": "Light, shade and a moment to breathe: details resolve into a resort courtyard.",
+    "viewer_payoff": "The close textures reveal the setting; the viewer can save a calm visual moment.",
+    "hook_mechanism": "A question over an immediate flower detail, then a scale and subject change.",
+    "bpm": 90,
+    "missing_visuals": [],
+    "beats": [
+      {
+        "id": "b0",
+        "object_id": "flowers",
+        "role": "hook",
+        "purpose": "A flower draws the eye into an unexpected close detail.",
+        "brief_anchor": "hook",
+        "camera": "push_in",
+        "action": "plant_sway",
+        "action_prompt": "The existing yellow flower and leaves sway visibly in a gentle breeze. Preserve the original flower and stem, no new petals, plants, people or objects.",
+        "overlay": {
+          "en": "A slower escape?",
+          "ar": "لحظة على مهل؟"
+        },
+        "text_position": "lower",
+        "pace": "quick"
+      },
+      {
+        "id": "b1",
+        "object_id": "water",
+        "role": "detail",
+        "purpose": "Reflected light changes the texture.",
+        "brief_anchor": "key_message",
+        "camera": "pan_right",
+        "action": "photo_camera",
+        "action_prompt": "Observe the existing water with an intentional camera edit, preserving its photographed geometry.",
+        "overlay": {
+          "en": "",
+          "ar": ""
+        },
+        "text_position": "lower",
+        "pace": "quick"
+      },
+      {
+        "id": "b2",
+        "object_id": "palms",
+        "role": "detail",
+        "purpose": "Palm canopy gives a sense of breathing room.",
+        "brief_anchor": "angle",
+        "camera": "pull_out",
+        "action": "photo_camera",
+        "action_prompt": "Observe the existing palms with an intentional camera edit, preserving its photographed geometry.",
+        "overlay": {
+          "en": "",
+          "ar": ""
+        },
+        "text_position": "lower",
+        "pace": "steady"
+      },
+      {
+        "id": "b3",
+        "object_id": "arches",
+        "role": "reveal",
+        "purpose": "The architectural reveal locates the details in the resort.",
+        "brief_anchor": "visual_description",
+        "camera": "pull_out",
+        "action": "photo_camera",
+        "action_prompt": "Observe the existing arches with an intentional camera edit, preserving its photographed geometry.",
+        "overlay": {
+          "en": "",
+          "ar": ""
+        },
+        "text_position": "lower",
+        "pace": "steady"
+      },
+      {
+        "id": "b4",
+        "object_id": "water",
+        "role": "payoff",
+        "purpose": "Water gives the promise of calm a physical movement.",
+        "brief_anchor": "key_message",
+        "camera": "static",
+        "action": "water_ripples",
+        "action_prompt": "Clearly visible gentle ripples travel across the existing water and move its reflected light. Preserve the photographed pool edge; add no objects, people, buildings, waves or fountains.",
+        "overlay": {
+          "en": "",
+          "ar": ""
+        },
+        "text_position": "lower",
+        "pace": "steady"
+      },
+      {
+        "id": "b5",
+        "object_id": "flowers",
+        "role": "detail",
+        "purpose": "Return to texture with a different photographic scale.",
+        "brief_anchor": "angle",
+        "camera": "push_in",
+        "action": "photo_camera",
+        "action_prompt": "Observe the existing flowers with an intentional camera edit, preserving its photographed geometry.",
+        "overlay": {
+          "en": "",
+          "ar": ""
+        },
+        "text_position": "lower",
+        "pace": "steady"
+      },
+      {
+        "id": "b6",
+        "object_id": "courtyard",
+        "role": "payoff",
+        "purpose": "Courtyard geometry completes the wider sense of place.",
+        "brief_anchor": "visual_description",
+        "camera": "pan_left",
+        "action": "photo_camera",
+        "action_prompt": "Observe the existing courtyard with an intentional camera edit, preserving its photographed geometry.",
+        "overlay": {
+          "en": "",
+          "ar": ""
+        },
+        "text_position": "lower",
+        "pace": "steady"
+      },
+      {
+        "id": "b7",
+        "object_id": "arches",
+        "role": "cta",
+        "purpose": "One save CTA concludes the shared brief.",
+        "brief_anchor": "cta",
+        "camera": "pull_out",
+        "action": "photo_camera",
+        "action_prompt": "Observe the existing arches with an intentional camera edit, preserving its photographed geometry.",
+        "overlay": {
+          "en": "Save this feeling.",
+          "ar": "احفظ هذه اللحظة."
+        },
+        "text_position": "lower",
+        "pace": "steady"
+      }
+    ]
+  },
+  "input_tokens": 600,
+  "output_tokens": 1500
+}

@@ -19,6 +19,7 @@ from instabay.agents.brand_architect import BrandArchitect
 from instabay.agents.brief_writer import BriefWriter
 from instabay.agents.common import prompt_hashes
 from instabay.agents.judge import Judge, write_bilingual
+from instabay.agents.video_director import VideoDirector
 from instabay.core.hashtags import select_hashtags
 from instabay.core.planner import plan_week
 from instabay.core.recipe import RenderRecipe
@@ -36,6 +37,8 @@ from instabay.decisions.cascade import CheckCascade
 from instabay.decisions.engine import DecisionEngine
 from instabay.llm import LLMService, RunUsage
 from instabay.repository import Repository
+from instabay.video.direction import ObjectCatalog
+from instabay.video.direction_commands import editorial_recipe
 from instabay.video.keyframes import stub_recipe
 from instabay.video.remote import RenderService
 from instabay.video.shotlist import Keyframe
@@ -88,12 +91,15 @@ class WeekRunner:
         model_overrides: dict[str, str] | None = None,
         token_overrides: dict[str, int] | None = None,
         render_recipes: dict[str, RenderRecipe] | None = None,
+        video_catalog: ObjectCatalog | None = None,
+        allow_video_animatic: bool = False,
     ) -> None:
         self._stack = ExitStack()
         self.repository = Repository(db)
         self._stack.callback(self.repository.close)
         self.calls = self._stack.enter_context(SQLiteCallStore(db))
         self.fake = FakeLLM(fixtures)
+        self.video_catalog, self.allow_video_animatic = video_catalog, allow_video_animatic
         self.service = LLMService(
             llm_client or self.fake,
             self.calls,
@@ -204,7 +210,20 @@ class WeekRunner:
             if post.format != "reel" or post.render_artifact is not None:
                 continue
             recipe = self.render_recipes.get(slot.id)
-            if recipe is None:
+            if recipe is None and self.video_catalog is not None:
+                from instabay.video.backends.editorial import EditorialVideoBackend
+
+                if not isinstance(self.video_studio.backend, EditorialVideoBackend):
+                    raise ValueError("The directed board requires the editorial assembler")
+                board = VideoDirector(self.service).direct(slot.id, post.brief, self.video_catalog)
+                recipe = editorial_recipe(
+                    board,
+                    self.video_studio.root,
+                    self.video_studio.root / "outputs/video-boards" / slot.id,
+                    "en",
+                    animatic=self.allow_video_animatic and state["demo"],
+                )
+            elif recipe is None:
                 if not state["demo"] or self.video_studio.backend.name != "stub":
                     raise ValueError(
                         "HUMAN: supply an exact approved native recipe before GPU work"
@@ -238,7 +257,9 @@ class WeekRunner:
                         "render_artifact": attachment,
                         "ai_disclosure": result.ai_disclosure,
                         "prompt_hashes": post.prompt_hashes
-                        | prompt_hashes(self.service, ["shot_list"]),
+                        | prompt_hashes(
+                            self.service, ["video_director" if self.video_catalog else "shot_list"]
+                        ),
                     }
                 )
             )

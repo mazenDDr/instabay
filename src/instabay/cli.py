@@ -23,6 +23,7 @@ from instabay.llm import LLMService
 from instabay.repository import Repository
 from instabay.settings import Settings
 from instabay.video.commands import register_video_commands
+from instabay.video.direction_commands import register_direction_commands
 from instabay.video.shotlist import ShotList
 from instabay.video.studio import VideoStudio
 
@@ -31,6 +32,7 @@ register_graph_commands(app)
 register_decision_commands(app)
 register_generation_commands(app)
 register_video_commands(app)
+register_direction_commands(app)
 console = Console()
 DEFAULT_DB = Path(os.environ.get("INSTABAY_DB_PATH", "outputs/demo.sqlite3"))
 DEFAULT_CHECKPOINTS = Path(

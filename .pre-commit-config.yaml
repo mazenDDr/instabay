@@ -25,6 +25,6 @@ repos:
         args:
           - --no-verify
           - --exclude-lines
-          - '^\s*(?:"(content_signature|brand_hash|protocol_hash|corpus_hash|sha256|recipe_hash|recipe_file_sha256|native_recipe_hash|raw_clip_sha256|file_sha256|raw_copy_sha256|edited_copy_sha256|conditioning_sha256|image_sha256|ffmpeg_sha256|ffprobe_sha256|implementation_sha256|prompt_hash|cache_key)": "[a-f0-9]{64}"|"revision": "[a-f0-9]{40}"),?$'
+          - '^\s*(?:"(content_signature|brand_hash|brief_hash|motion_recipe_hash|protocol_hash|corpus_hash|sha256|recipe_hash|recipe_file_sha256|native_recipe_hash|raw_clip_sha256|file_sha256|raw_copy_sha256|edited_copy_sha256|conditioning_sha256|image_sha256|ffmpeg_sha256|ffprobe_sha256|implementation_sha256|prompt_hash|cache_key)": "[a-f0-9]{64}"|"revision": "[a-f0-9]{40}"),?$|^\s*(?:sha256|motion_recipe_hash): (?:[a-f0-9]{64}|"[a-f0-9]{64}")$'
         language: system
         exclude: ^(uv\.lock|assets/photos/manifest\.json)$

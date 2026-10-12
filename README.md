@@ -248,3 +248,10 @@ from offline demos, calibrated benchmarks, brand freezing and post approval.
 - # HUMAN: supply benchmark ratings in Phase 4.
 
 The simulator was committed separately in `29fed9c` before optimizer code in `98c9202`.
+
+### Brief-led video direction
+
+The new [Video Director](docs/VIDEO_DIRECTION.md) turns a Brief Writer brief into an object-led
+sequence, with automatic reference selection, deterministic timing, unique motion shots,
+sparse white type and separate EN/AR editions. Start with `instabay direct-video --brief path/to/brief.json`; finished rendering requires motion footage, while `--render --animatic`
+explicitly produces a photo edit. Preview generation never stores a publishing approval.

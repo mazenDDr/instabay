@@ -34,6 +34,7 @@ class NativeLLMClient:
         if not re.fullmatch(r"[^@\s]+@[0-9a-f]{40}", model):
             raise ValueError("Native model must include its exact revision")
         self.model, self.confirm_external = model, confirm_external
+        self.last_completion: Completion | None = None
         self.client = httpx.Client(
             base_url=origin, timeout=180, transport=transport, trust_env=False
         )
@@ -60,6 +61,7 @@ class NativeLLMClient:
             result = Completion.model_validate({k: raw[k] for k in Completion.model_fields})
             if result.model != self.model:
                 raise ValueError("Returned model identity differs")
+            self.last_completion = result
             return result
         except Exception:
             raise RuntimeError("Native generation failed; no fixture fallback was used") from None

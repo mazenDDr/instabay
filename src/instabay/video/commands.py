@@ -10,6 +10,7 @@ import typer
 from instabay.core.recipe import RenderRecipe
 from instabay.video.backends.base import VideoBackend
 from instabay.video.backends.comfyui import ComfyUIBackend
+from instabay.video.backends.editorial import EditorialVideoBackend
 from instabay.video.backends.recorded import RecordedMotionBackend
 from instabay.video.backends.stub import StubVideoBackend
 from instabay.video.backends.wan_diffusers import WanDiffusersBackend
@@ -60,6 +61,8 @@ def register_video_commands(app: typer.Typer) -> None:
             adapter = (
                 RecordedMotionBackend()
                 if request.post.recorded_motion
+                else EditorialVideoBackend()
+                if request.post.style == "editorial"
                 else choose_backend(backend, confirm_gpu, request.model.supports_flf)
             )
             result = VideoStudio(db, root, renders, adapter).render(request)
@@ -89,6 +92,8 @@ def register_video_commands(app: typer.Typer) -> None:
         adapter = (
             RecordedMotionBackend()
             if request.post.recorded_motion
+            else EditorialVideoBackend()
+            if request.post.style == "editorial"
             else choose_backend(backend, confirm_gpu, request.model.supports_flf)
         )
         output.parent.mkdir(parents=True, exist_ok=True)
