@@ -3,9 +3,9 @@
 from pathlib import Path
 
 import pytest
-from instabay.adapters.publisher import DryRunPublisher, UnapprovedPublishError
 
 from instabay.adapters.memory_outbox import MemoryOutbox
+from instabay.adapters.publisher import DryRunPublisher, UnapprovedPublishError
 from instabay.core.schemas import ApprovalRequest, Copy, Post
 from instabay.repository import Repository
 from tests.support import draft_post, save_review

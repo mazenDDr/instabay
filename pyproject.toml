@@ -45,6 +45,9 @@ extend-exclude = [".tools", ".uv-cache", ".uv-python", ".pre-commit-cache"]
 select = ["E", "F", "I", "B", "UP", "SIM", "RUF"]
 allowed-confusables = ["ا", "ه"]
 
+[tool.ruff.lint.isort]
+known-first-party = ["instabay", "tests"]
+
 [tool.mypy]
 python_version = "3.12"
 strict = true
