@@ -1,0 +1,2598 @@
+{
+  "run": {
+    "run_id": "reference-w42",
+    "post_ids": [
+      "reference-w42-mon-1",
+      "reference-w42-tue-1",
+      "reference-w42-wed-1",
+      "reference-w42-thu-1",
+      "reference-w42-fri-1",
+      "reference-w42-sat-1",
+      "reference-w42-sun-1"
+    ],
+    "status": "approval_pending"
+  },
+  "synthetic": false,
+  "usage": {
+    "calls": 33,
+    "tokens": 100149,
+    "cost_usd": 0.0
+  },
+  "posts": [
+    {
+      "id": "reference-w42-mon-1",
+      "slot_id": "reference-w42-mon-1",
+      "brand_hash": "8f3983a1982c0c57b645c10a17f093f463ad3b4b66c81a4f52c27f3f52b49bd3",
+      "format": "photo",
+      "brief": {
+        "angle": "A journey through the visible water and architecture",
+        "hook": "1. Jetty into blue. 2. Waterfront, from three perspectives.",
+        "key_message": "Experience the visible coastal water and architecture of Reethi Faru Resort, Maldives.",
+        "visual_description": "Aerial view of thatched overwater villas connected by a wooden jetty, surrounded by clear turquoise water and island vegetation.",
+        "photo_uri": "assets/photos/reethi_faru/lagoon-villas.jpg",
+        "cta": "Compare the visible water and architecture of Reethi Faru Resort.",
+        "must_not": [
+          "invented facilities",
+          "snorkeling claims",
+          "nightlife",
+          "alcohol imagery"
+        ],
+        "reel_concept": null
+      },
+      "en": {
+        "caption": "Follow the jetty into blue.\n\nThatched villas follow a wooden jetty through turquoise water.\n\nSave the view for your travel moodboard.",
+        "alt_text": "Thatched villas follow a wooden jetty through turquoise water."
+      },
+      "ar": {
+        "caption": "رصيف يمتد إلى لون البحر.\n\nفلل بسقوف من القش على امتداد رصيف خشبي وسط مياه فيروزية.\n\nاحفظ هذه الإطلالة لقائمة رحلاتك.",
+        "alt_text": "فلل بسقوف من القش على امتداد رصيف خشبي وسط مياه فيروزية."
+      },
+      "hashtags": [
+        "#ReethiFaru",
+        "#ريثي_فارو",
+        "#Maldives",
+        "#المالديف",
+        "#OceanViews",
+        "#BeachArchitecture",
+        "#CoastalTravel",
+        "#TropicalBeach",
+        "#سفر",
+        "#شاطئ"
+      ],
+      "prompt_hashes": {
+        "visual_brief": "7c0816969be928182d458de7cd5af567f20ac89562e27449ff7b04f2c388f779",
+        "grounded_copy_en": "c280ea5f135af98e3df2fb64853ea790424f09c286526a6613328018c49fecf2",
+        "grounded_copy_ar": "57f80a371388fea23f4d91b18f5c89e61069c303b481a6986caee9c519310f12"
+      },
+      "revision": 0,
+      "ai_disclosure": false,
+      "offer_id": null,
+      "media_path": "/Users/mazenkhaled/Task/outputs/photos/bba36669189f5b4d70acbb5e2a3fa882323d420658c051aeaabbc9dacf03f2c7/photo-1.jpg",
+      "media_status": "rendered",
+      "photo_artifact": {
+        "recipe_hash": "bba36669189f5b4d70acbb5e2a3fa882323d420658c051aeaabbc9dacf03f2c7",
+        "render_recipe": {
+          "kind": "reference-photo-layout-v1",
+          "format": "photo",
+          "sources": [
+            {
+              "id": "lagoon-villas",
+              "label": "Lagoon Villas",
+              "observed": "Aerial view of a line of thatched overwater villas and a connecting jetty, surrounded by clear turquoise water; island trees and white shoreline at the lower left.",
+              "photo": {
+                "uri": "assets/photos/reethi_faru/lagoon-villas.jpg",
+                "sha256": "3e33860a79e5b9daabf170be3279e2ed38f37b4f3b43212ba4c9188bd1f826ce"
+              },
+              "crop": {
+                "x": 234,
+                "y": 0,
+                "width": 2530,
+                "height": 4500
+              },
+              "approved_by": "mazenDDr",
+              "approval_id": "reference-media-request-2026-10-12",
+              "faces_checked": true,
+              "attribution": "Moosa Haleem / Unsplash License - resized, cropped and animated",
+              "author": "Moosa Haleem",
+              "license_id": "Unsplash License",
+              "source_page": "https://unsplash.com/photos/aerial-view-of-green-trees-and-body-of-water-u94aG1t4xPE",
+              "license_url": "https://unsplash.com/license",
+              "reference_only": true,
+              "source": "photo",
+              "clip": null,
+              "allowed_actions": [
+                "scenic_motion",
+                "recorded_footage"
+              ],
+              "property_name": "Reethi Faru Resort, Maldives",
+              "approval_scope": "preview_source_use",
+              "must_include": [
+                {
+                  "x": 1200,
+                  "y": 450,
+                  "width": 900,
+                  "height": 3050
+                },
+                {
+                  "x": 400,
+                  "y": 3400,
+                  "width": 1200,
+                  "height": 600
+                }
+              ]
+            }
+          ],
+          "layout": "contain",
+          "background": "#e8eeee",
+          "width": 1080,
+          "height": 1350,
+          "runtime": {
+            "docker_image_digest": null,
+            "python": "3.12.15",
+            "platform": "macOS-27.0-arm64-arm-64bit",
+            "ffmpeg_sha256": "c8173e9755795978bce8e104f8d7044fabe7d6d84044aba37d3648c6f4e4e1a8",
+            "ffprobe_sha256": "56559c234422b0e3722c54b2bd99bbd8cd83d3732a13a6d207589982a6b7085e",
+            "implementation_sha256": "81d67e80aa803c99a0afcd1fcddf8e799b7c9206bab66961101bd03d5c0f2b4f",
+            "pillow": "12.3.0",
+            "reshaper": "3.0.1",
+            "bidi": "0.6.11",
+            "torch": null,
+            "cuda": null,
+            "driver": null,
+            "gpu": null,
+            "native_packages": {}
+          },
+          "story": {
+            "brief": {
+              "angle": "A journey through the visible water and architecture",
+              "hook": "1. Jetty into blue. 2. Waterfront, from three perspectives.",
+              "key_message": "Experience the visible coastal water and architecture of Reethi Faru Resort, Maldives.",
+              "visual_description": "Aerial view of thatched overwater villas connected by a wooden jetty, surrounded by clear turquoise water and island vegetation.",
+              "photo_uri": "assets/photos/reethi_faru/lagoon-villas.jpg",
+              "cta": "Compare the visible water and architecture of Reethi Faru Resort.",
+              "must_not": [
+                "invented facilities",
+                "snorkeling claims",
+                "nightlife",
+                "alcohol imagery"
+              ],
+              "reel_concept": null
+            },
+            "media_ids": [
+              "lagoon-villas"
+            ],
+            "fact_ids": [
+              "lagoon-villas-fact-1",
+              "lagoon-villas-fact-2",
+              "lagoon-villas-fact-3"
+            ],
+            "pillar_intent": "Use the visible coastal water colors and clarity. No underwater coral, marine species or snorkeling claims without footage.",
+            "sequence_reason": "The aerial view of the overwater villas and jetty provides a clear, unobstructed perspective of the visible water and architecture, highlighting the clarity of the turquoise water and the surrounding island vegetation.",
+            "cta_kind": "save"
+          }
+        },
+        "files": [
+          {
+            "file": "/Users/mazenkhaled/Task/outputs/photos/bba36669189f5b4d70acbb5e2a3fa882323d420658c051aeaabbc9dacf03f2c7/photo-1.jpg",
+            "file_sha256": "95ed78cafcbde2373a97f621083b0db0086665b883228f64ae97ea5e1abf97ef",
+            "width": 1080,
+            "height": 1350
+          }
+        ],
+        "generated": false,
+        "reference_only": true,
+        "qa_status": "needs_review"
+      },
+      "evidence": {
+        "context": {
+          "selection": {
+            "brief": {
+              "angle": "A journey through the visible water and architecture",
+              "hook": "1. Jetty into blue. 2. Waterfront, from three perspectives.",
+              "key_message": "Experience the visible coastal water and architecture of Reethi Faru Resort, Maldives.",
+              "visual_description": "Aerial view of thatched overwater villas connected by a wooden jetty, surrounded by clear turquoise water and island vegetation.",
+              "photo_uri": "assets/photos/reethi_faru/lagoon-villas.jpg",
+              "cta": "Compare the visible water and architecture of Reethi Faru Resort.",
+              "must_not": [
+                "invented facilities",
+                "snorkeling claims",
+                "nightlife",
+                "alcohol imagery"
+              ],
+              "reel_concept": null
+            },
+            "media_ids": [
+              "lagoon-villas"
+            ],
+            "fact_ids": [
+              "lagoon-villas-fact-1",
+              "lagoon-villas-fact-2",
+              "lagoon-villas-fact-3"
+            ],
+            "pillar_intent": "Use the visible coastal water colors and clarity. No underwater coral, marine species or snorkeling claims without footage.",
+            "sequence_reason": "The aerial view of the overwater villas and jetty provides a clear, unobstructed perspective of the visible water and architecture, highlighting the clarity of the turquoise water and the surrounding island vegetation.",
+            "cta_kind": "save"
+          },
+          "property_name": "Reethi Faru Resort, Maldives",
+          "geography": "Maldives",
+          "source_date_note": "Historical source photographs published in April 2020; present condition and offers are not verified.",
+          "facts": [
+            {
+              "id": "lagoon-villas-fact-1",
+              "scene_id": "lagoon-villas",
+              "text": "Overwater villas joined by a jetty",
+              "caption_en": "Thatched villas follow a wooden jetty through turquoise water.",
+              "caption_ar": "فلل بسقوف من القش على امتداد رصيف خشبي وسط مياه فيروزية."
+            },
+            {
+              "id": "lagoon-villas-fact-2",
+              "scene_id": "lagoon-villas",
+              "text": "Clear turquoise water around the buildings",
+              "caption_en": "Clear turquoise water surrounds the photographed villas and walkway.",
+              "caption_ar": "مياه فيروزية صافية تحيط بالفلل والممر الخشبي في الصورة."
+            },
+            {
+              "id": "lagoon-villas-fact-3",
+              "scene_id": "lagoon-villas",
+              "text": "White shoreline and island vegetation",
+              "caption_en": "From above, white sand curves between island greenery and the lagoon.",
+              "caption_ar": "من أعلى، يلتف الرمل الأبيض بين خضرة الجزيرة ومياه البحيرة الساحلية."
+            }
+          ],
+          "reference_only": true
+        },
+        "context_hash": "2f38765c76471043271c0a1f23c409cd95525d86eaafc75cff0cbc6bea744281",
+        "reference_only": true
+      }
+    },
+    {
+      "id": "reference-w42-tue-1",
+      "slot_id": "reference-w42-tue-1",
+      "brand_hash": "8f3983a1982c0c57b645c10a17f093f463ad3b4b66c81a4f52c27f3f52b49bd3",
+      "format": "carousel",
+      "brief": {
+        "angle": "A shoreline pause and relaxation through visible scenery",
+        "hook": "What does the water say to you?",
+        "key_message": "A moment of calm where the shoreline, water, and sky meet.",
+        "visual_description": "A wide beach-level scene with turquoise shallows, white sand, blue sky, palm trees, and existing thatched structures on the left.",
+        "photo_uri": "assets/photos/reethi_faru/shoreline.jpg",
+        "cta": "Compare your next escape",
+        "must_not": [
+          "spa facility",
+          "treatment claim",
+          "invented facilities"
+        ],
+        "reel_concept": null
+      },
+      "en": {
+        "caption": "What does the water say to you?\n\n1. Turquoise shallows meet a curve of white sand.\n2. A wooden jetty crosses the turquoise shallows beside the beach.\n3. Thatched villas follow a wooden jetty through turquoise water.\n\nCompare your next escape",
+        "alt_text": "Turquoise shallows meet a curve of white sand. A wooden jetty crosses the turquoise shallows beside the beach. Thatched villas follow a wooden jetty through turquoise water."
+      },
+      "ar": {
+        "caption": "أي إطلالة تختار؟\n\n1. مياه فيروزية تلتقي بانحناءة من الرمل الأبيض.\n2. رصيف خشبي يعبر المياه الفيروزية الضحلة بجوار الشاطئ.\n3. فلل بسقوف من القش على امتداد رصيف خشبي وسط مياه فيروزية.\n\nقارن رحلتك القادمة",
+        "alt_text": "مياه فيروزية تلتقي بانحناءة من الرمل الأبيض. رصيف خشبي يعبر المياه الفيروزية الضحلة بجوار الشاطئ. فلل بسقوف من القش على امتداد رصيف خشبي وسط مياه فيروزية."
+      },
+      "hashtags": [
+        "#ReethiFaru",
+        "#ريثي_فارو",
+        "#Maldives",
+        "#المالديف",
+        "#OceanViews",
+        "#BeachArchitecture",
+        "#CoastalTravel",
+        "#TropicalBeach",
+        "#سفر",
+        "#شاطئ"
+      ],
+      "prompt_hashes": {
+        "visual_brief": "549ab2ca08577f1357f1f9d028a958d117c023b47d3ba8d0b2b005955b17a8f2",
+        "grounded_copy_en": "c280ea5f135af98e3df2fb64853ea790424f09c286526a6613328018c49fecf2",
+        "grounded_copy_ar": "57f80a371388fea23f4d91b18f5c89e61069c303b481a6986caee9c519310f12"
+      },
+      "revision": 0,
+      "ai_disclosure": false,
+      "offer_id": null,
+      "media_path": "/Users/mazenkhaled/Task/outputs/photos/eacf5c10dcebf660ae1bdec9e892fe1ab8e7fcf6df4171e3cc794ba106831987/photo-1.jpg",
+      "media_status": "rendered",
+      "photo_artifact": {
+        "recipe_hash": "eacf5c10dcebf660ae1bdec9e892fe1ab8e7fcf6df4171e3cc794ba106831987",
+        "render_recipe": {
+          "kind": "reference-photo-layout-v1",
+          "format": "carousel",
+          "sources": [
+            {
+              "id": "shoreline",
+              "label": "Shoreline",
+              "observed": "Wide beach-level scene with turquoise shallows, white sand, blue sky, palm trees and existing thatched structures on the left.",
+              "photo": {
+                "uri": "assets/photos/reethi_faru/shoreline.jpg",
+                "sha256": "25e1846b15057b6bea74a95a5114895e9c55e968dc8fcf0ba3ca1bb807dc949b"
+              },
+              "crop": {
+                "x": 0,
+                "y": 0,
+                "width": 2528,
+                "height": 4494
+              },
+              "approved_by": "mazenDDr",
+              "approval_id": "reference-media-request-2026-10-12",
+              "faces_checked": true,
+              "attribution": "Moosa Haleem / Unsplash License - resized, cropped and animated",
+              "author": "Moosa Haleem",
+              "license_id": "Unsplash License",
+              "source_page": "https://unsplash.com/photos/palm-trees-on-beach-shore-during-daytime-BcqbKBVZ-Zk",
+              "license_url": "https://unsplash.com/license",
+              "reference_only": true,
+              "source": "photo",
+              "clip": null,
+              "allowed_actions": [
+                "scenic_motion",
+                "recorded_footage"
+              ],
+              "property_name": "Reethi Faru Resort, Maldives",
+              "approval_scope": "preview_source_use",
+              "must_include": [
+                {
+                  "x": 100,
+                  "y": 2200,
+                  "width": 1200,
+                  "height": 1400
+                },
+                {
+                  "x": 1200,
+                  "y": 3000,
+                  "width": 1200,
+                  "height": 1400
+                }
+              ]
+            },
+            {
+              "id": "palm-jetty",
+              "label": "Palm Jetty",
+              "observed": "Beach-level view with palms on the right, their shadows across white sand, a wooden jetty across turquoise water, and an open blue sky.",
+              "photo": {
+                "uri": "assets/photos/reethi_faru/palm-jetty.jpg",
+                "sha256": "96b60edd88e3e11cda2b975eab45d687cc6cc5f73a8cfe6bc7e219a156a7ea58"
+              },
+              "crop": {
+                "x": 470,
+                "y": 0,
+                "width": 2528,
+                "height": 4494
+              },
+              "approved_by": "mazenDDr",
+              "approval_id": "reference-media-request-2026-10-12",
+              "faces_checked": true,
+              "attribution": "Moosa Haleem / Unsplash License - resized, cropped and animated",
+              "author": "Moosa Haleem",
+              "license_id": "Unsplash License",
+              "source_page": "https://unsplash.com/photos/palm-trees-on-beach-shore-during-daytime-2opFBNXAJzw",
+              "license_url": "https://unsplash.com/license",
+              "reference_only": true,
+              "source": "photo",
+              "clip": null,
+              "allowed_actions": [
+                "scenic_motion",
+                "recorded_footage"
+              ],
+              "property_name": "Reethi Faru Resort, Maldives",
+              "approval_scope": "preview_source_use",
+              "must_include": [
+                {
+                  "x": 550,
+                  "y": 2150,
+                  "width": 2400,
+                  "height": 1100
+                },
+                {
+                  "x": 1600,
+                  "y": 3000,
+                  "width": 1100,
+                  "height": 1100
+                }
+              ]
+            },
+            {
+              "id": "lagoon-villas",
+              "label": "Lagoon Villas",
+              "observed": "Aerial view of a line of thatched overwater villas and a connecting jetty, surrounded by clear turquoise water; island trees and white shoreline at the lower left.",
+              "photo": {
+                "uri": "assets/photos/reethi_faru/lagoon-villas.jpg",
+                "sha256": "3e33860a79e5b9daabf170be3279e2ed38f37b4f3b43212ba4c9188bd1f826ce"
+              },
+              "crop": {
+                "x": 234,
+                "y": 0,
+                "width": 2530,
+                "height": 4500
+              },
+              "approved_by": "mazenDDr",
+              "approval_id": "reference-media-request-2026-10-12",
+              "faces_checked": true,
+              "attribution": "Moosa Haleem / Unsplash License - resized, cropped and animated",
+              "author": "Moosa Haleem",
+              "license_id": "Unsplash License",
+              "source_page": "https://unsplash.com/photos/aerial-view-of-green-trees-and-body-of-water-u94aG1t4xPE",
+              "license_url": "https://unsplash.com/license",
+              "reference_only": true,
+              "source": "photo",
+              "clip": null,
+              "allowed_actions": [
+                "scenic_motion",
+                "recorded_footage"
+              ],
+              "property_name": "Reethi Faru Resort, Maldives",
+              "approval_scope": "preview_source_use",
+              "must_include": [
+                {
+                  "x": 1200,
+                  "y": 450,
+                  "width": 900,
+                  "height": 3050
+                },
+                {
+                  "x": 400,
+                  "y": 3400,
+                  "width": 1200,
+                  "height": 600
+                }
+              ]
+            }
+          ],
+          "layout": "contain",
+          "background": "#e8eeee",
+          "width": 1080,
+          "height": 1350,
+          "runtime": {
+            "docker_image_digest": null,
+            "python": "3.12.15",
+            "platform": "macOS-27.0-arm64-arm-64bit",
+            "ffmpeg_sha256": "c8173e9755795978bce8e104f8d7044fabe7d6d84044aba37d3648c6f4e4e1a8",
+            "ffprobe_sha256": "56559c234422b0e3722c54b2bd99bbd8cd83d3732a13a6d207589982a6b7085e",
+            "implementation_sha256": "a741ff6e4d76c553fc7eb50ac7ec00e37aca3aafc6defb9fe45f2469a02acfb5",
+            "pillow": "12.3.0",
+            "reshaper": "3.0.1",
+            "bidi": "0.6.11",
+            "torch": null,
+            "cuda": null,
+            "driver": null,
+            "gpu": null,
+            "native_packages": {}
+          },
+          "story": {
+            "brief": {
+              "angle": "A shoreline pause and relaxation through visible scenery",
+              "hook": "What does the water say to you?",
+              "key_message": "A moment of calm where the shoreline, water, and sky meet.",
+              "visual_description": "A wide beach-level scene with turquoise shallows, white sand, blue sky, palm trees, and existing thatched structures on the left.",
+              "photo_uri": "assets/photos/reethi_faru/shoreline.jpg",
+              "cta": "Compare your next escape",
+              "must_not": [
+                "spa facility",
+                "treatment claim",
+                "invented facilities"
+              ],
+              "reel_concept": null
+            },
+            "media_ids": [
+              "shoreline",
+              "palm-jetty",
+              "lagoon-villas"
+            ],
+            "fact_ids": [
+              "lagoon-villas-fact-1",
+              "lagoon-villas-fact-2",
+              "lagoon-villas-fact-3",
+              "shoreline-fact-1",
+              "shoreline-fact-2",
+              "shoreline-fact-3",
+              "palm-jetty-fact-1",
+              "palm-jetty-fact-2",
+              "palm-jetty-fact-3"
+            ],
+            "pillar_intent": "A shoreline pause and relaxation through visible scenery. No spa facility or treatment claim.",
+            "sequence_reason": "Start with the shoreline to set the scene, then move to the jetty and villas to show the connection between the water, architecture, and sky.",
+            "cta_kind": "compare"
+          }
+        },
+        "files": [
+          {
+            "file": "/Users/mazenkhaled/Task/outputs/photos/eacf5c10dcebf660ae1bdec9e892fe1ab8e7fcf6df4171e3cc794ba106831987/photo-1.jpg",
+            "file_sha256": "70d7a6d7cc5e30a8e351868720d3a81e69523e3160072a0e6c050fb48413189c",
+            "width": 1080,
+            "height": 1350
+          },
+          {
+            "file": "/Users/mazenkhaled/Task/outputs/photos/eacf5c10dcebf660ae1bdec9e892fe1ab8e7fcf6df4171e3cc794ba106831987/photo-2.jpg",
+            "file_sha256": "385790697941a21e20c8ff83e7acf45037e7bc09913f1591c530dbb183d084f8",
+            "width": 1080,
+            "height": 1350
+          },
+          {
+            "file": "/Users/mazenkhaled/Task/outputs/photos/eacf5c10dcebf660ae1bdec9e892fe1ab8e7fcf6df4171e3cc794ba106831987/photo-3.jpg",
+            "file_sha256": "95ed78cafcbde2373a97f621083b0db0086665b883228f64ae97ea5e1abf97ef",
+            "width": 1080,
+            "height": 1350
+          }
+        ],
+        "generated": false,
+        "reference_only": true,
+        "qa_status": "needs_review"
+      },
+      "evidence": {
+        "context": {
+          "selection": {
+            "brief": {
+              "angle": "A shoreline pause and relaxation through visible scenery",
+              "hook": "What does the water say to you?",
+              "key_message": "A moment of calm where the shoreline, water, and sky meet.",
+              "visual_description": "A wide beach-level scene with turquoise shallows, white sand, blue sky, palm trees, and existing thatched structures on the left.",
+              "photo_uri": "assets/photos/reethi_faru/shoreline.jpg",
+              "cta": "Compare your next escape",
+              "must_not": [
+                "spa facility",
+                "treatment claim",
+                "invented facilities"
+              ],
+              "reel_concept": null
+            },
+            "media_ids": [
+              "shoreline",
+              "palm-jetty",
+              "lagoon-villas"
+            ],
+            "fact_ids": [
+              "lagoon-villas-fact-1",
+              "lagoon-villas-fact-2",
+              "lagoon-villas-fact-3",
+              "shoreline-fact-1",
+              "shoreline-fact-2",
+              "shoreline-fact-3",
+              "palm-jetty-fact-1",
+              "palm-jetty-fact-2",
+              "palm-jetty-fact-3"
+            ],
+            "pillar_intent": "A shoreline pause and relaxation through visible scenery. No spa facility or treatment claim.",
+            "sequence_reason": "Start with the shoreline to set the scene, then move to the jetty and villas to show the connection between the water, architecture, and sky.",
+            "cta_kind": "compare"
+          },
+          "property_name": "Reethi Faru Resort, Maldives",
+          "geography": "Maldives",
+          "source_date_note": "Historical source photographs published in April 2020; present condition and offers are not verified.",
+          "facts": [
+            {
+              "id": "lagoon-villas-fact-1",
+              "scene_id": "lagoon-villas",
+              "text": "Overwater villas joined by a jetty",
+              "caption_en": "Thatched villas follow a wooden jetty through turquoise water.",
+              "caption_ar": "فلل بسقوف من القش على امتداد رصيف خشبي وسط مياه فيروزية."
+            },
+            {
+              "id": "lagoon-villas-fact-2",
+              "scene_id": "lagoon-villas",
+              "text": "Clear turquoise water around the buildings",
+              "caption_en": "Clear turquoise water surrounds the photographed villas and walkway.",
+              "caption_ar": "مياه فيروزية صافية تحيط بالفلل والممر الخشبي في الصورة."
+            },
+            {
+              "id": "lagoon-villas-fact-3",
+              "scene_id": "lagoon-villas",
+              "text": "White shoreline and island vegetation",
+              "caption_en": "From above, white sand curves between island greenery and the lagoon.",
+              "caption_ar": "من أعلى، يلتف الرمل الأبيض بين خضرة الجزيرة ومياه البحيرة الساحلية."
+            },
+            {
+              "id": "shoreline-fact-1",
+              "scene_id": "shoreline",
+              "text": "Turquoise shallows reaching white sand",
+              "caption_en": "Turquoise shallows meet a curve of white sand.",
+              "caption_ar": "مياه فيروزية تلتقي بانحناءة من الرمل الأبيض."
+            },
+            {
+              "id": "shoreline-fact-2",
+              "scene_id": "shoreline",
+              "text": "Palms and thatched structures beside the shoreline",
+              "caption_en": "Palms and thatched structures sit beside the photographed shoreline.",
+              "caption_ar": "نخيل ومبان بسقوف من القش بجوار خط الشاطئ في الصورة."
+            },
+            {
+              "id": "shoreline-fact-3",
+              "scene_id": "shoreline",
+              "text": "Blue sky and a visible ocean horizon",
+              "caption_en": "Blue sky sits above an open ocean horizon.",
+              "caption_ar": "سماء زرقاء وأفق بحر مفتوح."
+            },
+            {
+              "id": "palm-jetty-fact-1",
+              "scene_id": "palm-jetty",
+              "text": "A wooden jetty crossing the shallows",
+              "caption_en": "A wooden jetty crosses the turquoise shallows beside the beach.",
+              "caption_ar": "رصيف خشبي يعبر المياه الفيروزية الضحلة بجوار الشاطئ."
+            },
+            {
+              "id": "palm-jetty-fact-2",
+              "scene_id": "palm-jetty",
+              "text": "Palm shadows on white sand",
+              "caption_en": "Palm shadows fall across white sand at the waterline.",
+              "caption_ar": "ظلال النخيل تمتد على الرمل الأبيض عند خط الماء."
+            },
+            {
+              "id": "palm-jetty-fact-3",
+              "scene_id": "palm-jetty",
+              "text": "Water, palms and an open horizon in the same view",
+              "caption_en": "Water, palms and an open horizon share this beach-level view.",
+              "caption_ar": "مياه ونخيل وأفق مفتوح في مشهد من مستوى الشاطئ."
+            }
+          ],
+          "reference_only": true
+        },
+        "context_hash": "87d66f8bf3be0ca29cb3c18d3ae21f5fd9ac01db1c1bbb66b7f41488f792c6f7",
+        "reference_only": true
+      }
+    },
+    {
+      "id": "reference-w42-wed-1",
+      "slot_id": "reference-w42-wed-1",
+      "brand_hash": "8f3983a1982c0c57b645c10a17f093f463ad3b4b66c81a4f52c27f3f52b49bd3",
+      "format": "reel",
+      "brief": {
+        "angle": "A journey through the visible water and architecture",
+        "hook": "What do you see as you approach the shore?",
+        "key_message": "Experience the visible connection between the water, architecture, and shoreline at Reethi Faru Resort, Maldives.",
+        "visual_description": "A journey through the visible water and architecture, from the lagoon villas to the shoreline and palm-jetty scene.",
+        "photo_uri": "assets/photos/reethi_faru/lagoon-villas.jpg",
+        "cta": "Imagine your next escape",
+        "must_not": [
+          "invented facilities",
+          "alcohol imagery",
+          "nightlife"
+        ],
+        "reel_concept": {
+          "hook": "What do you see as you approach the shore?",
+          "shots": [
+            "lagoon-villas",
+            "shoreline",
+            "palm-jetty"
+          ],
+          "overlay_en": "A journey through the visible water and architecture",
+          "overlay_ar": "رحلة عبر الماء والبنية المرئية",
+          "audio": "soft ambient waves",
+          "cta": "Imagine your next escape",
+          "cover": "assets/photos/reethi_faru/lagoon-villas.jpg"
+        }
+      },
+      "en": {
+        "caption": "What do you see as you approach the shore?\n\nThatched villas follow a wooden jetty through turquoise water.\n\nSave the view for your travel moodboard.",
+        "alt_text": "Thatched villas follow a wooden jetty through turquoise water."
+      },
+      "ar": {
+        "caption": "رصيف خشبي يمتد عبر مياه فيروزية.\n\nفلل بسقوف من القش على امتداد رصيف خشبي وسط مياه فيروزية.\n\nاحفظ هذه الإطلالة لرحلتك القادمة.",
+        "alt_text": "فلل بسقوف من القش على امتداد رصيف خشبي وسط مياه فيروزية."
+      },
+      "hashtags": [
+        "#ReethiFaru",
+        "#ريثي_فارو",
+        "#Maldives",
+        "#المالديف",
+        "#OceanViews",
+        "#BeachArchitecture",
+        "#CoastalTravel",
+        "#TropicalBeach",
+        "#سفر",
+        "#شاطئ"
+      ],
+      "prompt_hashes": {
+        "visual_brief": "549ab2ca08577f1357f1f9d028a958d117c023b47d3ba8d0b2b005955b17a8f2",
+        "grounded_copy_en": "c280ea5f135af98e3df2fb64853ea790424f09c286526a6613328018c49fecf2",
+        "grounded_copy_ar": "57f80a371388fea23f4d91b18f5c89e61069c303b481a6986caee9c519310f12",
+        "video_director": "baacc088cfcc0f1e58ead2bd8aa754aa0331fdfb88871ff83ca483e4fd9c54bf"
+      },
+      "revision": 0,
+      "ai_disclosure": true,
+      "offer_id": null,
+      "media_path": "/Users/mazenkhaled/Task/outputs/reference-week-native/renders/6cc114c54d0f937e23cc62f063b9f507959b3136c77f31909d8900878a5aebeb/reel.mp4",
+      "media_status": "rendered",
+      "render_artifact": {
+        "recipe_hash": "6cc114c54d0f937e23cc62f063b9f507959b3136c77f31909d8900878a5aebeb",
+        "render_recipe": {
+          "version": 1,
+          "backend": "stub",
+          "shots": {
+            "reel_id": "reference-w42-wed-1",
+            "duration_s": 15,
+            "aspect": "9:16",
+            "shots": [
+              {
+                "id": "hook-01",
+                "role": "hook",
+                "keyframe": {
+                  "uri": "outputs/video-boards/reference-w42-wed-1/references/lagoon-villas-3b978fc332d68e2a1b6b89e57f6ac4af2fb08740326a586b21c0814a9eea39f3.jpg",
+                  "sha256": "3b978fc332d68e2a1b6b89e57f6ac4af2fb08740326a586b21c0814a9eea39f3",
+                  "source": "photo",
+                  "scene": "mood",
+                  "approved_by": "mazenDDr",
+                  "approval_id": "reference-media-request-2026-10-12",
+                  "approval_scope": "preview_source_use",
+                  "reference_only": true,
+                  "faces_checked": true,
+                  "attribution": "Moosa Haleem / Unsplash License - resized, cropped and animated",
+                  "prompt": null,
+                  "seed": null
+                },
+                "end_keyframe": null,
+                "motion_prompt": "Aerial view of the lagoon villas with a slow pull-out to reveal the turquoise water and surrounding island trees.",
+                "negative_prompt": "New facilities, buildings added, new objects, people, faces, hands, signage, text, logos,\nwarped architecture, distorted pillars, camera shake, over-saturated colours, abrupt cuts,\nextra petals, duplicated leaves, boiling texture, flickering, frozen still frame.\n",
+                "camera": "static",
+                "seconds": 5.0,
+                "overlay": {
+                  "en": "",
+                  "ar": ""
+                },
+                "motion_strength": 0.16,
+                "source_clip": {
+                  "uri": "outputs/place-led/lagoon-native/shot-0.mp4",
+                  "sha256": "4eec92818fdd762af6c101bf51d7b3c3ecfe7597f479d6d88d287f0975c7ccbc",
+                  "generated": true,
+                  "reference_only": true,
+                  "credit": "Moosa Haleem / Unsplash License - resized, cropped and animated",
+                  "motion_recipe": {
+                    "uri": "outputs/place-led/lagoon-native/recipe.json",
+                    "sha256": "bef20ffd73415af92ce9de9908d41eec2ad550bc06b86721581b78d07f0dd049"
+                  },
+                  "motion_recipe_hash": "2c898f2e3052a426c376e79f395ddfea43622d3cffdda5b16d4f85007326a58d",
+                  "start_s": 0.0
+                },
+                "text_start_s": 0.1,
+                "text_end_s": 1.8,
+                "text_position": "lower"
+              },
+              {
+                "id": "reveal-02",
+                "role": "body",
+                "keyframe": {
+                  "uri": "outputs/video-boards/reference-w42-wed-1/references/shoreline-eb9fc71b1fa9174349ebbe5edb397ee5990efcbce0ff49397c73f5c6ef821915.jpg",
+                  "sha256": "eb9fc71b1fa9174349ebbe5edb397ee5990efcbce0ff49397c73f5c6ef821915",
+                  "source": "photo",
+                  "scene": "mood",
+                  "approved_by": "mazenDDr",
+                  "approval_id": "reference-media-request-2026-10-12",
+                  "approval_scope": "preview_source_use",
+                  "reference_only": true,
+                  "faces_checked": true,
+                  "attribution": "Moosa Haleem / Unsplash License - resized, cropped and animated",
+                  "prompt": null,
+                  "seed": null
+                },
+                "end_keyframe": null,
+                "motion_prompt": "Wide beach-level scene with a left-to-right pan to show the turquoise shallows, white sand, and palm trees.",
+                "negative_prompt": "New facilities, buildings added, new objects, people, faces, hands, signage, text, logos,\nwarped architecture, distorted pillars, camera shake, over-saturated colours, abrupt cuts,\nextra petals, duplicated leaves, boiling texture, flickering, frozen still frame.\n",
+                "camera": "static",
+                "seconds": 5.0,
+                "overlay": {
+                  "en": "",
+                  "ar": ""
+                },
+                "motion_strength": 0.16,
+                "source_clip": {
+                  "uri": "outputs/place-led/shoreline-spike/shot-0.mp4",
+                  "sha256": "7cadd988eedfb634d4be98cd815f747127b68d2cb591f09fcfed6c5cef09a210",
+                  "generated": true,
+                  "reference_only": true,
+                  "credit": "Moosa Haleem / Unsplash License - resized, cropped and animated",
+                  "motion_recipe": {
+                    "uri": "outputs/place-led/shoreline-spike/recipe.json",
+                    "sha256": "4f595b821a114b9c04c60d5fe22e3eabe22275d9e9c4728d4c15ebf5e68cd7ac"
+                  },
+                  "motion_recipe_hash": "4536c22977a43416dc97db0a67375d8d3b534462cc072cb8b21bf8aa718d3f50",
+                  "start_s": 0.0
+                },
+                "text_start_s": 0.1,
+                "text_end_s": 1.8,
+                "text_position": "lower"
+              },
+              {
+                "id": "payoff-03",
+                "role": "cta",
+                "keyframe": {
+                  "uri": "outputs/video-boards/reference-w42-wed-1/references/palm-jetty-4802c59beb1cd5685cced245f0bf73f7c3a5e532d77651cd45bbad69988b374b.jpg",
+                  "sha256": "4802c59beb1cd5685cced245f0bf73f7c3a5e532d77651cd45bbad69988b374b",
+                  "source": "photo",
+                  "scene": "mood",
+                  "approved_by": "mazenDDr",
+                  "approval_id": "reference-media-request-2026-10-12",
+                  "approval_scope": "preview_source_use",
+                  "reference_only": true,
+                  "faces_checked": true,
+                  "attribution": "Moosa Haleem / Unsplash License - resized, cropped and animated",
+                  "prompt": null,
+                  "seed": null
+                },
+                "end_keyframe": null,
+                "motion_prompt": "Static beach-level view of the palm jetty with turquoise water, white sand, and an open blue sky.",
+                "negative_prompt": "New facilities, buildings added, new objects, people, faces, hands, signage, text, logos,\nwarped architecture, distorted pillars, camera shake, over-saturated colours, abrupt cuts,\nextra petals, duplicated leaves, boiling texture, flickering, frozen still frame.\n",
+                "camera": "static",
+                "seconds": 5.0,
+                "overlay": {
+                  "en": "",
+                  "ar": ""
+                },
+                "motion_strength": 0.16,
+                "source_clip": {
+                  "uri": "outputs/place-led/jetty-native/shot-0.mp4",
+                  "sha256": "afbf3a864945229b0a420040c7a9debd1186667bff615d03ad34827e113eb217",
+                  "generated": true,
+                  "reference_only": true,
+                  "credit": "Moosa Haleem / Unsplash License - resized, cropped and animated",
+                  "motion_recipe": {
+                    "uri": "outputs/place-led/jetty-native/recipe.json",
+                    "sha256": "a9ed720a05849e5830bf89a9f0f98904611b84e3fc4214ce69b2ea7ce289dff2"
+                  },
+                  "motion_recipe_hash": "30fd20402e5302497de51e404216048b63b45161cdc3cf8f7f2c55097dd03548",
+                  "start_s": 0.0
+                },
+                "text_start_s": 0.1,
+                "text_end_s": 1.8,
+                "text_position": "lower"
+              }
+            ],
+            "audio": {
+              "music": {
+                "uri": "outputs/video-boards/reference-w42-wed-1/original-preview-score-4388308afc0eb2676c6d6b0f6c12eeaa887b46f8fe5231139f341510a788bc2d.wav",
+                "sha256": "4388308afc0eb2676c6d6b0f6c12eeaa887b46f8fe5231139f341510a788bc2d"
+              },
+              "music_credit": "Original procedural ambient score; synthesized tones and noise, no external samples or field recordings",
+              "voiceover": null,
+              "voiceover_lang": null
+            }
+          },
+          "model": {
+            "repo": "instabay/editorial-assembler",
+            "revision": "0000000000000000000000000000000000000000",
+            "weights": [],
+            "loras": [],
+            "pipeline_class": "EditorialVideoBackend",
+            "scheduler": "frame-index",
+            "scheduler_config": {},
+            "steps": 1,
+            "cfg": 1.0,
+            "shift": 1.0,
+            "supports_flf": false,
+            "workflow": {
+              "uri": "outputs/video-boards/reference-w42-wed-1/boards/8ca3a8fe94ec34d0cd0ff5eb9beee185ee538c76989eded818d775da71c3065d.json",
+              "sha256": "2f3a4a27187813a587488f7f1fb6e228e9e94cee4a9b95e03dc325702cb34549"
+            },
+            "custom_nodes": {}
+          },
+          "motion": {
+            "width": 576,
+            "height": 1024,
+            "fps": 30,
+            "frames": [
+              150,
+              150,
+              150
+            ],
+            "seeds": [
+              7,
+              7,
+              7
+            ]
+          },
+          "post": {
+            "font": {
+              "uri": "assets/fonts/NotoSansArabic.ttf",
+              "sha256": "63111b5b2e074dd48cc67692e0a2726d86ee94c1c37fe8598257b7b4e87e869e"
+            },
+            "lut": null,
+            "grain_strength": 0,
+            "preset": "fast",
+            "crf": 23,
+            "max_bytes": 300000000,
+            "continuity_threshold": 0.9,
+            "flicker_threshold": 0.08,
+            "palette": [],
+            "preview_label": null,
+            "credit": "Photos: Moosa Haleem\nUnsplash License - cropped and animated",
+            "recorded_motion": null,
+            "style": "editorial",
+            "language": "en",
+            "latin_font": {
+              "uri": "assets/fonts/Manrope.ttf",
+              "sha256": "3ae11c49db0455a3cc33e37d380f20fdb8c7f8b41dc07625c177e3d87a9d6ae6"
+            },
+            "frame_interpolation": "motion"
+          },
+          "runtime": {
+            "docker_image_digest": null,
+            "python": "3.12.15",
+            "platform": "macOS-27.0-arm64-arm-64bit",
+            "ffmpeg_sha256": "c8173e9755795978bce8e104f8d7044fabe7d6d84044aba37d3648c6f4e4e1a8",
+            "ffprobe_sha256": "56559c234422b0e3722c54b2bd99bbd8cd83d3732a13a6d207589982a6b7085e",
+            "implementation_sha256": "e0e154dfdf5f3a4a91c4be4465f2014368424be757e0f7f3659f950dc2389030",
+            "pillow": "12.3.0",
+            "reshaper": "3.0.1",
+            "bidi": "0.6.11",
+            "torch": null,
+            "cuda": null,
+            "driver": null,
+            "gpu": null,
+            "native_packages": {}
+          }
+        },
+        "file": "/Users/mazenkhaled/Task/outputs/reference-week-native/renders/6cc114c54d0f937e23cc62f063b9f507959b3136c77f31909d8900878a5aebeb/reel.mp4",
+        "file_sha256": "351fb011925fb7bac3917ec503ba842988a3544818ca84f52a5b1f010c100ee7",
+        "contact_sheet": "/Users/mazenkhaled/Task/outputs/reference-week-native/renders/6cc114c54d0f937e23cc62f063b9f507959b3136c77f31909d8900878a5aebeb/contact-sheet.jpg",
+        "contact_sha256": "3355ed7b3e31603a5618e00fa05bdc9814db0b87020d8a019e8c8cfd9972f423",
+        "qa_status": "needs_review",
+        "generated": true,
+        "reference_only": true
+      },
+      "evidence": {
+        "context": {
+          "selection": {
+            "brief": {
+              "angle": "A journey through the visible water and architecture",
+              "hook": "What do you see as you approach the shore?",
+              "key_message": "Experience the visible connection between the water, architecture, and shoreline at Reethi Faru Resort, Maldives.",
+              "visual_description": "A journey through the visible water and architecture, from the lagoon villas to the shoreline and palm-jetty scene.",
+              "photo_uri": "assets/photos/reethi_faru/lagoon-villas.jpg",
+              "cta": "Imagine your next escape",
+              "must_not": [
+                "invented facilities",
+                "alcohol imagery",
+                "nightlife"
+              ],
+              "reel_concept": {
+                "hook": "What do you see as you approach the shore?",
+                "shots": [
+                  "lagoon-villas",
+                  "shoreline",
+                  "palm-jetty"
+                ],
+                "overlay_en": "A journey through the visible water and architecture",
+                "overlay_ar": "رحلة عبر الماء والبنية المرئية",
+                "audio": "soft ambient waves",
+                "cta": "Imagine your next escape",
+                "cover": "assets/photos/reethi_faru/lagoon-villas.jpg"
+              }
+            },
+            "media_ids": [
+              "lagoon-villas",
+              "shoreline",
+              "palm-jetty"
+            ],
+            "fact_ids": [
+              "lagoon-villas-fact-1",
+              "lagoon-villas-fact-2",
+              "lagoon-villas-fact-3",
+              "shoreline-fact-1",
+              "shoreline-fact-2",
+              "shoreline-fact-3",
+              "palm-jetty-fact-1",
+              "palm-jetty-fact-2",
+              "palm-jetty-fact-3"
+            ],
+            "pillar_intent": "Imagine the visible approach and the relationship of villas, water and shoreline. Do not invent guest testimonials or room amenities.",
+            "sequence_reason": "The sequence follows a natural approach from the lagoon villas to the shoreline and then to the palm-jetty scene, highlighting the visible connection between the water, architecture, and shoreline.",
+            "cta_kind": "save"
+          },
+          "property_name": "Reethi Faru Resort, Maldives",
+          "geography": "Maldives",
+          "source_date_note": "Historical source photographs published in April 2020; present condition and offers are not verified.",
+          "facts": [
+            {
+              "id": "lagoon-villas-fact-1",
+              "scene_id": "lagoon-villas",
+              "text": "Overwater villas joined by a jetty",
+              "caption_en": "Thatched villas follow a wooden jetty through turquoise water.",
+              "caption_ar": "فلل بسقوف من القش على امتداد رصيف خشبي وسط مياه فيروزية."
+            },
+            {
+              "id": "lagoon-villas-fact-2",
+              "scene_id": "lagoon-villas",
+              "text": "Clear turquoise water around the buildings",
+              "caption_en": "Clear turquoise water surrounds the photographed villas and walkway.",
+              "caption_ar": "مياه فيروزية صافية تحيط بالفلل والممر الخشبي في الصورة."
+            },
+            {
+              "id": "lagoon-villas-fact-3",
+              "scene_id": "lagoon-villas",
+              "text": "White shoreline and island vegetation",
+              "caption_en": "From above, white sand curves between island greenery and the lagoon.",
+              "caption_ar": "من أعلى، يلتف الرمل الأبيض بين خضرة الجزيرة ومياه البحيرة الساحلية."
+            },
+            {
+              "id": "shoreline-fact-1",
+              "scene_id": "shoreline",
+              "text": "Turquoise shallows reaching white sand",
+              "caption_en": "Turquoise shallows meet a curve of white sand.",
+              "caption_ar": "مياه فيروزية تلتقي بانحناءة من الرمل الأبيض."
+            },
+            {
+              "id": "shoreline-fact-2",
+              "scene_id": "shoreline",
+              "text": "Palms and thatched structures beside the shoreline",
+              "caption_en": "Palms and thatched structures sit beside the photographed shoreline.",
+              "caption_ar": "نخيل ومبان بسقوف من القش بجوار خط الشاطئ في الصورة."
+            },
+            {
+              "id": "shoreline-fact-3",
+              "scene_id": "shoreline",
+              "text": "Blue sky and a visible ocean horizon",
+              "caption_en": "Blue sky sits above an open ocean horizon.",
+              "caption_ar": "سماء زرقاء وأفق بحر مفتوح."
+            },
+            {
+              "id": "palm-jetty-fact-1",
+              "scene_id": "palm-jetty",
+              "text": "A wooden jetty crossing the shallows",
+              "caption_en": "A wooden jetty crosses the turquoise shallows beside the beach.",
+              "caption_ar": "رصيف خشبي يعبر المياه الفيروزية الضحلة بجوار الشاطئ."
+            },
+            {
+              "id": "palm-jetty-fact-2",
+              "scene_id": "palm-jetty",
+              "text": "Palm shadows on white sand",
+              "caption_en": "Palm shadows fall across white sand at the waterline.",
+              "caption_ar": "ظلال النخيل تمتد على الرمل الأبيض عند خط الماء."
+            },
+            {
+              "id": "palm-jetty-fact-3",
+              "scene_id": "palm-jetty",
+              "text": "Water, palms and an open horizon in the same view",
+              "caption_en": "Water, palms and an open horizon share this beach-level view.",
+              "caption_ar": "مياه ونخيل وأفق مفتوح في مشهد من مستوى الشاطئ."
+            }
+          ],
+          "reference_only": true
+        },
+        "context_hash": "fbe2f4ee6e9970e4ef0dc0351fb17a369c5adab9276bf6f3ed5ab3d61a54c84c",
+        "reference_only": true
+      }
+    },
+    {
+      "id": "reference-w42-thu-1",
+      "slot_id": "reference-w42-thu-1",
+      "brand_hash": "8f3983a1982c0c57b645c10a17f093f463ad3b4b66c81a4f52c27f3f52b49bd3",
+      "format": "photo",
+      "brief": {
+        "angle": "A journey through the visible water and architecture",
+        "hook": "What color is the water where the villas meet the shore?",
+        "key_message": "Reethi Faru Resort, Maldives: a visual journey through the visible water and architecture.",
+        "visual_description": "Aerial view of thatched overwater villas connected by a wooden jetty, surrounded by clear turquoise water and island vegetation.",
+        "photo_uri": "assets/photos/reethi_faru/lagoon-villas.jpg",
+        "cta": "Swipe to see the water's color where the villas meet the shore.",
+        "must_not": [
+          "invented facilities",
+          "snorkeling claims",
+          "nightlife",
+          "alcohol imagery"
+        ],
+        "reel_concept": null
+      },
+      "en": {
+        "caption": "What color is the water where the villas meet the shore?\n\nClear turquoise water surrounds the photographed villas and walkway.\n\nSave the view for your travel moodboard.",
+        "alt_text": "Clear turquoise water surrounds the photographed villas and walkway."
+      },
+      "ar": {
+        "caption": "أي إطلالة تختار؟\n\nفلل بسقوف من القش على امتداد رصيف خشبي وسط مياه فيروزية.\n\nاحفظ هذه الإطلالة لقائمة رحلاتك.",
+        "alt_text": "فلل بسقوف من القش على امتداد رصيف خشبي وسط مياه فيروزية."
+      },
+      "hashtags": [
+        "#ReethiFaru",
+        "#ريثي_فارو",
+        "#Maldives",
+        "#المالديف",
+        "#OceanViews",
+        "#BeachArchitecture",
+        "#CoastalTravel",
+        "#TropicalBeach",
+        "#سفر",
+        "#شاطئ"
+      ],
+      "prompt_hashes": {
+        "visual_brief": "549ab2ca08577f1357f1f9d028a958d117c023b47d3ba8d0b2b005955b17a8f2",
+        "grounded_copy_en": "c280ea5f135af98e3df2fb64853ea790424f09c286526a6613328018c49fecf2",
+        "grounded_copy_ar": "57f80a371388fea23f4d91b18f5c89e61069c303b481a6986caee9c519310f12"
+      },
+      "revision": 0,
+      "ai_disclosure": false,
+      "offer_id": null,
+      "media_path": "/Users/mazenkhaled/Task/outputs/photos/1a2f349b2754b99948207088abff9c63306c6e6ca642cbc417070e578fefdfce/photo-1.jpg",
+      "media_status": "rendered",
+      "photo_artifact": {
+        "recipe_hash": "1a2f349b2754b99948207088abff9c63306c6e6ca642cbc417070e578fefdfce",
+        "render_recipe": {
+          "kind": "reference-photo-layout-v1",
+          "format": "photo",
+          "sources": [
+            {
+              "id": "lagoon-villas",
+              "label": "Lagoon Villas",
+              "observed": "Aerial view of a line of thatched overwater villas and a connecting jetty, surrounded by clear turquoise water; island trees and white shoreline at the lower left.",
+              "photo": {
+                "uri": "assets/photos/reethi_faru/lagoon-villas.jpg",
+                "sha256": "3e33860a79e5b9daabf170be3279e2ed38f37b4f3b43212ba4c9188bd1f826ce"
+              },
+              "crop": {
+                "x": 234,
+                "y": 0,
+                "width": 2530,
+                "height": 4500
+              },
+              "approved_by": "mazenDDr",
+              "approval_id": "reference-media-request-2026-10-12",
+              "faces_checked": true,
+              "attribution": "Moosa Haleem / Unsplash License - resized, cropped and animated",
+              "author": "Moosa Haleem",
+              "license_id": "Unsplash License",
+              "source_page": "https://unsplash.com/photos/aerial-view-of-green-trees-and-body-of-water-u94aG1t4xPE",
+              "license_url": "https://unsplash.com/license",
+              "reference_only": true,
+              "source": "photo",
+              "clip": null,
+              "allowed_actions": [
+                "scenic_motion",
+                "recorded_footage"
+              ],
+              "property_name": "Reethi Faru Resort, Maldives",
+              "approval_scope": "preview_source_use",
+              "must_include": [
+                {
+                  "x": 1200,
+                  "y": 450,
+                  "width": 900,
+                  "height": 3050
+                },
+                {
+                  "x": 400,
+                  "y": 3400,
+                  "width": 1200,
+                  "height": 600
+                }
+              ]
+            }
+          ],
+          "layout": "contain",
+          "background": "#e8eeee",
+          "width": 1080,
+          "height": 1350,
+          "runtime": {
+            "docker_image_digest": null,
+            "python": "3.12.15",
+            "platform": "macOS-27.0-arm64-arm-64bit",
+            "ffmpeg_sha256": "c8173e9755795978bce8e104f8d7044fabe7d6d84044aba37d3648c6f4e4e1a8",
+            "ffprobe_sha256": "56559c234422b0e3722c54b2bd99bbd8cd83d3732a13a6d207589982a6b7085e",
+            "implementation_sha256": "a741ff6e4d76c553fc7eb50ac7ec00e37aca3aafc6defb9fe45f2469a02acfb5",
+            "pillow": "12.3.0",
+            "reshaper": "3.0.1",
+            "bidi": "0.6.11",
+            "torch": null,
+            "cuda": null,
+            "driver": null,
+            "gpu": null,
+            "native_packages": {}
+          },
+          "story": {
+            "brief": {
+              "angle": "A journey through the visible water and architecture",
+              "hook": "What color is the water where the villas meet the shore?",
+              "key_message": "Reethi Faru Resort, Maldives: a visual journey through the visible water and architecture.",
+              "visual_description": "Aerial view of thatched overwater villas connected by a wooden jetty, surrounded by clear turquoise water and island vegetation.",
+              "photo_uri": "assets/photos/reethi_faru/lagoon-villas.jpg",
+              "cta": "Swipe to see the water's color where the villas meet the shore.",
+              "must_not": [
+                "invented facilities",
+                "snorkeling claims",
+                "nightlife",
+                "alcohol imagery"
+              ],
+              "reel_concept": null
+            },
+            "media_ids": [
+              "lagoon-villas"
+            ],
+            "fact_ids": [
+              "lagoon-villas-fact-1",
+              "lagoon-villas-fact-2",
+              "lagoon-villas-fact-3"
+            ],
+            "pillar_intent": "Show the named Maldives reference location; never label it Hurghada or the Red Sea.",
+            "sequence_reason": "The aerial view of the villas and jetty provides a clear, unobstructed perspective of the water and architecture, making it the best starting point for the visual journey.",
+            "cta_kind": "save"
+          }
+        },
+        "files": [
+          {
+            "file": "/Users/mazenkhaled/Task/outputs/photos/1a2f349b2754b99948207088abff9c63306c6e6ca642cbc417070e578fefdfce/photo-1.jpg",
+            "file_sha256": "95ed78cafcbde2373a97f621083b0db0086665b883228f64ae97ea5e1abf97ef",
+            "width": 1080,
+            "height": 1350
+          }
+        ],
+        "generated": false,
+        "reference_only": true,
+        "qa_status": "needs_review"
+      },
+      "evidence": {
+        "context": {
+          "selection": {
+            "brief": {
+              "angle": "A journey through the visible water and architecture",
+              "hook": "What color is the water where the villas meet the shore?",
+              "key_message": "Reethi Faru Resort, Maldives: a visual journey through the visible water and architecture.",
+              "visual_description": "Aerial view of thatched overwater villas connected by a wooden jetty, surrounded by clear turquoise water and island vegetation.",
+              "photo_uri": "assets/photos/reethi_faru/lagoon-villas.jpg",
+              "cta": "Swipe to see the water's color where the villas meet the shore.",
+              "must_not": [
+                "invented facilities",
+                "snorkeling claims",
+                "nightlife",
+                "alcohol imagery"
+              ],
+              "reel_concept": null
+            },
+            "media_ids": [
+              "lagoon-villas"
+            ],
+            "fact_ids": [
+              "lagoon-villas-fact-1",
+              "lagoon-villas-fact-2",
+              "lagoon-villas-fact-3"
+            ],
+            "pillar_intent": "Show the named Maldives reference location; never label it Hurghada or the Red Sea.",
+            "sequence_reason": "The aerial view of the villas and jetty provides a clear, unobstructed perspective of the water and architecture, making it the best starting point for the visual journey.",
+            "cta_kind": "save"
+          },
+          "property_name": "Reethi Faru Resort, Maldives",
+          "geography": "Maldives",
+          "source_date_note": "Historical source photographs published in April 2020; present condition and offers are not verified.",
+          "facts": [
+            {
+              "id": "lagoon-villas-fact-1",
+              "scene_id": "lagoon-villas",
+              "text": "Overwater villas joined by a jetty",
+              "caption_en": "Thatched villas follow a wooden jetty through turquoise water.",
+              "caption_ar": "فلل بسقوف من القش على امتداد رصيف خشبي وسط مياه فيروزية."
+            },
+            {
+              "id": "lagoon-villas-fact-2",
+              "scene_id": "lagoon-villas",
+              "text": "Clear turquoise water around the buildings",
+              "caption_en": "Clear turquoise water surrounds the photographed villas and walkway.",
+              "caption_ar": "مياه فيروزية صافية تحيط بالفلل والممر الخشبي في الصورة."
+            },
+            {
+              "id": "lagoon-villas-fact-3",
+              "scene_id": "lagoon-villas",
+              "text": "White shoreline and island vegetation",
+              "caption_en": "From above, white sand curves between island greenery and the lagoon.",
+              "caption_ar": "من أعلى، يلتف الرمل الأبيض بين خضرة الجزيرة ومياه البحيرة الساحلية."
+            }
+          ],
+          "reference_only": true
+        },
+        "context_hash": "73207d022ccac65bcfc43bdefa06645ba985cf5ed2e32f4114a5b641f7f6e3fd",
+        "reference_only": true
+      }
+    },
+    {
+      "id": "reference-w42-fri-1",
+      "slot_id": "reference-w42-fri-1",
+      "brand_hash": "8f3983a1982c0c57b645c10a17f093f463ad3b4b66c81a4f52c27f3f52b49bd3",
+      "format": "carousel",
+      "brief": {
+        "angle": "A journey through the visible water and architecture",
+        "hook": "What color is the water at Reethi Faru?",
+        "key_message": "Reethi Faru's coastal clarity and architecture are visible through its real photographs.",
+        "visual_description": "Aerial view of thatched overwater villas connected by a wooden jetty, surrounded by clear turquoise water and island vegetation.",
+        "photo_uri": "assets/photos/reethi_faru/lagoon-villas.jpg",
+        "cta": "Compare the water color with your next coastal escape.",
+        "must_not": [
+          "invented facilities",
+          "snorkeling claims",
+          "nightlife",
+          "alcohol imagery"
+        ],
+        "reel_concept": null
+      },
+      "en": {
+        "caption": "What color is the water at Reethi Faru?\n\n1. Thatched villas follow a wooden jetty through turquoise water.\n2. Turquoise shallows meet a curve of white sand.\n3. A wooden jetty crosses the turquoise shallows beside the beach.\n\nSave the view for your travel moodboard.",
+        "alt_text": "Thatched villas follow a wooden jetty through turquoise water. Turquoise shallows meet a curve of white sand. A wooden jetty crosses the turquoise shallows beside the beach."
+      },
+      "ar": {
+        "caption": "لون الماء يسأل عن مساحة جديدة.\n\n1. فلل بسقوف من القش على امتداد رصيف خشبي وسط مياه فيروزية.\n2. مياه فيروزية تلتقي بانحناءة من الرمل الأبيض.\n3. رصيف خشبي يعبر المياه الفيروزية الضحلة بجوار الشاطئ.\n\nاحفظ هذه الإطلالة لرحلاتك القادمة.",
+        "alt_text": "فلل بسقوف من القش على امتداد رصيف خشبي وسط مياه فيروزية. مياه فيروزية تلتقي بانحناءة من الرمل الأبيض. رصيف خشبي يعبر المياه الفيروزية الضحلة بجوار الشاطئ."
+      },
+      "hashtags": [
+        "#ReethiFaru",
+        "#ريثي_فارو",
+        "#Maldives",
+        "#المالديف",
+        "#OceanViews",
+        "#BeachArchitecture",
+        "#CoastalTravel",
+        "#TropicalBeach",
+        "#سفر",
+        "#شاطئ"
+      ],
+      "prompt_hashes": {
+        "visual_brief": "549ab2ca08577f1357f1f9d028a958d117c023b47d3ba8d0b2b005955b17a8f2",
+        "grounded_copy_en": "c280ea5f135af98e3df2fb64853ea790424f09c286526a6613328018c49fecf2",
+        "grounded_copy_ar": "57f80a371388fea23f4d91b18f5c89e61069c303b481a6986caee9c519310f12"
+      },
+      "revision": 0,
+      "ai_disclosure": false,
+      "offer_id": null,
+      "media_path": "/Users/mazenkhaled/Task/outputs/photos/6e7a0ad941f5fd338e5e40746f36bcbabc9197916c47c9e81d4eef09cb28db8f/photo-1.jpg",
+      "media_status": "rendered",
+      "photo_artifact": {
+        "recipe_hash": "6e7a0ad941f5fd338e5e40746f36bcbabc9197916c47c9e81d4eef09cb28db8f",
+        "render_recipe": {
+          "kind": "reference-photo-layout-v1",
+          "format": "carousel",
+          "sources": [
+            {
+              "id": "lagoon-villas",
+              "label": "Lagoon Villas",
+              "observed": "Aerial view of a line of thatched overwater villas and a connecting jetty, surrounded by clear turquoise water; island trees and white shoreline at the lower left.",
+              "photo": {
+                "uri": "assets/photos/reethi_faru/lagoon-villas.jpg",
+                "sha256": "3e33860a79e5b9daabf170be3279e2ed38f37b4f3b43212ba4c9188bd1f826ce"
+              },
+              "crop": {
+                "x": 234,
+                "y": 0,
+                "width": 2530,
+                "height": 4500
+              },
+              "approved_by": "mazenDDr",
+              "approval_id": "reference-media-request-2026-10-12",
+              "faces_checked": true,
+              "attribution": "Moosa Haleem / Unsplash License - resized, cropped and animated",
+              "author": "Moosa Haleem",
+              "license_id": "Unsplash License",
+              "source_page": "https://unsplash.com/photos/aerial-view-of-green-trees-and-body-of-water-u94aG1t4xPE",
+              "license_url": "https://unsplash.com/license",
+              "reference_only": true,
+              "source": "photo",
+              "clip": null,
+              "allowed_actions": [
+                "scenic_motion",
+                "recorded_footage"
+              ],
+              "property_name": "Reethi Faru Resort, Maldives",
+              "approval_scope": "preview_source_use",
+              "must_include": [
+                {
+                  "x": 1200,
+                  "y": 450,
+                  "width": 900,
+                  "height": 3050
+                },
+                {
+                  "x": 400,
+                  "y": 3400,
+                  "width": 1200,
+                  "height": 600
+                }
+              ]
+            },
+            {
+              "id": "shoreline",
+              "label": "Shoreline",
+              "observed": "Wide beach-level scene with turquoise shallows, white sand, blue sky, palm trees and existing thatched structures on the left.",
+              "photo": {
+                "uri": "assets/photos/reethi_faru/shoreline.jpg",
+                "sha256": "25e1846b15057b6bea74a95a5114895e9c55e968dc8fcf0ba3ca1bb807dc949b"
+              },
+              "crop": {
+                "x": 0,
+                "y": 0,
+                "width": 2528,
+                "height": 4494
+              },
+              "approved_by": "mazenDDr",
+              "approval_id": "reference-media-request-2026-10-12",
+              "faces_checked": true,
+              "attribution": "Moosa Haleem / Unsplash License - resized, cropped and animated",
+              "author": "Moosa Haleem",
+              "license_id": "Unsplash License",
+              "source_page": "https://unsplash.com/photos/palm-trees-on-beach-shore-during-daytime-BcqbKBVZ-Zk",
+              "license_url": "https://unsplash.com/license",
+              "reference_only": true,
+              "source": "photo",
+              "clip": null,
+              "allowed_actions": [
+                "scenic_motion",
+                "recorded_footage"
+              ],
+              "property_name": "Reethi Faru Resort, Maldives",
+              "approval_scope": "preview_source_use",
+              "must_include": [
+                {
+                  "x": 100,
+                  "y": 2200,
+                  "width": 1200,
+                  "height": 1400
+                },
+                {
+                  "x": 1200,
+                  "y": 3000,
+                  "width": 1200,
+                  "height": 1400
+                }
+              ]
+            },
+            {
+              "id": "palm-jetty",
+              "label": "Palm Jetty",
+              "observed": "Beach-level view with palms on the right, their shadows across white sand, a wooden jetty across turquoise water, and an open blue sky.",
+              "photo": {
+                "uri": "assets/photos/reethi_faru/palm-jetty.jpg",
+                "sha256": "96b60edd88e3e11cda2b975eab45d687cc6cc5f73a8cfe6bc7e219a156a7ea58"
+              },
+              "crop": {
+                "x": 470,
+                "y": 0,
+                "width": 2528,
+                "height": 4494
+              },
+              "approved_by": "mazenDDr",
+              "approval_id": "reference-media-request-2026-10-12",
+              "faces_checked": true,
+              "attribution": "Moosa Haleem / Unsplash License - resized, cropped and animated",
+              "author": "Moosa Haleem",
+              "license_id": "Unsplash License",
+              "source_page": "https://unsplash.com/photos/palm-trees-on-beach-shore-during-daytime-2opFBNXAJzw",
+              "license_url": "https://unsplash.com/license",
+              "reference_only": true,
+              "source": "photo",
+              "clip": null,
+              "allowed_actions": [
+                "scenic_motion",
+                "recorded_footage"
+              ],
+              "property_name": "Reethi Faru Resort, Maldives",
+              "approval_scope": "preview_source_use",
+              "must_include": [
+                {
+                  "x": 550,
+                  "y": 2150,
+                  "width": 2400,
+                  "height": 1100
+                },
+                {
+                  "x": 1600,
+                  "y": 3000,
+                  "width": 1100,
+                  "height": 1100
+                }
+              ]
+            }
+          ],
+          "layout": "contain",
+          "background": "#e8eeee",
+          "width": 1080,
+          "height": 1350,
+          "runtime": {
+            "docker_image_digest": null,
+            "python": "3.12.15",
+            "platform": "macOS-27.0-arm64-arm-64bit",
+            "ffmpeg_sha256": "c8173e9755795978bce8e104f8d7044fabe7d6d84044aba37d3648c6f4e4e1a8",
+            "ffprobe_sha256": "56559c234422b0e3722c54b2bd99bbd8cd83d3732a13a6d207589982a6b7085e",
+            "implementation_sha256": "a741ff6e4d76c553fc7eb50ac7ec00e37aca3aafc6defb9fe45f2469a02acfb5",
+            "pillow": "12.3.0",
+            "reshaper": "3.0.1",
+            "bidi": "0.6.11",
+            "torch": null,
+            "cuda": null,
+            "driver": null,
+            "gpu": null,
+            "native_packages": {}
+          },
+          "story": {
+            "brief": {
+              "angle": "A journey through the visible water and architecture",
+              "hook": "What color is the water at Reethi Faru?",
+              "key_message": "Reethi Faru's coastal clarity and architecture are visible through its real photographs.",
+              "visual_description": "Aerial view of thatched overwater villas connected by a wooden jetty, surrounded by clear turquoise water and island vegetation.",
+              "photo_uri": "assets/photos/reethi_faru/lagoon-villas.jpg",
+              "cta": "Compare the water color with your next coastal escape.",
+              "must_not": [
+                "invented facilities",
+                "snorkeling claims",
+                "nightlife",
+                "alcohol imagery"
+              ],
+              "reel_concept": null
+            },
+            "media_ids": [
+              "lagoon-villas",
+              "shoreline",
+              "palm-jetty"
+            ],
+            "fact_ids": [
+              "lagoon-villas-fact-1",
+              "lagoon-villas-fact-2",
+              "lagoon-villas-fact-3",
+              "shoreline-fact-1",
+              "shoreline-fact-2",
+              "shoreline-fact-3",
+              "palm-jetty-fact-1",
+              "palm-jetty-fact-2",
+              "palm-jetty-fact-3"
+            ],
+            "pillar_intent": "Show the named Maldives reference location; never label it Hurghada or the Red Sea.",
+            "sequence_reason": "Start with the jetty and villas, then move to the shoreline and sky, ending with the palm shadows and open horizon to show the full coastal view.",
+            "cta_kind": "save"
+          }
+        },
+        "files": [
+          {
+            "file": "/Users/mazenkhaled/Task/outputs/photos/6e7a0ad941f5fd338e5e40746f36bcbabc9197916c47c9e81d4eef09cb28db8f/photo-1.jpg",
+            "file_sha256": "95ed78cafcbde2373a97f621083b0db0086665b883228f64ae97ea5e1abf97ef",
+            "width": 1080,
+            "height": 1350
+          },
+          {
+            "file": "/Users/mazenkhaled/Task/outputs/photos/6e7a0ad941f5fd338e5e40746f36bcbabc9197916c47c9e81d4eef09cb28db8f/photo-2.jpg",
+            "file_sha256": "70d7a6d7cc5e30a8e351868720d3a81e69523e3160072a0e6c050fb48413189c",
+            "width": 1080,
+            "height": 1350
+          },
+          {
+            "file": "/Users/mazenkhaled/Task/outputs/photos/6e7a0ad941f5fd338e5e40746f36bcbabc9197916c47c9e81d4eef09cb28db8f/photo-3.jpg",
+            "file_sha256": "385790697941a21e20c8ff83e7acf45037e7bc09913f1591c530dbb183d084f8",
+            "width": 1080,
+            "height": 1350
+          }
+        ],
+        "generated": false,
+        "reference_only": true,
+        "qa_status": "needs_review"
+      },
+      "evidence": {
+        "context": {
+          "selection": {
+            "brief": {
+              "angle": "A journey through the visible water and architecture",
+              "hook": "What color is the water at Reethi Faru?",
+              "key_message": "Reethi Faru's coastal clarity and architecture are visible through its real photographs.",
+              "visual_description": "Aerial view of thatched overwater villas connected by a wooden jetty, surrounded by clear turquoise water and island vegetation.",
+              "photo_uri": "assets/photos/reethi_faru/lagoon-villas.jpg",
+              "cta": "Compare the water color with your next coastal escape.",
+              "must_not": [
+                "invented facilities",
+                "snorkeling claims",
+                "nightlife",
+                "alcohol imagery"
+              ],
+              "reel_concept": null
+            },
+            "media_ids": [
+              "lagoon-villas",
+              "shoreline",
+              "palm-jetty"
+            ],
+            "fact_ids": [
+              "lagoon-villas-fact-1",
+              "lagoon-villas-fact-2",
+              "lagoon-villas-fact-3",
+              "shoreline-fact-1",
+              "shoreline-fact-2",
+              "shoreline-fact-3",
+              "palm-jetty-fact-1",
+              "palm-jetty-fact-2",
+              "palm-jetty-fact-3"
+            ],
+            "pillar_intent": "Show the named Maldives reference location; never label it Hurghada or the Red Sea.",
+            "sequence_reason": "Start with the jetty and villas, then move to the shoreline and sky, ending with the palm shadows and open horizon to show the full coastal view.",
+            "cta_kind": "save"
+          },
+          "property_name": "Reethi Faru Resort, Maldives",
+          "geography": "Maldives",
+          "source_date_note": "Historical source photographs published in April 2020; present condition and offers are not verified.",
+          "facts": [
+            {
+              "id": "lagoon-villas-fact-1",
+              "scene_id": "lagoon-villas",
+              "text": "Overwater villas joined by a jetty",
+              "caption_en": "Thatched villas follow a wooden jetty through turquoise water.",
+              "caption_ar": "فلل بسقوف من القش على امتداد رصيف خشبي وسط مياه فيروزية."
+            },
+            {
+              "id": "lagoon-villas-fact-2",
+              "scene_id": "lagoon-villas",
+              "text": "Clear turquoise water around the buildings",
+              "caption_en": "Clear turquoise water surrounds the photographed villas and walkway.",
+              "caption_ar": "مياه فيروزية صافية تحيط بالفلل والممر الخشبي في الصورة."
+            },
+            {
+              "id": "lagoon-villas-fact-3",
+              "scene_id": "lagoon-villas",
+              "text": "White shoreline and island vegetation",
+              "caption_en": "From above, white sand curves between island greenery and the lagoon.",
+              "caption_ar": "من أعلى، يلتف الرمل الأبيض بين خضرة الجزيرة ومياه البحيرة الساحلية."
+            },
+            {
+              "id": "shoreline-fact-1",
+              "scene_id": "shoreline",
+              "text": "Turquoise shallows reaching white sand",
+              "caption_en": "Turquoise shallows meet a curve of white sand.",
+              "caption_ar": "مياه فيروزية تلتقي بانحناءة من الرمل الأبيض."
+            },
+            {
+              "id": "shoreline-fact-2",
+              "scene_id": "shoreline",
+              "text": "Palms and thatched structures beside the shoreline",
+              "caption_en": "Palms and thatched structures sit beside the photographed shoreline.",
+              "caption_ar": "نخيل ومبان بسقوف من القش بجوار خط الشاطئ في الصورة."
+            },
+            {
+              "id": "shoreline-fact-3",
+              "scene_id": "shoreline",
+              "text": "Blue sky and a visible ocean horizon",
+              "caption_en": "Blue sky sits above an open ocean horizon.",
+              "caption_ar": "سماء زرقاء وأفق بحر مفتوح."
+            },
+            {
+              "id": "palm-jetty-fact-1",
+              "scene_id": "palm-jetty",
+              "text": "A wooden jetty crossing the shallows",
+              "caption_en": "A wooden jetty crosses the turquoise shallows beside the beach.",
+              "caption_ar": "رصيف خشبي يعبر المياه الفيروزية الضحلة بجوار الشاطئ."
+            },
+            {
+              "id": "palm-jetty-fact-2",
+              "scene_id": "palm-jetty",
+              "text": "Palm shadows on white sand",
+              "caption_en": "Palm shadows fall across white sand at the waterline.",
+              "caption_ar": "ظلال النخيل تمتد على الرمل الأبيض عند خط الماء."
+            },
+            {
+              "id": "palm-jetty-fact-3",
+              "scene_id": "palm-jetty",
+              "text": "Water, palms and an open horizon in the same view",
+              "caption_en": "Water, palms and an open horizon share this beach-level view.",
+              "caption_ar": "مياه ونخيل وأفق مفتوح في مشهد من مستوى الشاطئ."
+            }
+          ],
+          "reference_only": true
+        },
+        "context_hash": "d284170041fea74b8a0bbe0d9e069f9ded561bef80eb091e837fda2650188b79",
+        "reference_only": true
+      }
+    },
+    {
+      "id": "reference-w42-sat-1",
+      "slot_id": "reference-w42-sat-1",
+      "brand_hash": "8f3983a1982c0c57b645c10a17f093f463ad3b4b66c81a4f52c27f3f52b49bd3",
+      "format": "reel",
+      "brief": {
+        "angle": "A journey through the visible water and architecture",
+        "hook": "What does the water reveal about the island?",
+        "key_message": "Discover the visible connection between the water, architecture, and shoreline at Reethi Faru Resort, Maldives.",
+        "visual_description": "A journey through the visible water and architecture, highlighting the connection between the water, architecture, and shoreline.",
+        "photo_uri": "assets/photos/reethi_faru/lagoon-villas.jpg",
+        "cta": "Compare the visible connection between the water, architecture, and shoreline.",
+        "must_not": [
+          "invented facilities",
+          "snorkeling claims",
+          "price promises"
+        ],
+        "reel_concept": {
+          "hook": "What does the water reveal about the island?",
+          "shots": [
+            "lagoon-villas",
+            "shoreline",
+            "palm-jetty"
+          ],
+          "overlay_en": "Visible connection between water, architecture, and shoreline",
+          "overlay_ar": "الارتباط المرئي بين الماء والبنية التحتية وخط الشاطئ",
+          "audio": "Soft ambient waves and light wind sounds",
+          "cta": "Compare the visible connection between the water, architecture, and shoreline.",
+          "cover": "assets/photos/reethi_faru/lagoon-villas.jpg"
+        }
+      },
+      "en": {
+        "caption": "What does the water reveal about the island?\n\nThatched villas follow a wooden jetty through turquoise water.\n\nSave the view for your travel moodboard.",
+        "alt_text": "Thatched villas follow a wooden jetty through turquoise water."
+      },
+      "ar": {
+        "caption": "فلل بسطاء على مياه فيروزية.\n\nفلل بسقوف من القش على امتداد رصيف خشبي وسط مياه فيروزية.\n\nاحفظ هذه الإطلالة لقائمة رحلاتك.",
+        "alt_text": "فلل بسقوف من القش على امتداد رصيف خشبي وسط مياه فيروزية."
+      },
+      "hashtags": [
+        "#ReethiFaru",
+        "#ريثي_فارو",
+        "#Maldives",
+        "#المالديف",
+        "#OceanViews",
+        "#BeachArchitecture",
+        "#CoastalTravel",
+        "#TropicalBeach",
+        "#سفر",
+        "#شاطئ"
+      ],
+      "prompt_hashes": {
+        "visual_brief": "549ab2ca08577f1357f1f9d028a958d117c023b47d3ba8d0b2b005955b17a8f2",
+        "grounded_copy_en": "c280ea5f135af98e3df2fb64853ea790424f09c286526a6613328018c49fecf2",
+        "grounded_copy_ar": "57f80a371388fea23f4d91b18f5c89e61069c303b481a6986caee9c519310f12",
+        "video_director": "baacc088cfcc0f1e58ead2bd8aa754aa0331fdfb88871ff83ca483e4fd9c54bf"
+      },
+      "revision": 0,
+      "ai_disclosure": true,
+      "offer_id": null,
+      "media_path": "/Users/mazenkhaled/Task/outputs/reference-week-native/renders/88563feee4ef60979d1f53798499039121ddc915dac101d10d43daa2bfa7522d/reel.mp4",
+      "media_status": "rendered",
+      "render_artifact": {
+        "recipe_hash": "88563feee4ef60979d1f53798499039121ddc915dac101d10d43daa2bfa7522d",
+        "render_recipe": {
+          "version": 1,
+          "backend": "stub",
+          "shots": {
+            "reel_id": "reference-w42-sat-1",
+            "duration_s": 15,
+            "aspect": "9:16",
+            "shots": [
+              {
+                "id": "scenic-001",
+                "role": "hook",
+                "keyframe": {
+                  "uri": "outputs/video-boards/reference-w42-sat-1/references/lagoon-villas-3b978fc332d68e2a1b6b89e57f6ac4af2fb08740326a586b21c0814a9eea39f3.jpg",
+                  "sha256": "3b978fc332d68e2a1b6b89e57f6ac4af2fb08740326a586b21c0814a9eea39f3",
+                  "source": "photo",
+                  "scene": "mood",
+                  "approved_by": "mazenDDr",
+                  "approval_id": "reference-media-request-2026-10-12",
+                  "approval_scope": "preview_source_use",
+                  "reference_only": true,
+                  "faces_checked": true,
+                  "attribution": "Moosa Haleem / Unsplash License - resized, cropped and animated",
+                  "prompt": null,
+                  "seed": null
+                },
+                "end_keyframe": null,
+                "motion_prompt": "Aerial view of the lagoon villas with a slow pull-out to reveal the turquoise water and island trees in the background.",
+                "negative_prompt": "New facilities, buildings added, new objects, people, faces, hands, signage, text, logos,\nwarped architecture, distorted pillars, camera shake, over-saturated colours, abrupt cuts,\nextra petals, duplicated leaves, boiling texture, flickering, frozen still frame.\n",
+                "camera": "static",
+                "seconds": 5.0,
+                "overlay": {
+                  "en": "",
+                  "ar": ""
+                },
+                "motion_strength": 0.16,
+                "source_clip": {
+                  "uri": "outputs/place-led/lagoon-native/shot-0.mp4",
+                  "sha256": "4eec92818fdd762af6c101bf51d7b3c3ecfe7597f479d6d88d287f0975c7ccbc",
+                  "generated": true,
+                  "reference_only": true,
+                  "credit": "Moosa Haleem / Unsplash License - resized, cropped and animated",
+                  "motion_recipe": {
+                    "uri": "outputs/place-led/lagoon-native/recipe.json",
+                    "sha256": "bef20ffd73415af92ce9de9908d41eec2ad550bc06b86721581b78d07f0dd049"
+                  },
+                  "motion_recipe_hash": "2c898f2e3052a426c376e79f395ddfea43622d3cffdda5b16d4f85007326a58d",
+                  "start_s": 0.0
+                },
+                "text_start_s": 0.1,
+                "text_end_s": 1.8,
+                "text_position": "lower"
+              },
+              {
+                "id": "scenic-002",
+                "role": "body",
+                "keyframe": {
+                  "uri": "outputs/video-boards/reference-w42-sat-1/references/shoreline-eb9fc71b1fa9174349ebbe5edb397ee5990efcbce0ff49397c73f5c6ef821915.jpg",
+                  "sha256": "eb9fc71b1fa9174349ebbe5edb397ee5990efcbce0ff49397c73f5c6ef821915",
+                  "source": "photo",
+                  "scene": "mood",
+                  "approved_by": "mazenDDr",
+                  "approval_id": "reference-media-request-2026-10-12",
+                  "approval_scope": "preview_source_use",
+                  "reference_only": true,
+                  "faces_checked": true,
+                  "attribution": "Moosa Haleem / Unsplash License - resized, cropped and animated",
+                  "prompt": null,
+                  "seed": null
+                },
+                "end_keyframe": null,
+                "motion_prompt": "Wide beach-level view of the shoreline with a left pan to show the turquoise shallows and palm trees.",
+                "negative_prompt": "New facilities, buildings added, new objects, people, faces, hands, signage, text, logos,\nwarped architecture, distorted pillars, camera shake, over-saturated colours, abrupt cuts,\nextra petals, duplicated leaves, boiling texture, flickering, frozen still frame.\n",
+                "camera": "static",
+                "seconds": 5.0,
+                "overlay": {
+                  "en": "",
+                  "ar": ""
+                },
+                "motion_strength": 0.16,
+                "source_clip": {
+                  "uri": "outputs/place-led/shoreline-spike/shot-0.mp4",
+                  "sha256": "7cadd988eedfb634d4be98cd815f747127b68d2cb591f09fcfed6c5cef09a210",
+                  "generated": true,
+                  "reference_only": true,
+                  "credit": "Moosa Haleem / Unsplash License - resized, cropped and animated",
+                  "motion_recipe": {
+                    "uri": "outputs/place-led/shoreline-spike/recipe.json",
+                    "sha256": "4f595b821a114b9c04c60d5fe22e3eabe22275d9e9c4728d4c15ebf5e68cd7ac"
+                  },
+                  "motion_recipe_hash": "4536c22977a43416dc97db0a67375d8d3b534462cc072cb8b21bf8aa718d3f50",
+                  "start_s": 0.0
+                },
+                "text_start_s": 0.1,
+                "text_end_s": 1.8,
+                "text_position": "lower"
+              },
+              {
+                "id": "scenic-003",
+                "role": "cta",
+                "keyframe": {
+                  "uri": "outputs/video-boards/reference-w42-sat-1/references/palm-jetty-4802c59beb1cd5685cced245f0bf73f7c3a5e532d77651cd45bbad69988b374b.jpg",
+                  "sha256": "4802c59beb1cd5685cced245f0bf73f7c3a5e532d77651cd45bbad69988b374b",
+                  "source": "photo",
+                  "scene": "mood",
+                  "approved_by": "mazenDDr",
+                  "approval_id": "reference-media-request-2026-10-12",
+                  "approval_scope": "preview_source_use",
+                  "reference_only": true,
+                  "faces_checked": true,
+                  "attribution": "Moosa Haleem / Unsplash License - resized, cropped and animated",
+                  "prompt": null,
+                  "seed": null
+                },
+                "end_keyframe": null,
+                "motion_prompt": "Static beach-level view of the palm jetty with turquoise water and white sand, highlighting the connection between the jetty, shoreline, and villas.",
+                "negative_prompt": "New facilities, buildings added, new objects, people, faces, hands, signage, text, logos,\nwarped architecture, distorted pillars, camera shake, over-saturated colours, abrupt cuts,\nextra petals, duplicated leaves, boiling texture, flickering, frozen still frame.\n",
+                "camera": "static",
+                "seconds": 5.0,
+                "overlay": {
+                  "en": "",
+                  "ar": ""
+                },
+                "motion_strength": 0.16,
+                "source_clip": {
+                  "uri": "outputs/place-led/jetty-native/shot-0.mp4",
+                  "sha256": "afbf3a864945229b0a420040c7a9debd1186667bff615d03ad34827e113eb217",
+                  "generated": true,
+                  "reference_only": true,
+                  "credit": "Moosa Haleem / Unsplash License - resized, cropped and animated",
+                  "motion_recipe": {
+                    "uri": "outputs/place-led/jetty-native/recipe.json",
+                    "sha256": "a9ed720a05849e5830bf89a9f0f98904611b84e3fc4214ce69b2ea7ce289dff2"
+                  },
+                  "motion_recipe_hash": "30fd20402e5302497de51e404216048b63b45161cdc3cf8f7f2c55097dd03548",
+                  "start_s": 0.0
+                },
+                "text_start_s": 0.1,
+                "text_end_s": 1.8,
+                "text_position": "lower"
+              }
+            ],
+            "audio": {
+              "music": {
+                "uri": "outputs/video-boards/reference-w42-sat-1/original-preview-score-4388308afc0eb2676c6d6b0f6c12eeaa887b46f8fe5231139f341510a788bc2d.wav",
+                "sha256": "4388308afc0eb2676c6d6b0f6c12eeaa887b46f8fe5231139f341510a788bc2d"
+              },
+              "music_credit": "Original procedural ambient score; synthesized tones and noise, no external samples or field recordings",
+              "voiceover": null,
+              "voiceover_lang": null
+            }
+          },
+          "model": {
+            "repo": "instabay/editorial-assembler",
+            "revision": "0000000000000000000000000000000000000000",
+            "weights": [],
+            "loras": [],
+            "pipeline_class": "EditorialVideoBackend",
+            "scheduler": "frame-index",
+            "scheduler_config": {},
+            "steps": 1,
+            "cfg": 1.0,
+            "shift": 1.0,
+            "supports_flf": false,
+            "workflow": {
+              "uri": "outputs/video-boards/reference-w42-sat-1/boards/e7d2b934b54c454e220d6316518b528606c8c8f8efebfe13ec5ac17c5fd772ad.json",
+              "sha256": "a95bc9172a10fa841931673b0b865f1a77fb0e3a249ce94c2689d35624fb8c8c"
+            },
+            "custom_nodes": {}
+          },
+          "motion": {
+            "width": 576,
+            "height": 1024,
+            "fps": 30,
+            "frames": [
+              150,
+              150,
+              150
+            ],
+            "seeds": [
+              7,
+              7,
+              7
+            ]
+          },
+          "post": {
+            "font": {
+              "uri": "assets/fonts/NotoSansArabic.ttf",
+              "sha256": "63111b5b2e074dd48cc67692e0a2726d86ee94c1c37fe8598257b7b4e87e869e"
+            },
+            "lut": null,
+            "grain_strength": 0,
+            "preset": "fast",
+            "crf": 23,
+            "max_bytes": 300000000,
+            "continuity_threshold": 0.9,
+            "flicker_threshold": 0.08,
+            "palette": [],
+            "preview_label": null,
+            "credit": "Photos: Moosa Haleem\nUnsplash License - cropped and animated",
+            "recorded_motion": null,
+            "style": "editorial",
+            "language": "en",
+            "latin_font": {
+              "uri": "assets/fonts/Manrope.ttf",
+              "sha256": "3ae11c49db0455a3cc33e37d380f20fdb8c7f8b41dc07625c177e3d87a9d6ae6"
+            },
+            "frame_interpolation": "motion"
+          },
+          "runtime": {
+            "docker_image_digest": null,
+            "python": "3.12.15",
+            "platform": "macOS-27.0-arm64-arm-64bit",
+            "ffmpeg_sha256": "c8173e9755795978bce8e104f8d7044fabe7d6d84044aba37d3648c6f4e4e1a8",
+            "ffprobe_sha256": "56559c234422b0e3722c54b2bd99bbd8cd83d3732a13a6d207589982a6b7085e",
+            "implementation_sha256": "e0e154dfdf5f3a4a91c4be4465f2014368424be757e0f7f3659f950dc2389030",
+            "pillow": "12.3.0",
+            "reshaper": "3.0.1",
+            "bidi": "0.6.11",
+            "torch": null,
+            "cuda": null,
+            "driver": null,
+            "gpu": null,
+            "native_packages": {}
+          }
+        },
+        "file": "/Users/mazenkhaled/Task/outputs/reference-week-native/renders/88563feee4ef60979d1f53798499039121ddc915dac101d10d43daa2bfa7522d/reel.mp4",
+        "file_sha256": "351fb011925fb7bac3917ec503ba842988a3544818ca84f52a5b1f010c100ee7",
+        "contact_sheet": "/Users/mazenkhaled/Task/outputs/reference-week-native/renders/88563feee4ef60979d1f53798499039121ddc915dac101d10d43daa2bfa7522d/contact-sheet.jpg",
+        "contact_sha256": "3355ed7b3e31603a5618e00fa05bdc9814db0b87020d8a019e8c8cfd9972f423",
+        "qa_status": "needs_review",
+        "generated": true,
+        "reference_only": true
+      },
+      "evidence": {
+        "context": {
+          "selection": {
+            "brief": {
+              "angle": "A journey through the visible water and architecture",
+              "hook": "What does the water reveal about the island?",
+              "key_message": "Discover the visible connection between the water, architecture, and shoreline at Reethi Faru Resort, Maldives.",
+              "visual_description": "A journey through the visible water and architecture, highlighting the connection between the water, architecture, and shoreline.",
+              "photo_uri": "assets/photos/reethi_faru/lagoon-villas.jpg",
+              "cta": "Compare the visible connection between the water, architecture, and shoreline.",
+              "must_not": [
+                "invented facilities",
+                "snorkeling claims",
+                "price promises"
+              ],
+              "reel_concept": {
+                "hook": "What does the water reveal about the island?",
+                "shots": [
+                  "lagoon-villas",
+                  "shoreline",
+                  "palm-jetty"
+                ],
+                "overlay_en": "Visible connection between water, architecture, and shoreline",
+                "overlay_ar": "الارتباط المرئي بين الماء والبنية التحتية وخط الشاطئ",
+                "audio": "Soft ambient waves and light wind sounds",
+                "cta": "Compare the visible connection between the water, architecture, and shoreline.",
+                "cover": "assets/photos/reethi_faru/lagoon-villas.jpg"
+              }
+            },
+            "media_ids": [
+              "lagoon-villas",
+              "shoreline",
+              "palm-jetty"
+            ],
+            "fact_ids": [
+              "lagoon-villas-fact-1",
+              "lagoon-villas-fact-2",
+              "lagoon-villas-fact-3",
+              "shoreline-fact-1",
+              "shoreline-fact-2",
+              "shoreline-fact-3",
+              "palm-jetty-fact-1",
+              "palm-jetty-fact-2",
+              "palm-jetty-fact-3"
+            ],
+            "pillar_intent": "Offer a useful planning or comparison prompt. No price, deal, availability or booking promise.",
+            "sequence_reason": "The sequence follows the visible connection between the water, architecture, and shoreline, starting with the overwater villas, then the shoreline, and finally the palm-jetty view.",
+            "cta_kind": "save"
+          },
+          "property_name": "Reethi Faru Resort, Maldives",
+          "geography": "Maldives",
+          "source_date_note": "Historical source photographs published in April 2020; present condition and offers are not verified.",
+          "facts": [
+            {
+              "id": "lagoon-villas-fact-1",
+              "scene_id": "lagoon-villas",
+              "text": "Overwater villas joined by a jetty",
+              "caption_en": "Thatched villas follow a wooden jetty through turquoise water.",
+              "caption_ar": "فلل بسقوف من القش على امتداد رصيف خشبي وسط مياه فيروزية."
+            },
+            {
+              "id": "lagoon-villas-fact-2",
+              "scene_id": "lagoon-villas",
+              "text": "Clear turquoise water around the buildings",
+              "caption_en": "Clear turquoise water surrounds the photographed villas and walkway.",
+              "caption_ar": "مياه فيروزية صافية تحيط بالفلل والممر الخشبي في الصورة."
+            },
+            {
+              "id": "lagoon-villas-fact-3",
+              "scene_id": "lagoon-villas",
+              "text": "White shoreline and island vegetation",
+              "caption_en": "From above, white sand curves between island greenery and the lagoon.",
+              "caption_ar": "من أعلى، يلتف الرمل الأبيض بين خضرة الجزيرة ومياه البحيرة الساحلية."
+            },
+            {
+              "id": "shoreline-fact-1",
+              "scene_id": "shoreline",
+              "text": "Turquoise shallows reaching white sand",
+              "caption_en": "Turquoise shallows meet a curve of white sand.",
+              "caption_ar": "مياه فيروزية تلتقي بانحناءة من الرمل الأبيض."
+            },
+            {
+              "id": "shoreline-fact-2",
+              "scene_id": "shoreline",
+              "text": "Palms and thatched structures beside the shoreline",
+              "caption_en": "Palms and thatched structures sit beside the photographed shoreline.",
+              "caption_ar": "نخيل ومبان بسقوف من القش بجوار خط الشاطئ في الصورة."
+            },
+            {
+              "id": "shoreline-fact-3",
+              "scene_id": "shoreline",
+              "text": "Blue sky and a visible ocean horizon",
+              "caption_en": "Blue sky sits above an open ocean horizon.",
+              "caption_ar": "سماء زرقاء وأفق بحر مفتوح."
+            },
+            {
+              "id": "palm-jetty-fact-1",
+              "scene_id": "palm-jetty",
+              "text": "A wooden jetty crossing the shallows",
+              "caption_en": "A wooden jetty crosses the turquoise shallows beside the beach.",
+              "caption_ar": "رصيف خشبي يعبر المياه الفيروزية الضحلة بجوار الشاطئ."
+            },
+            {
+              "id": "palm-jetty-fact-2",
+              "scene_id": "palm-jetty",
+              "text": "Palm shadows on white sand",
+              "caption_en": "Palm shadows fall across white sand at the waterline.",
+              "caption_ar": "ظلال النخيل تمتد على الرمل الأبيض عند خط الماء."
+            },
+            {
+              "id": "palm-jetty-fact-3",
+              "scene_id": "palm-jetty",
+              "text": "Water, palms and an open horizon in the same view",
+              "caption_en": "Water, palms and an open horizon share this beach-level view.",
+              "caption_ar": "مياه ونخيل وأفق مفتوح في مشهد من مستوى الشاطئ."
+            }
+          ],
+          "reference_only": true
+        },
+        "context_hash": "cb5d7c02ee7f78b5f278fc8ba91b090d794e73178556cb4504f0589da2f059a6",
+        "reference_only": true
+      }
+    },
+    {
+      "id": "reference-w42-sun-1",
+      "slot_id": "reference-w42-sun-1",
+      "brand_hash": "8f3983a1982c0c57b645c10a17f093f463ad3b4b66c81a4f52c27f3f52b49bd3",
+      "format": "photo",
+      "brief": {
+        "angle": "A journey through the visible water and architecture",
+        "hook": "What color is the water where the villas meet the shore?",
+        "key_message": "Discover the visible coastal water colors and architecture of Reethi Faru Resort, Maldives.",
+        "visual_description": "Aerial view of thatched overwater villas connected by a wooden jetty, surrounded by clear turquoise water and island vegetation.",
+        "photo_uri": "assets/photos/reethi_faru/lagoon-villas.jpg",
+        "cta": "Compare the water colors to your next coastal escape.",
+        "must_not": [
+          "invented facilities",
+          "snorkeling claims",
+          "price promises"
+        ],
+        "reel_concept": null
+      },
+      "en": {
+        "caption": "What color is the water where the villas meet the shore?\n\nClear turquoise water surrounds the photographed villas and walkway.\n\nSave the view for your travel moodboard.",
+        "alt_text": "Clear turquoise water surrounds the photographed villas and walkway."
+      },
+      "ar": {
+        "caption": "أي إطلالة تختار؟\n\nفلل بسقوف من القش على امتداد رصيف خشبي وسط مياه فيروزية.\n\nاحفظ هذه الإطلالة لقائمة رحلاتك.",
+        "alt_text": "فلل بسقوف من القش على امتداد رصيف خشبي وسط مياه فيروزية."
+      },
+      "hashtags": [
+        "#ReethiFaru",
+        "#ريثي_فارو",
+        "#Maldives",
+        "#المالديف",
+        "#OceanViews",
+        "#BeachArchitecture",
+        "#CoastalTravel",
+        "#TropicalBeach",
+        "#سفر",
+        "#شاطئ"
+      ],
+      "prompt_hashes": {
+        "visual_brief": "549ab2ca08577f1357f1f9d028a958d117c023b47d3ba8d0b2b005955b17a8f2",
+        "grounded_copy_en": "c280ea5f135af98e3df2fb64853ea790424f09c286526a6613328018c49fecf2",
+        "grounded_copy_ar": "57f80a371388fea23f4d91b18f5c89e61069c303b481a6986caee9c519310f12"
+      },
+      "revision": 0,
+      "ai_disclosure": false,
+      "offer_id": null,
+      "media_path": "/Users/mazenkhaled/Task/outputs/photos/eec597df8c6d24250fd3e4eb28ede634f971ae6196867652729bf190739073bf/photo-1.jpg",
+      "media_status": "rendered",
+      "photo_artifact": {
+        "recipe_hash": "eec597df8c6d24250fd3e4eb28ede634f971ae6196867652729bf190739073bf",
+        "render_recipe": {
+          "kind": "reference-photo-layout-v1",
+          "format": "photo",
+          "sources": [
+            {
+              "id": "lagoon-villas",
+              "label": "Lagoon Villas",
+              "observed": "Aerial view of a line of thatched overwater villas and a connecting jetty, surrounded by clear turquoise water; island trees and white shoreline at the lower left.",
+              "photo": {
+                "uri": "assets/photos/reethi_faru/lagoon-villas.jpg",
+                "sha256": "3e33860a79e5b9daabf170be3279e2ed38f37b4f3b43212ba4c9188bd1f826ce"
+              },
+              "crop": {
+                "x": 234,
+                "y": 0,
+                "width": 2530,
+                "height": 4500
+              },
+              "approved_by": "mazenDDr",
+              "approval_id": "reference-media-request-2026-10-12",
+              "faces_checked": true,
+              "attribution": "Moosa Haleem / Unsplash License - resized, cropped and animated",
+              "author": "Moosa Haleem",
+              "license_id": "Unsplash License",
+              "source_page": "https://unsplash.com/photos/aerial-view-of-green-trees-and-body-of-water-u94aG1t4xPE",
+              "license_url": "https://unsplash.com/license",
+              "reference_only": true,
+              "source": "photo",
+              "clip": null,
+              "allowed_actions": [
+                "scenic_motion",
+                "recorded_footage"
+              ],
+              "property_name": "Reethi Faru Resort, Maldives",
+              "approval_scope": "preview_source_use",
+              "must_include": [
+                {
+                  "x": 1200,
+                  "y": 450,
+                  "width": 900,
+                  "height": 3050
+                },
+                {
+                  "x": 400,
+                  "y": 3400,
+                  "width": 1200,
+                  "height": 600
+                }
+              ]
+            }
+          ],
+          "layout": "contain",
+          "background": "#e8eeee",
+          "width": 1080,
+          "height": 1350,
+          "runtime": {
+            "docker_image_digest": null,
+            "python": "3.12.15",
+            "platform": "macOS-27.0-arm64-arm-64bit",
+            "ffmpeg_sha256": "c8173e9755795978bce8e104f8d7044fabe7d6d84044aba37d3648c6f4e4e1a8",
+            "ffprobe_sha256": "56559c234422b0e3722c54b2bd99bbd8cd83d3732a13a6d207589982a6b7085e",
+            "implementation_sha256": "caf750a245a0424f2c6018dc9d3f80a11c8ba27ffe4c08c8b6d2f99da37435e5",
+            "pillow": "12.3.0",
+            "reshaper": "3.0.1",
+            "bidi": "0.6.11",
+            "torch": null,
+            "cuda": null,
+            "driver": null,
+            "gpu": null,
+            "native_packages": {}
+          },
+          "story": {
+            "brief": {
+              "angle": "A journey through the visible water and architecture",
+              "hook": "What color is the water where the villas meet the shore?",
+              "key_message": "Discover the visible coastal water colors and architecture of Reethi Faru Resort, Maldives.",
+              "visual_description": "Aerial view of thatched overwater villas connected by a wooden jetty, surrounded by clear turquoise water and island vegetation.",
+              "photo_uri": "assets/photos/reethi_faru/lagoon-villas.jpg",
+              "cta": "Compare the water colors to your next coastal escape.",
+              "must_not": [
+                "invented facilities",
+                "snorkeling claims",
+                "price promises"
+              ],
+              "reel_concept": null
+            },
+            "media_ids": [
+              "lagoon-villas"
+            ],
+            "fact_ids": [
+              "lagoon-villas-fact-1",
+              "lagoon-villas-fact-2",
+              "lagoon-villas-fact-3"
+            ],
+            "pillar_intent": "Offer a useful planning or comparison prompt. No price, deal, availability or booking promise.",
+            "sequence_reason": "The aerial view of the villas and jetty provides a clear, memorable perspective of the coastal water colors and architecture.",
+            "cta_kind": "save"
+          }
+        },
+        "files": [
+          {
+            "file": "/Users/mazenkhaled/Task/outputs/photos/eec597df8c6d24250fd3e4eb28ede634f971ae6196867652729bf190739073bf/photo-1.jpg",
+            "file_sha256": "95ed78cafcbde2373a97f621083b0db0086665b883228f64ae97ea5e1abf97ef",
+            "width": 1080,
+            "height": 1350
+          }
+        ],
+        "generated": false,
+        "reference_only": true,
+        "qa_status": "needs_review"
+      },
+      "evidence": {
+        "context": {
+          "selection": {
+            "brief": {
+              "angle": "A journey through the visible water and architecture",
+              "hook": "What color is the water where the villas meet the shore?",
+              "key_message": "Discover the visible coastal water colors and architecture of Reethi Faru Resort, Maldives.",
+              "visual_description": "Aerial view of thatched overwater villas connected by a wooden jetty, surrounded by clear turquoise water and island vegetation.",
+              "photo_uri": "assets/photos/reethi_faru/lagoon-villas.jpg",
+              "cta": "Compare the water colors to your next coastal escape.",
+              "must_not": [
+                "invented facilities",
+                "snorkeling claims",
+                "price promises"
+              ],
+              "reel_concept": null
+            },
+            "media_ids": [
+              "lagoon-villas"
+            ],
+            "fact_ids": [
+              "lagoon-villas-fact-1",
+              "lagoon-villas-fact-2",
+              "lagoon-villas-fact-3"
+            ],
+            "pillar_intent": "Offer a useful planning or comparison prompt. No price, deal, availability or booking promise.",
+            "sequence_reason": "The aerial view of the villas and jetty provides a clear, memorable perspective of the coastal water colors and architecture.",
+            "cta_kind": "save"
+          },
+          "property_name": "Reethi Faru Resort, Maldives",
+          "geography": "Maldives",
+          "source_date_note": "Historical source photographs published in April 2020; present condition and offers are not verified.",
+          "facts": [
+            {
+              "id": "lagoon-villas-fact-1",
+              "scene_id": "lagoon-villas",
+              "text": "Overwater villas joined by a jetty",
+              "caption_en": "Thatched villas follow a wooden jetty through turquoise water.",
+              "caption_ar": "فلل بسقوف من القش على امتداد رصيف خشبي وسط مياه فيروزية."
+            },
+            {
+              "id": "lagoon-villas-fact-2",
+              "scene_id": "lagoon-villas",
+              "text": "Clear turquoise water around the buildings",
+              "caption_en": "Clear turquoise water surrounds the photographed villas and walkway.",
+              "caption_ar": "مياه فيروزية صافية تحيط بالفلل والممر الخشبي في الصورة."
+            },
+            {
+              "id": "lagoon-villas-fact-3",
+              "scene_id": "lagoon-villas",
+              "text": "White shoreline and island vegetation",
+              "caption_en": "From above, white sand curves between island greenery and the lagoon.",
+              "caption_ar": "من أعلى، يلتف الرمل الأبيض بين خضرة الجزيرة ومياه البحيرة الساحلية."
+            }
+          ],
+          "reference_only": true
+        },
+        "context_hash": "7f5c845f974235d9ded58534ca4b9285ffd7c3e7636279b4df0c70151882711e",
+        "reference_only": true
+      }
+    }
+  ],
+  "reviews": [
+    {
+      "post_id": "reference-w42-mon-1",
+      "content_hash": "67cc2ab89b2ca956c7020ec07f976a6488973e908fef5c7edcab74cc8dad8cf1",
+      "rules": {
+        "post_id": "reference-w42-mon-1",
+        "content_hash": "67cc2ab89b2ca956c7020ec07f976a6488973e908fef5c7edcab74cc8dad8cf1",
+        "passed": true,
+        "violations": [],
+        "arabic_ratio": 1.0
+      },
+      "judge": null,
+      "check_path": "human_pending",
+      "decision_trace": {
+        "post_id": "reference-w42-mon-1",
+        "pillar_intent": "Use the visible coastal water colors and clarity. No underwater coral, marine species or snorkeling claims without footage.",
+        "evidence_fact_ids": [
+          "lagoon-villas-fact-1",
+          "lagoon-villas-fact-2",
+          "lagoon-villas-fact-3"
+        ],
+        "media_ids": [
+          "lagoon-villas"
+        ],
+        "flags": [],
+        "human_copy_review": "pending",
+        "engagement_lift": null
+      },
+      "flagged": true,
+      "flags": [
+        "Human source/caption/appeal review pending",
+        "Photo reference only: source fidelity, caption and rights review required"
+      ]
+    },
+    {
+      "post_id": "reference-w42-tue-1",
+      "content_hash": "2fce65737c3a4afa82f97182a4e91b0fbe6a91d339895d94eb8cbe95f2a8027b",
+      "rules": {
+        "post_id": "reference-w42-tue-1",
+        "content_hash": "2fce65737c3a4afa82f97182a4e91b0fbe6a91d339895d94eb8cbe95f2a8027b",
+        "passed": true,
+        "violations": [],
+        "arabic_ratio": 1.0
+      },
+      "judge": null,
+      "check_path": "human_pending",
+      "decision_trace": {
+        "post_id": "reference-w42-tue-1",
+        "pillar_intent": "A shoreline pause and relaxation through visible scenery. No spa facility or treatment claim.",
+        "evidence_fact_ids": [
+          "lagoon-villas-fact-1",
+          "lagoon-villas-fact-2",
+          "lagoon-villas-fact-3",
+          "shoreline-fact-1",
+          "shoreline-fact-2",
+          "shoreline-fact-3",
+          "palm-jetty-fact-1",
+          "palm-jetty-fact-2",
+          "palm-jetty-fact-3"
+        ],
+        "media_ids": [
+          "shoreline",
+          "palm-jetty",
+          "lagoon-villas"
+        ],
+        "flags": [],
+        "human_copy_review": "pending",
+        "engagement_lift": null
+      },
+      "flagged": true,
+      "flags": [
+        "Human source/caption/appeal review pending",
+        "Photo reference only: source fidelity, caption and rights review required"
+      ]
+    },
+    {
+      "post_id": "reference-w42-wed-1",
+      "content_hash": "2f78d95b52d1b2d6b4477de5a228d6daead2a2ea3c9af5bf486db49cfa47b2f1",
+      "rules": {
+        "post_id": "reference-w42-wed-1",
+        "content_hash": "2f78d95b52d1b2d6b4477de5a228d6daead2a2ea3c9af5bf486db49cfa47b2f1",
+        "passed": true,
+        "violations": [],
+        "arabic_ratio": 1.0
+      },
+      "judge": null,
+      "check_path": "human_pending",
+      "decision_trace": {
+        "post_id": "reference-w42-wed-1",
+        "pillar_intent": "Imagine the visible approach and the relationship of villas, water and shoreline. Do not invent guest testimonials or room amenities.",
+        "evidence_fact_ids": [
+          "lagoon-villas-fact-1",
+          "lagoon-villas-fact-2",
+          "lagoon-villas-fact-3",
+          "shoreline-fact-1",
+          "shoreline-fact-2",
+          "shoreline-fact-3",
+          "palm-jetty-fact-1",
+          "palm-jetty-fact-2",
+          "palm-jetty-fact-3"
+        ],
+        "media_ids": [
+          "lagoon-villas",
+          "shoreline",
+          "palm-jetty"
+        ],
+        "flags": [
+          "en: caption substantially repeats another post",
+          "ar: caption substantially repeats another post"
+        ],
+        "human_copy_review": "pending",
+        "engagement_lift": null
+      },
+      "flagged": true,
+      "flags": [
+        "Human source/caption/appeal review pending",
+        "en: caption substantially repeats another post",
+        "ar: caption substantially repeats another post",
+        "Video QA pending: semantic, continuity and facility review required",
+        "Video reference only: cannot represent approved property footage"
+      ]
+    },
+    {
+      "post_id": "reference-w42-thu-1",
+      "content_hash": "66f7db2647899ad91cab5d85b1a3b1923f636893851ec9000bb41552d442e268",
+      "rules": {
+        "post_id": "reference-w42-thu-1",
+        "content_hash": "66f7db2647899ad91cab5d85b1a3b1923f636893851ec9000bb41552d442e268",
+        "passed": true,
+        "violations": [],
+        "arabic_ratio": 1.0
+      },
+      "judge": null,
+      "check_path": "human_pending",
+      "decision_trace": {
+        "post_id": "reference-w42-thu-1",
+        "pillar_intent": "Show the named Maldives reference location; never label it Hurghada or the Red Sea.",
+        "evidence_fact_ids": [
+          "lagoon-villas-fact-1",
+          "lagoon-villas-fact-2",
+          "lagoon-villas-fact-3"
+        ],
+        "media_ids": [
+          "lagoon-villas"
+        ],
+        "flags": [
+          "ar: caption substantially repeats another post"
+        ],
+        "human_copy_review": "pending",
+        "engagement_lift": null
+      },
+      "flagged": true,
+      "flags": [
+        "Human source/caption/appeal review pending",
+        "ar: caption substantially repeats another post",
+        "Photo reference only: source fidelity, caption and rights review required"
+      ]
+    },
+    {
+      "post_id": "reference-w42-fri-1",
+      "content_hash": "48b07c034bd337148daac181e3ba509d24c969cf43f32558482bed3bc5e8d88f",
+      "rules": {
+        "post_id": "reference-w42-fri-1",
+        "content_hash": "48b07c034bd337148daac181e3ba509d24c969cf43f32558482bed3bc5e8d88f",
+        "passed": true,
+        "violations": [],
+        "arabic_ratio": 1.0
+      },
+      "judge": null,
+      "check_path": "human_pending",
+      "decision_trace": {
+        "post_id": "reference-w42-fri-1",
+        "pillar_intent": "Show the named Maldives reference location; never label it Hurghada or the Red Sea.",
+        "evidence_fact_ids": [
+          "lagoon-villas-fact-1",
+          "lagoon-villas-fact-2",
+          "lagoon-villas-fact-3",
+          "shoreline-fact-1",
+          "shoreline-fact-2",
+          "shoreline-fact-3",
+          "palm-jetty-fact-1",
+          "palm-jetty-fact-2",
+          "palm-jetty-fact-3"
+        ],
+        "media_ids": [
+          "lagoon-villas",
+          "shoreline",
+          "palm-jetty"
+        ],
+        "flags": [],
+        "human_copy_review": "pending",
+        "engagement_lift": null
+      },
+      "flagged": true,
+      "flags": [
+        "Human source/caption/appeal review pending",
+        "Photo reference only: source fidelity, caption and rights review required"
+      ]
+    },
+    {
+      "post_id": "reference-w42-sat-1",
+      "content_hash": "6110250672b3137cd2c145aef451f69118c72b18c534533818d4219d17409cfb",
+      "rules": {
+        "post_id": "reference-w42-sat-1",
+        "content_hash": "6110250672b3137cd2c145aef451f69118c72b18c534533818d4219d17409cfb",
+        "passed": true,
+        "violations": [],
+        "arabic_ratio": 1.0
+      },
+      "judge": null,
+      "check_path": "human_pending",
+      "decision_trace": {
+        "post_id": "reference-w42-sat-1",
+        "pillar_intent": "Offer a useful planning or comparison prompt. No price, deal, availability or booking promise.",
+        "evidence_fact_ids": [
+          "lagoon-villas-fact-1",
+          "lagoon-villas-fact-2",
+          "lagoon-villas-fact-3",
+          "shoreline-fact-1",
+          "shoreline-fact-2",
+          "shoreline-fact-3",
+          "palm-jetty-fact-1",
+          "palm-jetty-fact-2",
+          "palm-jetty-fact-3"
+        ],
+        "media_ids": [
+          "lagoon-villas",
+          "shoreline",
+          "palm-jetty"
+        ],
+        "flags": [
+          "en: caption substantially repeats another post",
+          "ar: caption substantially repeats another post"
+        ],
+        "human_copy_review": "pending",
+        "engagement_lift": null
+      },
+      "flagged": true,
+      "flags": [
+        "Human source/caption/appeal review pending",
+        "en: caption substantially repeats another post",
+        "ar: caption substantially repeats another post",
+        "Video QA pending: semantic, continuity and facility review required",
+        "Video reference only: cannot represent approved property footage"
+      ]
+    },
+    {
+      "post_id": "reference-w42-sun-1",
+      "content_hash": "c4500c4ad584d1517f818b1f44af70dcb1e118b3957fdd925932a349b8bce5d4",
+      "rules": {
+        "post_id": "reference-w42-sun-1",
+        "content_hash": "c4500c4ad584d1517f818b1f44af70dcb1e118b3957fdd925932a349b8bce5d4",
+        "passed": true,
+        "violations": [],
+        "arabic_ratio": 1.0
+      },
+      "judge": null,
+      "check_path": "human_pending",
+      "decision_trace": {
+        "post_id": "reference-w42-sun-1",
+        "pillar_intent": "Offer a useful planning or comparison prompt. No price, deal, availability or booking promise.",
+        "evidence_fact_ids": [
+          "lagoon-villas-fact-1",
+          "lagoon-villas-fact-2",
+          "lagoon-villas-fact-3"
+        ],
+        "media_ids": [
+          "lagoon-villas"
+        ],
+        "flags": [
+          "en: caption substantially repeats another post",
+          "ar: caption substantially repeats another post"
+        ],
+        "human_copy_review": "pending",
+        "engagement_lift": null
+      },
+      "flagged": true,
+      "flags": [
+        "Human source/caption/appeal review pending",
+        "en: caption substantially repeats another post",
+        "ar: caption substantially repeats another post",
+        "Photo reference only: source fidelity, caption and rights review required"
+      ]
+    }
+  ],
+  "post_approved": false,
+  "published": false
+}

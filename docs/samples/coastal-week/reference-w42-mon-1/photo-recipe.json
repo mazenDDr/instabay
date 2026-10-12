@@ -1,0 +1,101 @@
+{
+  "kind": "reference-photo-layout-v1",
+  "format": "photo",
+  "sources": [
+    {
+      "id": "lagoon-villas",
+      "label": "Lagoon Villas",
+      "observed": "Aerial view of a line of thatched overwater villas and a connecting jetty, surrounded by clear turquoise water; island trees and white shoreline at the lower left.",
+      "photo": {
+        "uri": "assets/photos/reethi_faru/lagoon-villas.jpg",
+        "sha256": "3e33860a79e5b9daabf170be3279e2ed38f37b4f3b43212ba4c9188bd1f826ce"
+      },
+      "crop": {
+        "x": 234,
+        "y": 0,
+        "width": 2530,
+        "height": 4500
+      },
+      "approved_by": "mazenDDr",
+      "approval_id": "reference-media-request-2026-10-12",
+      "faces_checked": true,
+      "attribution": "Moosa Haleem / Unsplash License - resized, cropped and animated",
+      "author": "Moosa Haleem",
+      "license_id": "Unsplash License",
+      "source_page": "https://unsplash.com/photos/aerial-view-of-green-trees-and-body-of-water-u94aG1t4xPE",
+      "license_url": "https://unsplash.com/license",
+      "reference_only": true,
+      "source": "photo",
+      "clip": null,
+      "allowed_actions": [
+        "scenic_motion",
+        "recorded_footage"
+      ],
+      "property_name": "Reethi Faru Resort, Maldives",
+      "approval_scope": "preview_source_use",
+      "must_include": [
+        {
+          "x": 1200,
+          "y": 450,
+          "width": 900,
+          "height": 3050
+        },
+        {
+          "x": 400,
+          "y": 3400,
+          "width": 1200,
+          "height": 600
+        }
+      ]
+    }
+  ],
+  "layout": "contain",
+  "background": "#e8eeee",
+  "width": 1080,
+  "height": 1350,
+  "runtime": {
+    "docker_image_digest": null,
+    "python": "3.12.15",
+    "platform": "macOS-27.0-arm64-arm-64bit",
+    "ffmpeg_sha256": "c8173e9755795978bce8e104f8d7044fabe7d6d84044aba37d3648c6f4e4e1a8",
+    "ffprobe_sha256": "56559c234422b0e3722c54b2bd99bbd8cd83d3732a13a6d207589982a6b7085e",
+    "implementation_sha256": "a71466351a02da4ab25cda26073ed8f12b2fb274c10bc8ad0ab8d3c08837647d",
+    "pillow": "12.3.0",
+    "reshaper": "3.0.1",
+    "bidi": "0.6.11",
+    "torch": null,
+    "cuda": null,
+    "driver": null,
+    "gpu": null,
+    "native_packages": {}
+  },
+  "story": {
+    "brief": {
+      "angle": "Aerial view of the lagoon villas and jetty",
+      "hook": "1. A line of thatched overwater villas",
+      "key_message": "Experience the serene beauty of Reethi Faru Resort's lagoon villas and turquoise waters.",
+      "visual_description": "Aerial view of a line of thatched overwater villas and a connecting jetty, surrounded by clear turquoise water; island trees and white shoreline at the lower left.",
+      "photo_uri": "assets/photos/reethi_faru/lagoon-villas.jpg",
+      "cta": "Save this view for your dream getaway",
+      "must_not": [
+        "Underwater coral",
+        "Marine species",
+        "Snorkeling",
+        "Spa facilities",
+        "Room amenities"
+      ],
+      "reel_concept": null
+    },
+    "media_ids": [
+      "lagoon-villas"
+    ],
+    "fact_ids": [
+      "lagoon-villas-fact-1",
+      "lagoon-villas-fact-2",
+      "lagoon-villas-fact-3"
+    ],
+    "pillar_intent": "Use the visible coastal water colors and clarity. No underwater coral, marine species or snorkeling claims without footage.",
+    "sequence_reason": "This single aerial view captures the essence of the lagoon villas and their connection to the turquoise waters, offering a clear and serene visual of the resort's coastal setting.",
+    "cta_kind": "save"
+  }
+}

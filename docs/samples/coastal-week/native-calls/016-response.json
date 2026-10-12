@@ -1,0 +1,7 @@
+{
+  "model": "Qwen/Qwen3-8B:nf4@b968826d9c46dd6066d109eabc6255188de91218",
+  "output_json": "{\n  \"brief\": {\n    \"angle\": \"A visual journey from the lagoon villas to the shoreline\",\n    \"hook\": \"What connects the villas to the beach?\",\n    \"key_message\": \"Discover the seamless link between the lagoon villas and the pristine shoreline of Reethi Faru Resort.\",\n    \"visual_description\": \"Aerial view of thatched overwater villas connected by a jetty, surrounded by clear turquoise water, transitioning to a wide beach-level scene with white sand, palm trees, and a blue sky.\",\n    \"photo_uri\": \"assets/photos/reethi_faru/lagoon-villas.jpg\",\n    \"cta\": \"Compare the connection between the villas and the shoreline\",\n    \"must_not\": [\"Underwater details\", \"Spa facilities\", \"Guest testimonials\", \"Price or booking promises\"]\n  },\n  \"media_ids\": [\"lagoon-villas\", \"shoreline\"],\n  \"fact_ids\": [\"lagoon-villas-fact-1\", \"lagoon-villas-fact-2\", \"shoreline-fact-1\", \"shoreline-fact-2\", \"shoreline-fact-3\"],\n  \"pillar_intent\": \"Show the named Maldives reference location; never label it Hurghada or the Red Sea.\",\n  \"sequence_reason\": \"The transition from the lagoon villas to the shoreline highlights the natural connection between the water and the island's landscape, emphasizing the resort's coastal setting.\",\n  \"cta_kind\": \"compare\"\n}",
+  "input_tokens": 2644,
+  "output_tokens": 311,
+  "cost_usd": 0.0
+}

@@ -1,0 +1,241 @@
+{
+  "property": "Reethi Faru Resort, Maldives",
+  "synthetic": false,
+  "published": false,
+  "items": [
+    {
+      "id": "reference-w42-mon-1",
+      "pillar": "underwater",
+      "pillar_name": "Water & nature",
+      "format": "photo",
+      "captions": {
+        "en": "A walkway drawn through turquoise.\n\nThatched villas follow a wooden jetty through turquoise water.\n\nSave this view for your travel shortlist.\n#ReethiFaru #ريثي_فارو #Maldives #المالديف #OceanViews #BeachArchitecture #CoastalTravel #TropicalBeach #سفر #شاطئ",
+        "ar": "ممر خشبي وسط المياه الفيروزية.\n\nفلل بسقوف من القش على امتداد رصيف خشبي وسط مياه فيروزية.\n\nاحفظ هذه الإطلالة لقائمة وجهاتك.\n#ReethiFaru #ريثي_فارو #Maldives #المالديف #OceanViews #BeachArchitecture #CoastalTravel #TropicalBeach #سفر #شاطئ"
+      },
+      "images": [
+        {
+          "uri": "assets/reference-w42-mon-1-1.jpg",
+          "sha256": "95ed78cafcbde2373a97f621083b0db0086665b883228f64ae97ea5e1abf97ef"
+        }
+      ],
+      "video": null,
+      "sources": [
+        {
+          "page": "https://unsplash.com/photos/aerial-view-of-green-trees-and-body-of-water-u94aG1t4xPE",
+          "author": "Moosa Haleem",
+          "scene": "lagoon-villas"
+        }
+      ],
+      "approved": false,
+      "generated": false,
+      "content_hash": "ad6ba8903fdf79b5825c5eb9163dad9b1e7e34b3b8eab4adaa31cee0d1289e6c"
+    },
+    {
+      "id": "reference-w42-tue-1",
+      "pillar": "spa",
+      "pillar_name": "Relaxation",
+      "format": "carousel",
+      "captions": {
+        "en": "Three views for a coastal pause.\n\n1. Thatched villas follow a wooden jetty through turquoise water.\n2. Turquoise shallows meet a curve of white sand.\n3. A wooden jetty crosses the turquoise shallows beside the beach.\n\nCompare these views: villas, shoreline or palm-lined jetty?\n#ReethiFaru #ريثي_فارو #Maldives #المالديف #OceanViews #BeachArchitecture #CoastalTravel #TropicalBeach #سفر #شاطئ",
+        "ar": "ثلاث إطلالات لاستراحة على الشاطئ.\n\n1. فلل بسقوف من القش على امتداد رصيف خشبي وسط مياه فيروزية.\n2. مياه فيروزية تلتقي بانحناءة من الرمل الأبيض.\n3. رصيف خشبي يعبر المياه الفيروزية الضحلة بجوار الشاطئ.\n\nقارن الإطلالات: الفلل أم الشاطئ أم الرصيف المحاط بالنخيل؟\n#ReethiFaru #ريثي_فارو #Maldives #المالديف #OceanViews #BeachArchitecture #CoastalTravel #TropicalBeach #سفر #شاطئ"
+      },
+      "images": [
+        {
+          "uri": "assets/reference-w42-tue-1-1.jpg",
+          "sha256": "95ed78cafcbde2373a97f621083b0db0086665b883228f64ae97ea5e1abf97ef"
+        },
+        {
+          "uri": "assets/reference-w42-tue-1-2.jpg",
+          "sha256": "70d7a6d7cc5e30a8e351868720d3a81e69523e3160072a0e6c050fb48413189c"
+        },
+        {
+          "uri": "assets/reference-w42-tue-1-3.jpg",
+          "sha256": "385790697941a21e20c8ff83e7acf45037e7bc09913f1591c530dbb183d084f8"
+        }
+      ],
+      "video": null,
+      "sources": [
+        {
+          "page": "https://unsplash.com/photos/aerial-view-of-green-trees-and-body-of-water-u94aG1t4xPE",
+          "author": "Moosa Haleem",
+          "scene": "lagoon-villas"
+        },
+        {
+          "page": "https://unsplash.com/photos/palm-trees-on-beach-shore-during-daytime-BcqbKBVZ-Zk",
+          "author": "Moosa Haleem",
+          "scene": "shoreline"
+        },
+        {
+          "page": "https://unsplash.com/photos/palm-trees-on-beach-shore-during-daytime-2opFBNXAJzw",
+          "author": "Moosa Haleem",
+          "scene": "palm-jetty"
+        }
+      ],
+      "approved": false,
+      "generated": false,
+      "content_hash": "286deadde5c5874b44ca606e6cb8c714d3314f116d1e86203ad416eb40c62fc9"
+    },
+    {
+      "id": "reference-w42-wed-1",
+      "pillar": "guests",
+      "pillar_name": "Stay inspiration",
+      "format": "reel",
+      "captions": {
+        "en": "See how the villas meet the water.\n\nA wooden jetty crosses the turquoise shallows beside the beach.\n\nSave this view for your travel shortlist.\nScenes created with AI.\n#ReethiFaru #ريثي_فارو #Maldives #المالديف #OceanViews #BeachArchitecture #CoastalTravel #TropicalBeach #سفر #شاطئ",
+        "ar": "شاهد كيف تلتقي الفلل بالماء.\n\nمياه ونخيل وأفق مفتوح في مشهد من مستوى الشاطئ.\n\nاحفظ هذه الإطلالة لقائمة وجهاتك.\nمشاهد أُنشئت بالذكاء الاصطناعي.\n#ReethiFaru #ريثي_فارو #Maldives #المالديف #OceanViews #BeachArchitecture #CoastalTravel #TropicalBeach #سفر #شاطئ"
+      },
+      "images": [],
+      "video": {
+        "uri": "assets/reference-w42-wed-1.mp4",
+        "sha256": "351fb011925fb7bac3917ec503ba842988a3544818ca84f52a5b1f010c100ee7",
+        "contact": "assets/reference-w42-wed-1-contact.jpg"
+      },
+      "sources": [
+        {
+          "page": "https://unsplash.com/photos/aerial-view-of-green-trees-and-body-of-water-u94aG1t4xPE",
+          "author": "Moosa Haleem",
+          "scene": "lagoon-villas"
+        },
+        {
+          "page": "https://unsplash.com/photos/palm-trees-on-beach-shore-during-daytime-BcqbKBVZ-Zk",
+          "author": "Moosa Haleem",
+          "scene": "shoreline"
+        },
+        {
+          "page": "https://unsplash.com/photos/palm-trees-on-beach-shore-during-daytime-2opFBNXAJzw",
+          "author": "Moosa Haleem",
+          "scene": "palm-jetty"
+        }
+      ],
+      "approved": false,
+      "generated": true,
+      "content_hash": "55226c14a47462d2b0ee8347f4beeb8810e2d1f4bb3bd34089c105cfc8d2b545"
+    },
+    {
+      "id": "reference-w42-thu-1",
+      "pillar": "local",
+      "pillar_name": "The setting",
+      "format": "photo",
+      "captions": {
+        "en": "A shoreline view from Reethi Faru, Maldives.\n\nA wooden jetty crosses the turquoise shallows beside the beach.\n\nCompare these views: villas, shoreline or palm-lined jetty?\n#ReethiFaru #ريثي_فارو #Maldives #المالديف #OceanViews #BeachArchitecture #CoastalTravel #TropicalBeach #سفر #شاطئ",
+        "ar": "إطلالة على شاطئ ريثي فارو في المالديف.\n\nرصيف خشبي يعبر المياه الفيروزية الضحلة بجوار الشاطئ.\n\nقارن الإطلالات: الفلل أم الشاطئ أم الرصيف المحاط بالنخيل؟\n#ReethiFaru #ريثي_فارو #Maldives #المالديف #OceanViews #BeachArchitecture #CoastalTravel #TropicalBeach #سفر #شاطئ"
+      },
+      "images": [
+        {
+          "uri": "assets/reference-w42-thu-1-1.jpg",
+          "sha256": "385790697941a21e20c8ff83e7acf45037e7bc09913f1591c530dbb183d084f8"
+        }
+      ],
+      "video": null,
+      "sources": [
+        {
+          "page": "https://unsplash.com/photos/palm-trees-on-beach-shore-during-daytime-2opFBNXAJzw",
+          "author": "Moosa Haleem",
+          "scene": "palm-jetty"
+        }
+      ],
+      "approved": false,
+      "generated": false,
+      "content_hash": "cf1c3ed712d12b7f2eba0af18030867bfafa5846e1e07397391218f9d8419025"
+    },
+    {
+      "id": "reference-w42-fri-1",
+      "pillar": "local",
+      "pillar_name": "The setting",
+      "format": "carousel",
+      "captions": {
+        "en": "Reethi Faru in three perspectives.\n\n1. Thatched villas follow a wooden jetty through turquoise water.\n2. Turquoise shallows meet a curve of white sand.\n\nCompare these views: villas, shoreline or palm-lined jetty?\n#ReethiFaru #ريثي_فارو #Maldives #المالديف #OceanViews #BeachArchitecture #CoastalTravel #TropicalBeach #سفر #شاطئ",
+        "ar": "ريثي فارو من ثلاث زوايا.\n\n1. فلل بسقوف من القش على امتداد رصيف خشبي وسط مياه فيروزية.\n2. مياه فيروزية تلتقي بانحناءة من الرمل الأبيض.\n\nقارن الإطلالات: الفلل أم الشاطئ أم الرصيف المحاط بالنخيل؟\n#ReethiFaru #ريثي_فارو #Maldives #المالديف #OceanViews #BeachArchitecture #CoastalTravel #TropicalBeach #سفر #شاطئ"
+      },
+      "images": [
+        {
+          "uri": "assets/reference-w42-fri-1-1.jpg",
+          "sha256": "95ed78cafcbde2373a97f621083b0db0086665b883228f64ae97ea5e1abf97ef"
+        },
+        {
+          "uri": "assets/reference-w42-fri-1-2.jpg",
+          "sha256": "70d7a6d7cc5e30a8e351868720d3a81e69523e3160072a0e6c050fb48413189c"
+        }
+      ],
+      "video": null,
+      "sources": [
+        {
+          "page": "https://unsplash.com/photos/aerial-view-of-green-trees-and-body-of-water-u94aG1t4xPE",
+          "author": "Moosa Haleem",
+          "scene": "lagoon-villas"
+        },
+        {
+          "page": "https://unsplash.com/photos/palm-trees-on-beach-shore-during-daytime-BcqbKBVZ-Zk",
+          "author": "Moosa Haleem",
+          "scene": "shoreline"
+        }
+      ],
+      "approved": false,
+      "generated": false,
+      "content_hash": "09315d1c821fb10d841fd8fad13bab23a8a6762a3ed64eb5c17af5321ea16575"
+    },
+    {
+      "id": "reference-w42-sat-1",
+      "pillar": "offers",
+      "pillar_name": "Travel planning",
+      "format": "reel",
+      "captions": {
+        "en": "Compare the views before choosing a destination.\n\nA wooden jetty crosses the turquoise shallows beside the beach.\n\nSave this view for your travel shortlist.\nScenes created with AI.\n#ReethiFaru #ريثي_فارو #Maldives #المالديف #OceanViews #BeachArchitecture #CoastalTravel #TropicalBeach #سفر #شاطئ",
+        "ar": "قارن الإطلالات قبل اختيار الوجهة.\n\nفلل بسقوف من القش على امتداد رصيف خشبي وسط مياه فيروزية.\n\nاحفظ هذه الإطلالة لقائمة وجهاتك.\nمشاهد أُنشئت بالذكاء الاصطناعي.\n#ReethiFaru #ريثي_فارو #Maldives #المالديف #OceanViews #BeachArchitecture #CoastalTravel #TropicalBeach #سفر #شاطئ"
+      },
+      "images": [],
+      "video": {
+        "uri": "assets/reference-w42-sat-1.mp4",
+        "sha256": "72a09ea304b91accbb21f929aa94100628b8e288c0e3c2bc34a7145beabd0a07",
+        "contact": "assets/reference-w42-sat-1-contact.jpg"
+      },
+      "sources": [
+        {
+          "page": "https://unsplash.com/photos/aerial-view-of-green-trees-and-body-of-water-u94aG1t4xPE",
+          "author": "Moosa Haleem",
+          "scene": "lagoon-villas"
+        },
+        {
+          "page": "https://unsplash.com/photos/palm-trees-on-beach-shore-during-daytime-BcqbKBVZ-Zk",
+          "author": "Moosa Haleem",
+          "scene": "shoreline"
+        },
+        {
+          "page": "https://unsplash.com/photos/palm-trees-on-beach-shore-during-daytime-2opFBNXAJzw",
+          "author": "Moosa Haleem",
+          "scene": "palm-jetty"
+        }
+      ],
+      "approved": false,
+      "generated": true,
+      "content_hash": "58b53866981b3738bc851bc9056e19caa16b59edc174ac8aadb81eb3aeaa17eb"
+    },
+    {
+      "id": "reference-w42-sun-1",
+      "pillar": "offers",
+      "pillar_name": "Travel planning",
+      "format": "photo",
+      "captions": {
+        "en": "A coastal view for your travel shortlist.\n\nTurquoise shallows meet a curve of white sand.\n\nCompare these views: villas, shoreline or palm-lined jetty?\n#ReethiFaru #ريثي_فارو #Maldives #المالديف #OceanViews #BeachArchitecture #CoastalTravel #TropicalBeach #سفر #شاطئ",
+        "ar": "إطلالة ساحلية لقائمة وجهاتك.\n\nمياه فيروزية تلتقي بانحناءة من الرمل الأبيض.\n\nقارن الإطلالات: الفلل أم الشاطئ أم الرصيف المحاط بالنخيل؟\n#ReethiFaru #ريثي_فارو #Maldives #المالديف #OceanViews #BeachArchitecture #CoastalTravel #TropicalBeach #سفر #شاطئ"
+      },
+      "images": [
+        {
+          "uri": "assets/reference-w42-sun-1-1.jpg",
+          "sha256": "70d7a6d7cc5e30a8e351868720d3a81e69523e3160072a0e6c050fb48413189c"
+        }
+      ],
+      "video": null,
+      "sources": [
+        {
+          "page": "https://unsplash.com/photos/palm-trees-on-beach-shore-during-daytime-BcqbKBVZ-Zk",
+          "author": "Moosa Haleem",
+          "scene": "shoreline"
+        }
+      ],
+      "approved": false,
+      "generated": false,
+      "content_hash": "c7820905b465c622c828f969aac27a9e3018f1d8ac88b0e2e5ec14807f4b0eac"
+    }
+  ]
+}

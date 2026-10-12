@@ -1,0 +1,7 @@
+{
+  "model": "Qwen/Qwen3-8B:nf4@b968826d9c46dd6066d109eabc6255188de91218",
+  "output_json": "{\n  \"opening\": \"A wooden jetty connects the lagoon to the shore.\",\n  \"action\": \"Compare views of the lagoon to the shoreline.\",\n  \"fact_id\": \"palm-jetty-fact-1\"\n}",
+  "input_tokens": 2452,
+  "output_tokens": 50,
+  "cost_usd": 0.0
+}

@@ -1,0 +1,225 @@
+{
+  "version": 1,
+  "backend": "stub",
+  "shots": {
+    "reel_id": "reference-w42-sat-1",
+    "duration_s": 15,
+    "aspect": "9:16",
+    "shots": [
+      {
+        "id": "hook-001",
+        "role": "hook",
+        "keyframe": {
+          "uri": "docs/samples/coastal-week/reference-w42-sat-1/references/lagoon-villas-3b978fc332d68e2a1b6b89e57f6ac4af2fb08740326a586b21c0814a9eea39f3.jpg",
+          "sha256": "3b978fc332d68e2a1b6b89e57f6ac4af2fb08740326a586b21c0814a9eea39f3",
+          "source": "photo",
+          "scene": "mood",
+          "approved_by": "mazenDDr",
+          "approval_id": "reference-media-request-2026-10-12",
+          "approval_scope": "preview_source_use",
+          "reference_only": true,
+          "faces_checked": true,
+          "attribution": "Moosa Haleem / Unsplash License - resized, cropped and animated",
+          "prompt": null,
+          "seed": null
+        },
+        "end_keyframe": null,
+        "motion_prompt": "Aerial view of the lagoon villas with a slow pull-out to reveal the turquoise water and the connecting jetty",
+        "negative_prompt": "New facilities, buildings added, new objects, people, faces, hands, signage, text, logos,\nwarped architecture, distorted pillars, camera shake, over-saturated colours, abrupt cuts,\nextra petals, duplicated leaves, boiling texture, flickering, frozen still frame.\n",
+        "camera": "static",
+        "seconds": 5.0,
+        "overlay": {
+          "en": "",
+          "ar": ""
+        },
+        "motion_strength": 0.16,
+        "source_clip": {
+          "uri": "docs/samples/coastal-week/motion/lagoon-villas/shot-0.mp4",
+          "sha256": "4eec92818fdd762af6c101bf51d7b3c3ecfe7597f479d6d88d287f0975c7ccbc",
+          "generated": true,
+          "reference_only": true,
+          "credit": "Moosa Haleem / Unsplash License - resized, cropped and animated",
+          "motion_recipe": {
+            "uri": "docs/samples/coastal-week/motion/lagoon-villas/recipe.json",
+            "sha256": "bef20ffd73415af92ce9de9908d41eec2ad550bc06b86721581b78d07f0dd049"
+          },
+          "motion_recipe_hash": "2c898f2e3052a426c376e79f395ddfea43622d3cffdda5b16d4f85007326a58d",
+          "start_s": 0.0
+        },
+        "text_start_s": 0.1,
+        "text_end_s": 1.8,
+        "text_position": "lower"
+      },
+      {
+        "id": "reveal-002",
+        "role": "body",
+        "keyframe": {
+          "uri": "docs/samples/coastal-week/reference-w42-sat-1/references/palm-jetty-4802c59beb1cd5685cced245f0bf73f7c3a5e532d77651cd45bbad69988b374b.jpg",
+          "sha256": "4802c59beb1cd5685cced245f0bf73f7c3a5e532d77651cd45bbad69988b374b",
+          "source": "photo",
+          "scene": "mood",
+          "approved_by": "mazenDDr",
+          "approval_id": "reference-media-request-2026-10-12",
+          "approval_scope": "preview_source_use",
+          "reference_only": true,
+          "faces_checked": true,
+          "attribution": "Moosa Haleem / Unsplash License - resized, cropped and animated",
+          "prompt": null,
+          "seed": null
+        },
+        "end_keyframe": null,
+        "motion_prompt": "Pan left across the jetty to reveal the turquoise water and the palm trees on the beach",
+        "negative_prompt": "New facilities, buildings added, new objects, people, faces, hands, signage, text, logos,\nwarped architecture, distorted pillars, camera shake, over-saturated colours, abrupt cuts,\nextra petals, duplicated leaves, boiling texture, flickering, frozen still frame.\n",
+        "camera": "static",
+        "seconds": 5.0,
+        "overlay": {
+          "en": "",
+          "ar": ""
+        },
+        "motion_strength": 0.16,
+        "source_clip": {
+          "uri": "docs/samples/coastal-week/motion/palm-jetty/shot-0.mp4",
+          "sha256": "afbf3a864945229b0a420040c7a9debd1186667bff615d03ad34827e113eb217",
+          "generated": true,
+          "reference_only": true,
+          "credit": "Moosa Haleem / Unsplash License - resized, cropped and animated",
+          "motion_recipe": {
+            "uri": "docs/samples/coastal-week/motion/palm-jetty/recipe.json",
+            "sha256": "a9ed720a05849e5830bf89a9f0f98904611b84e3fc4214ce69b2ea7ce289dff2"
+          },
+          "motion_recipe_hash": "30fd20402e5302497de51e404216048b63b45161cdc3cf8f7f2c55097dd03548",
+          "start_s": 0.0
+        },
+        "text_start_s": 0.1,
+        "text_end_s": 1.8,
+        "text_position": "lower"
+      },
+      {
+        "id": "payoff-003",
+        "role": "cta",
+        "keyframe": {
+          "uri": "docs/samples/coastal-week/reference-w42-sat-1/references/shoreline-eb9fc71b1fa9174349ebbe5edb397ee5990efcbce0ff49397c73f5c6ef821915.jpg",
+          "sha256": "eb9fc71b1fa9174349ebbe5edb397ee5990efcbce0ff49397c73f5c6ef821915",
+          "source": "photo",
+          "scene": "mood",
+          "approved_by": "mazenDDr",
+          "approval_id": "reference-media-request-2026-10-12",
+          "approval_scope": "preview_source_use",
+          "reference_only": true,
+          "faces_checked": true,
+          "attribution": "Moosa Haleem / Unsplash License - resized, cropped and animated",
+          "prompt": null,
+          "seed": null
+        },
+        "end_keyframe": null,
+        "motion_prompt": "Static wide shot of the shoreline with turquoise water, white sand, and palm trees",
+        "negative_prompt": "New facilities, buildings added, new objects, people, faces, hands, signage, text, logos,\nwarped architecture, distorted pillars, camera shake, over-saturated colours, abrupt cuts,\nextra petals, duplicated leaves, boiling texture, flickering, frozen still frame.\n",
+        "camera": "static",
+        "seconds": 5.0,
+        "overlay": {
+          "en": "",
+          "ar": ""
+        },
+        "motion_strength": 0.16,
+        "source_clip": {
+          "uri": "docs/samples/coastal-week/motion/shoreline/shot-0.mp4",
+          "sha256": "7cadd988eedfb634d4be98cd815f747127b68d2cb591f09fcfed6c5cef09a210",
+          "generated": true,
+          "reference_only": true,
+          "credit": "Moosa Haleem / Unsplash License - resized, cropped and animated",
+          "motion_recipe": {
+            "uri": "docs/samples/coastal-week/motion/shoreline/recipe.json",
+            "sha256": "4f595b821a114b9c04c60d5fe22e3eabe22275d9e9c4728d4c15ebf5e68cd7ac"
+          },
+          "motion_recipe_hash": "4536c22977a43416dc97db0a67375d8d3b534462cc072cb8b21bf8aa718d3f50",
+          "start_s": 0.0
+        },
+        "text_start_s": 0.1,
+        "text_end_s": 1.8,
+        "text_position": "lower"
+      }
+    ],
+    "audio": {
+      "music": {
+        "uri": "docs/samples/coastal-week/reference-w42-sat-1/original-preview-score-4388308afc0eb2676c6d6b0f6c12eeaa887b46f8fe5231139f341510a788bc2d.wav",
+        "sha256": "4388308afc0eb2676c6d6b0f6c12eeaa887b46f8fe5231139f341510a788bc2d"
+      },
+      "music_credit": "Original procedural ambient score; synthesized tones and noise, no external samples or field recordings",
+      "voiceover": null,
+      "voiceover_lang": null
+    }
+  },
+  "model": {
+    "repo": "instabay/editorial-assembler",
+    "revision": "0000000000000000000000000000000000000000",
+    "weights": [],
+    "loras": [],
+    "pipeline_class": "EditorialVideoBackend",
+    "scheduler": "frame-index",
+    "scheduler_config": {},
+    "steps": 1,
+    "cfg": 1.0,
+    "shift": 1.0,
+    "supports_flf": false,
+    "workflow": {
+      "uri": "docs/samples/coastal-week/reference-w42-sat-1/boards/0d0d91a24fa864d65093c3b9bf90baf120900350c7c558ab7cf41738757342bd.json",
+      "sha256": "a765ca1b0678c8c187ffef5d35acb35f09c24772fddfbe322dbbc20dfb8dad2e"
+    },
+    "custom_nodes": {}
+  },
+  "motion": {
+    "width": 576,
+    "height": 1024,
+    "fps": 30,
+    "frames": [
+      150,
+      150,
+      150
+    ],
+    "seeds": [
+      7,
+      7,
+      7
+    ]
+  },
+  "post": {
+    "font": {
+      "uri": "assets/fonts/NotoSansArabic.ttf",
+      "sha256": "63111b5b2e074dd48cc67692e0a2726d86ee94c1c37fe8598257b7b4e87e869e"
+    },
+    "lut": null,
+    "grain_strength": 0,
+    "preset": "fast",
+    "crf": 23,
+    "max_bytes": 300000000,
+    "continuity_threshold": 0.9,
+    "flicker_threshold": 0.08,
+    "palette": [],
+    "preview_label": null,
+    "credit": "Photos: Moosa Haleem\nUnsplash License - cropped and animated",
+    "recorded_motion": null,
+    "style": "editorial",
+    "language": "en",
+    "latin_font": {
+      "uri": "assets/fonts/Manrope.ttf",
+      "sha256": "3ae11c49db0455a3cc33e37d380f20fdb8c7f8b41dc07625c177e3d87a9d6ae6"
+    },
+    "frame_interpolation": "motion"
+  },
+  "runtime": {
+    "docker_image_digest": null,
+    "python": "3.12.15",
+    "platform": "macOS-27.0-arm64-arm-64bit",
+    "ffmpeg_sha256": "c8173e9755795978bce8e104f8d7044fabe7d6d84044aba37d3648c6f4e4e1a8",
+    "ffprobe_sha256": "56559c234422b0e3722c54b2bd99bbd8cd83d3732a13a6d207589982a6b7085e",
+    "implementation_sha256": "a71466351a02da4ab25cda26073ed8f12b2fb274c10bc8ad0ab8d3c08837647d",
+    "pillow": "12.3.0",
+    "reshaper": "3.0.1",
+    "bidi": "0.6.11",
+    "torch": null,
+    "cuda": null,
+    "driver": null,
+    "gpu": null,
+    "native_packages": {}
+  }
+}

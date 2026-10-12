@@ -88,7 +88,21 @@ def export_gallery(
     )
     data = {"property": property_name, "synthetic": synthetic, "published": False, "items": items}
     (output / "gallery.json").write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n")
-    payload = json.dumps(data, ensure_ascii=False).replace("<", "\\u003c")
+    # The companion JSON preserves hashes; the page needs only display data.
+    display = {
+        **data,
+        "items": [
+            {
+                **{k: v for k, v in item.items() if k != "content_hash"},
+                "images": [{"uri": im["uri"]} for im in item["images"]],
+                "video": {k: v for k, v in item["video"].items() if k != "sha256"}
+                if item["video"]
+                else None,
+            }
+            for item in items
+        ],
+    }
+    payload = json.dumps(display, ensure_ascii=False).replace("<", "\\u003c")
     template = (Path(__file__).parent / "gallery.html").read_text()
     page = output / "index.html"
     page.write_text(template.replace("__CAMPAIGN_DATA__", payload))

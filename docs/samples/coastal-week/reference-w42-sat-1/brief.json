@@ -1,0 +1,27 @@
+{
+  "angle": "A serene coastal journey from the lagoon villas to the shoreline",
+  "hook": "What connects the lagoon villas to the beach?",
+  "key_message": "Experience the seamless transition from the tranquil lagoon to the vibrant shoreline at Reethi Faru Resort.",
+  "visual_description": "Aerial view of overwater villas connected by a jetty, transitioning to a wide beach-level scene with turquoise water, white sand, and palm trees.",
+  "photo_uri": "assets/photos/reethi_faru/lagoon-villas.jpg",
+  "cta": "Plan your coastal escape with Reethi Faru Resort",
+  "must_not": [
+    "Underwater details",
+    "Spa facilities",
+    "Guest testimonials",
+    "Price mentions"
+  ],
+  "reel_concept": {
+    "hook": "What connects the lagoon villas to the beach?",
+    "shots": [
+      "lagoon-villas",
+      "shoreline",
+      "palm-jetty"
+    ],
+    "overlay_en": "A seamless coastal journey from the lagoon to the beach",
+    "overlay_ar": "رحلة ساحلية سلسة من البحيرة إلى الشاطئ",
+    "audio": "Soft ambient waves and light wind sounds",
+    "cta": "Plan your coastal escape with Reethi Faru Resort",
+    "cover": "assets/photos/reethi_faru/lagoon-villas.jpg"
+  }
+}

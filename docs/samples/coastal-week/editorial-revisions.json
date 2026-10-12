@@ -1,0 +1,191 @@
+[
+  {
+    "post_id": "reference-w42-mon-1",
+    "reason": "Remove repetitive framing and awkward Arabic; retain source-compiled factual body and alt text. No publication approval.",
+    "raw_copy": {
+      "en": {
+        "caption": "A line of thatched overwater villas stretches through turquoise water.\n\nThatched villas follow a wooden jetty through turquoise water.\n\nSave this view for your dream getaway",
+        "alt_text": "Thatched villas follow a wooden jetty through turquoise water."
+      },
+      "ar": {
+        "caption": "فلل بسطاء على مياه فيروزية\n\nفلل بسقوف من القش على امتداد رصيف خشبي وسط مياه فيروزية.\n\nاحفظ هذا المنظر لرحلة أحلامك",
+        "alt_text": "فلل بسقوف من القش على امتداد رصيف خشبي وسط مياه فيروزية."
+      }
+    },
+    "revised_copy": {
+      "en": {
+        "caption": "A walkway drawn through turquoise.\n\nThatched villas follow a wooden jetty through turquoise water.\n\nSave this view for your travel shortlist.",
+        "alt_text": "Thatched villas follow a wooden jetty through turquoise water."
+      },
+      "ar": {
+        "caption": "ممر خشبي وسط المياه الفيروزية.\n\nفلل بسقوف من القش على امتداد رصيف خشبي وسط مياه فيروزية.\n\nاحفظ هذه الإطلالة لقائمة وجهاتك.",
+        "alt_text": "فلل بسقوف من القش على امتداد رصيف خشبي وسط مياه فيروزية."
+      }
+    },
+    "raw_copy_sha256": "196625b4444b498dd32cce667eaee5386da1e2b3c4f2b4bce878043a47274e00",
+    "edited_copy_sha256": "7b1f495b6f8d08931a815537e38f50f1cc81887ca14c3c10b72e45837d6c8606",
+    "human_review": "pending"
+  },
+  {
+    "post_id": "reference-w42-tue-1",
+    "reason": "Remove repetitive framing and awkward Arabic; retain source-compiled factual body and alt text. No publication approval.",
+    "raw_copy": {
+      "en": {
+        "caption": "A wooden jetty bridges the lagoon to the shoreline.\n\n1. Thatched villas follow a wooden jetty through turquoise water.\n2. Turquoise shallows meet a curve of white sand.\n3. A wooden jetty crosses the turquoise shallows beside the beach.\n\nCompare this view with other destinations.",
+        "alt_text": "Thatched villas follow a wooden jetty through turquoise water. Turquoise shallows meet a curve of white sand. A wooden jetty crosses the turquoise shallows beside the beach."
+      },
+      "ar": {
+        "caption": "فلل على مياه فيروزية تصل إلى الشاطئ\n\n1. فلل بسقوف من القش على امتداد رصيف خشبي وسط مياه فيروزية.\n2. مياه فيروزية تلتقي بانحناءة من الرمل الأبيض.\n3. رصيف خشبي يعبر المياه الفيروزية الضحلة بجوار الشاطئ.\n\nقارن معالم الماء والشاطئ في رحلتك",
+        "alt_text": "فلل بسقوف من القش على امتداد رصيف خشبي وسط مياه فيروزية. مياه فيروزية تلتقي بانحناءة من الرمل الأبيض. رصيف خشبي يعبر المياه الفيروزية الضحلة بجوار الشاطئ."
+      }
+    },
+    "revised_copy": {
+      "en": {
+        "caption": "Three views for a coastal pause.\n\n1. Thatched villas follow a wooden jetty through turquoise water.\n2. Turquoise shallows meet a curve of white sand.\n3. A wooden jetty crosses the turquoise shallows beside the beach.\n\nCompare these views: villas, shoreline or palm-lined jetty?",
+        "alt_text": "Thatched villas follow a wooden jetty through turquoise water. Turquoise shallows meet a curve of white sand. A wooden jetty crosses the turquoise shallows beside the beach."
+      },
+      "ar": {
+        "caption": "ثلاث إطلالات لاستراحة على الشاطئ.\n\n1. فلل بسقوف من القش على امتداد رصيف خشبي وسط مياه فيروزية.\n2. مياه فيروزية تلتقي بانحناءة من الرمل الأبيض.\n3. رصيف خشبي يعبر المياه الفيروزية الضحلة بجوار الشاطئ.\n\nقارن الإطلالات: الفلل أم الشاطئ أم الرصيف المحاط بالنخيل؟",
+        "alt_text": "فلل بسقوف من القش على امتداد رصيف خشبي وسط مياه فيروزية. مياه فيروزية تلتقي بانحناءة من الرمل الأبيض. رصيف خشبي يعبر المياه الفيروزية الضحلة بجوار الشاطئ."
+      }
+    },
+    "raw_copy_sha256": "7be10f88a24208a06dd843764ce6c622c5241a9a7c36fc3e4cc9ffdb446db595",
+    "edited_copy_sha256": "8b5f8740f31c45680fbd7a45788b2a33e19e46074bf122567854aedd3e5bb2f2",
+    "human_review": "pending"
+  },
+  {
+    "post_id": "reference-w42-wed-1",
+    "reason": "Remove repetitive framing and awkward Arabic; retain source-compiled factual body and alt text. No publication approval.",
+    "raw_copy": {
+      "en": {
+        "caption": "A wooden jetty connects the lagoon to the shore.\n\nA wooden jetty crosses the turquoise shallows beside the beach.\n\nCompare views of the lagoon to the shoreline.",
+        "alt_text": "A wooden jetty crosses the turquoise shallows beside the beach."
+      },
+      "ar": {
+        "caption": "الانتقال من الفلل إلى الشاطئ عبر الماء\n\nمياه ونخيل وأفق مفتوح في مشهد من مستوى الشاطئ.\n\nاحفظ رحلتك من الفلل إلى الشاطئ",
+        "alt_text": "مياه ونخيل وأفق مفتوح في مشهد من مستوى الشاطئ."
+      }
+    },
+    "revised_copy": {
+      "en": {
+        "caption": "See how the villas meet the water.\n\nA wooden jetty crosses the turquoise shallows beside the beach.\n\nSave this view for your travel shortlist.",
+        "alt_text": "A wooden jetty crosses the turquoise shallows beside the beach."
+      },
+      "ar": {
+        "caption": "شاهد كيف تلتقي الفلل بالماء.\n\nمياه ونخيل وأفق مفتوح في مشهد من مستوى الشاطئ.\n\nاحفظ هذه الإطلالة لقائمة وجهاتك.",
+        "alt_text": "مياه ونخيل وأفق مفتوح في مشهد من مستوى الشاطئ."
+      }
+    },
+    "raw_copy_sha256": "ab6e9a0b0aa0149fd2d4d7feea1517f106f6980f99bffe608508725517ee5cf6",
+    "edited_copy_sha256": "13a93aedbb78067391e43c489a630f87f9b6f13c1a562145e79c6fa0ae329b03",
+    "human_review": "pending"
+  },
+  {
+    "post_id": "reference-w42-thu-1",
+    "reason": "Remove repetitive framing and awkward Arabic; retain source-compiled factual body and alt text. No publication approval.",
+    "raw_copy": {
+      "en": {
+        "caption": "A wooden jetty bridges the lagoon to the shore.\n\nA wooden jetty crosses the turquoise shallows beside the beach.\n\nCompare views of the shoreline connection.",
+        "alt_text": "A wooden jetty crosses the turquoise shallows beside the beach."
+      },
+      "ar": {
+        "caption": "جسر خشبي يربط بين الشاطئ والفلل\n\nرصيف خشبي يعبر المياه الفيروزية الضحلة بجوار الشاطئ.\n\nقارن بين الإطلالات من الشاطئ والفلل",
+        "alt_text": "رصيف خشبي يعبر المياه الفيروزية الضحلة بجوار الشاطئ."
+      }
+    },
+    "revised_copy": {
+      "en": {
+        "caption": "A shoreline view from Reethi Faru, Maldives.\n\nA wooden jetty crosses the turquoise shallows beside the beach.\n\nCompare these views: villas, shoreline or palm-lined jetty?",
+        "alt_text": "A wooden jetty crosses the turquoise shallows beside the beach."
+      },
+      "ar": {
+        "caption": "إطلالة على شاطئ ريثي فارو في المالديف.\n\nرصيف خشبي يعبر المياه الفيروزية الضحلة بجوار الشاطئ.\n\nقارن الإطلالات: الفلل أم الشاطئ أم الرصيف المحاط بالنخيل؟",
+        "alt_text": "رصيف خشبي يعبر المياه الفيروزية الضحلة بجوار الشاطئ."
+      }
+    },
+    "raw_copy_sha256": "564507fa1d8bd1471f8b2abd50789076de946c1fdbf434b91935f795315affd7",
+    "edited_copy_sha256": "8dbb14580da97a81cfd1ccc7783a54cc8ed6709b68bafdad5dc7a7ec9583cc85",
+    "human_review": "pending"
+  },
+  {
+    "post_id": "reference-w42-fri-1",
+    "reason": "Remove repetitive framing and awkward Arabic; retain source-compiled factual body and alt text. No publication approval.",
+    "raw_copy": {
+      "en": {
+        "caption": "A wooden jetty bridges the lagoon to the shore.\n\n1. Thatched villas follow a wooden jetty through turquoise water.\n2. Turquoise shallows meet a curve of white sand.\n\nCompare the connection between the villas and the shoreline",
+        "alt_text": "Thatched villas follow a wooden jetty through turquoise water. Turquoise shallows meet a curve of white sand."
+      },
+      "ar": {
+        "caption": "الفلل تصل إلى الشاطئ عبر الماء\n\n1. فلل بسقوف من القش على امتداد رصيف خشبي وسط مياه فيروزية.\n2. مياه فيروزية تلتقي بانحناءة من الرمل الأبيض.\n\nقارن الربط بين الفلل والشاطئ",
+        "alt_text": "فلل بسقوف من القش على امتداد رصيف خشبي وسط مياه فيروزية. مياه فيروزية تلتقي بانحناءة من الرمل الأبيض."
+      }
+    },
+    "revised_copy": {
+      "en": {
+        "caption": "Reethi Faru in three perspectives.\n\n1. Thatched villas follow a wooden jetty through turquoise water.\n2. Turquoise shallows meet a curve of white sand.\n\nCompare these views: villas, shoreline or palm-lined jetty?",
+        "alt_text": "Thatched villas follow a wooden jetty through turquoise water. Turquoise shallows meet a curve of white sand."
+      },
+      "ar": {
+        "caption": "ريثي فارو من ثلاث زوايا.\n\n1. فلل بسقوف من القش على امتداد رصيف خشبي وسط مياه فيروزية.\n2. مياه فيروزية تلتقي بانحناءة من الرمل الأبيض.\n\nقارن الإطلالات: الفلل أم الشاطئ أم الرصيف المحاط بالنخيل؟",
+        "alt_text": "فلل بسقوف من القش على امتداد رصيف خشبي وسط مياه فيروزية. مياه فيروزية تلتقي بانحناءة من الرمل الأبيض."
+      }
+    },
+    "raw_copy_sha256": "caa0dea1afc63a7bc443c6e31375af445280231a58f9087e7e4a7c80c8220067",
+    "edited_copy_sha256": "3ded73d17aa961da089772f20cd71864cdb3647bfebd05bfe405e79d3b8a2667",
+    "human_review": "pending"
+  },
+  {
+    "post_id": "reference-w42-sat-1",
+    "reason": "Remove repetitive framing and awkward Arabic; retain source-compiled factual body and alt text. No publication approval.",
+    "raw_copy": {
+      "en": {
+        "caption": "A wooden jetty bridges the lagoon to the shore.\n\nA wooden jetty crosses the turquoise shallows beside the beach.\n\nCompare these photographed views",
+        "alt_text": "A wooden jetty crosses the turquoise shallows beside the beach."
+      },
+      "ar": {
+        "caption": "رحلة ساحلية من الفلل إلى الشاطئ\n\nفلل بسقوف من القش على امتداد رصيف خشبي وسط مياه فيروزية.\n\nاحفظ رحلتك الساحلية",
+        "alt_text": "فلل بسقوف من القش على امتداد رصيف خشبي وسط مياه فيروزية."
+      }
+    },
+    "revised_copy": {
+      "en": {
+        "caption": "Compare the views before choosing a destination.\n\nA wooden jetty crosses the turquoise shallows beside the beach.\n\nSave this view for your travel shortlist.",
+        "alt_text": "A wooden jetty crosses the turquoise shallows beside the beach."
+      },
+      "ar": {
+        "caption": "قارن الإطلالات قبل اختيار الوجهة.\n\nفلل بسقوف من القش على امتداد رصيف خشبي وسط مياه فيروزية.\n\nاحفظ هذه الإطلالة لقائمة وجهاتك.",
+        "alt_text": "فلل بسقوف من القش على امتداد رصيف خشبي وسط مياه فيروزية."
+      }
+    },
+    "raw_copy_sha256": "803b1368ae19c8a19329cbbc97e01f5c02539adbcc9288622115e0911c7a897d",
+    "edited_copy_sha256": "a666fa60acc8b9693e4bf2cc28e4b9f31109145f096e2233710ae2c66a43e9d9",
+    "human_review": "pending"
+  },
+  {
+    "post_id": "reference-w42-sun-1",
+    "reason": "Remove repetitive framing and awkward Arabic; retain source-compiled factual body and alt text. No publication approval.",
+    "raw_copy": {
+      "en": {
+        "caption": "Turquoise shallows meet a curve of white sand\n\nTurquoise shallows meet a curve of white sand.\n\nCompare the lagoon villas and shoreline to plan your coastal journey",
+        "alt_text": "Turquoise shallows meet a curve of white sand."
+      },
+      "ar": {
+        "caption": "رحلة ساحلية من الفلل إلى الشاطئ\n\nمياه فيروزية تلتقي بانحناءة من الرمل الأبيض.\n\nقارن بين الفلل والشاطئ لتحديد وجهتك",
+        "alt_text": "مياه فيروزية تلتقي بانحناءة من الرمل الأبيض."
+      }
+    },
+    "revised_copy": {
+      "en": {
+        "caption": "A coastal view for your travel shortlist.\n\nTurquoise shallows meet a curve of white sand.\n\nCompare these views: villas, shoreline or palm-lined jetty?",
+        "alt_text": "Turquoise shallows meet a curve of white sand."
+      },
+      "ar": {
+        "caption": "إطلالة ساحلية لقائمة وجهاتك.\n\nمياه فيروزية تلتقي بانحناءة من الرمل الأبيض.\n\nقارن الإطلالات: الفلل أم الشاطئ أم الرصيف المحاط بالنخيل؟",
+        "alt_text": "مياه فيروزية تلتقي بانحناءة من الرمل الأبيض."
+      }
+    },
+    "raw_copy_sha256": "5b9a9235f114cfcff21c0cd93f248e1c49d21d984c746ea3fab2e22a8c737d24",
+    "edited_copy_sha256": "518cbdb55aafccb985496557e612b2b9a1979883fa280ab9751a5648e5c7d4ae",
+    "human_review": "pending"
+  }
+]

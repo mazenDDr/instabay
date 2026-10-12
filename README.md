@@ -1,5 +1,11 @@
 # Insta Bay
 
+The new [coastal mixed-week preview](docs/samples/coastal-week/README.md) uses source-grounded
+scenic reels, three single photographs and two real carousels, with EN/AR captions.
+See [content direction and generation limits](docs/CONTENT_DIRECTION.md).
+Run `uv run instabay reference-week` for the offline mixed-format draft and local review gallery;
+it stops at human approval and never publishes the historical reference property.
+
 An approval-first Instagram marketing system for a fictional Red Sea resort in Hurghada.
 The intended weekly loop is brand → plan → native EN/AR content → checks → human approval
 → publishing → metrics → learning. **LLMs write, statistics decide, a human approves.**

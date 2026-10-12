@@ -1,0 +1,27 @@
+{
+  "angle": "A seamless transition from the lagoon villas to the shoreline, highlighting the connection between the water and the island's natural beauty",
+  "hook": "What connects the villas to the shore?",
+  "key_message": "Experience the natural flow from the lagoon to the beach at Reethi Faru Resort, Maldives.",
+  "visual_description": "Aerial view of overwater villas and a wooden jetty, transitioning to a beach-level scene with turquoise water, white sand, and palm trees.",
+  "photo_uri": "assets/photos/reethi_faru/lagoon-villas.jpg",
+  "cta": "Plan your journey from the lagoon to the shore at Reethi Faru Resort.",
+  "must_not": [
+    "Underwater details",
+    "Spa facilities",
+    "Guest testimonials",
+    "Room amenities"
+  ],
+  "reel_concept": {
+    "hook": "What connects the villas to the shore?",
+    "shots": [
+      "lagoon-villas",
+      "shoreline",
+      "palm-jetty"
+    ],
+    "overlay_en": "A seamless transition from the lagoon to the shore at Reethi Faru Resort, Maldives.",
+    "overlay_ar": "الانتقال السلس من البحيرة إلى الشاطئ في فندق ريثي فارو، مالديب.",
+    "audio": "Soft ambient waves and light wind sounds",
+    "cta": "Plan your journey from the lagoon to the shore at Reethi Faru Resort.",
+    "cover": "assets/photos/reethi_faru/lagoon-villas.jpg"
+  }
+}

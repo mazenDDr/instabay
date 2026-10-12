@@ -1,0 +1,7 @@
+{
+  "model": "Qwen/Qwen3-8B:nf4@b968826d9c46dd6066d109eabc6255188de91218",
+  "output_json": "{\n  \"opening\": \"Turquoise shallows meet a curve of white sand\",\n  \"action\": \"Compare the lagoon villas and shoreline to plan your coastal journey\",\n  \"fact_id\": \"shoreline-fact-1\"\n}",
+  "input_tokens": 1608,
+  "output_tokens": 51,
+  "cost_usd": 0.0
+}

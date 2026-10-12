@@ -1,0 +1,18 @@
+{
+  "recipe_hash": "4536c22977a43416dc97db0a67375d8d3b534462cc072cb8b21bf8aa718d3f50",
+  "recipe_file_sha256": "4f595b821a114b9c04c60d5fe22e3eabe22275d9e9c4728d4c15ebf5e68cd7ac",
+  "clips": [
+    {
+      "file": "outputs/wan-motion/4536c22977a43416dc97db0a67375d8d3b534462cc072cb8b21bf8aa718d3f50/shot-0.mp4",
+      "sha256": "7cadd988eedfb634d4be98cd815f747127b68d2cb591f09fcfed6c5cef09a210",
+      "seed": 2500,
+      "seconds": 364.074150756991
+    }
+  ],
+  "seconds": 384.083331531001,
+  "peak_vram_bytes": 14767928320,
+  "ai_disclosure": true,
+  "reference_only": true,
+  "cost_usd_api_fees": 0,
+  "quality_status": "awaiting visual review; not publish approved"
+}

@@ -62,6 +62,25 @@ def test_mixed_week_preserves_artifacts_sources_and_unapproved_boundary(tmp_path
         )
         assert "Reethi Faru" in text.getvalue() and "Photo 3" in text.getvalue()
         saved = [p.content_hash for p in posts]
+        import json
+
+        from instabay.content.export import export_gallery
+
+        gallery = export_gallery(
+            posts,
+            {s.id: s.arm.pillar for s in runner.repository.slots("reference-w42")},
+            ROOT,
+            tmp_path / "gallery",
+            synthetic=True,
+        )
+        metadata = json.loads((gallery.parent / "gallery.json").read_text())
+        assert len(metadata["items"]) == 7
+        assert metadata["items"][0]["content_hash"] == posts[0].content_hash
+        assert posts[0].content_hash not in gallery.read_text()
+        singles = [
+            p.evidence.context["selection"]["media_ids"][0] for p in posts if p.format == "photo"
+        ]
+        assert len(set(singles)) == 3
     repository = Repository(db)
     assert [repository.post(i).content_hash for i in result.post_ids] == saved
     repository.close()
