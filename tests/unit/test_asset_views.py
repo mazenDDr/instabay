@@ -136,6 +136,9 @@ def test_dashboard_upload_review_mix_plan_and_safe_media(library, tmp_path):
         client.get(f"/media/assets/{created['id']}?w=120").headers["content-type"] == "image/jpeg"
     )
     assert client.get("/media/run?path=../ws/assets.sqlite").status_code == 404
+    (tmp_path / ".env").write_text("SECRET=1")
+    assert client.get("/media/run?path=.env").status_code == 404
+    assert client.get("/media/run?path=ws/assets.sqlite").status_code == 404
     assert client.get("/api/runs").json() == []
     assert (
         client.post(f"/api/assets/{created['id']}/variants", json={"preset": "aerial"}).status_code
