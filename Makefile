@@ -29,8 +29,7 @@ bench:
 	$(UV) run --offline --no-sync instabay bench --readme README.md
 
 record:
-	@echo '# HUMAN: real cassette recording is not implemented; see docs/BACKLOG.md.'
-	@exit 2
+	$(UV) run --offline --no-sync instabay record $(ARGS)
 
 render:
 	$(UV) run --offline --no-sync instabay render --recipe "$(RECIPE)" --backend "$(or $(BACKEND),stub)"

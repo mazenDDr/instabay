@@ -3,8 +3,10 @@
 Insta Bay is an approval-first bilingual marketing prototype for a fictional Hurghada resort.
 Python 3.12, Pydantic boundaries, SQLite and LangGraph implement an offline weekly loop.
 LLMs produce content; code plans and learns; a human authorizes exact snapshots. The default
-runtime uses `FakeLLM`, concept-only reels and `DryRunPublisher`. No production LLM client,
-end-to-end live campaign or native GPU quality result is implemented/verified.
+runtime uses `FakeLLM`, concept-only reels and `DryRunPublisher`. An explicit production
+generator uses a stored frozen brand, native or recorded model calls, and source-backed
+photo/carousel/reel media. It stops at human approval. Native motion and caption generation
+have been exercised on gpu-box; an end-to-end live Instagram campaign remains pending.
 
 ## Weekly execution
 
@@ -40,14 +42,14 @@ Only the benchmark oracle reads them, to measure regret against its declared fea
 |---|---|---|
 | Typed domain | `core/schemas.py`, `core/tables.py` | Validated brand, slot, post, approval and API/media boundaries; UTC DB times, Cairo schedules. |
 | Content | `agents/`, `prompts/`, `llm.py` | Shared brief, independent EN/AR calls, hashed Markdown prompts, schema validation and one invalid-output retry. |
-| External LLM | `adapters/llm.py:LLMClient`, `fake_llm.py` | Fixture implementation only; exact unknown keys fail. Production provider/recording is pending. |
-| Orchestration | `graph.py`, `cycle.py` | Durable checkpoint IDs and restart-safe human interrupt; default generation remains fixture-only. |
+| External LLM | `adapters/llm.py:LLMClient`, `fake_llm.py` | Offline fixtures, opt-in pinned local native client, private atomic recording and exact replay without fallback. |
+| Orchestration | `graph.py`, `cycle.py` | Durable checkpoints and restart-safe human interrupt; the separate production command requires a frozen brand. |
 | Content checks | `core/rules.py`, `agents/judge.py`, `decisions/cascade.py` | Rules first, optional calibrated atomic decisions, judge fallback, at most one caption revision. |
 | Decision engines | `decisions/engine.py`, `jev_http.py`, `laya_local.py` | Exact-input fake, opt-in HTTP/local interfaces; native calibration/accuracy remain unmeasured. |
 | Approval/storage | `repository.py`, `approval.py` | Append-only decisions, timed edits/reasons, exact current hash and latest decision required. |
 | Publishing | `adapters/publisher.py`, `graph_publisher.py` | Atomic dry-run intents; explicit guarded native adapter for prepared non-demo media. |
 | Insights/learning | `adapters/graph_insights.py`, `core/learning.py`, `core/optimizer.py` | Missing real values remain missing; live reward normalization/learning is blocked. |
-| Video | `core/recipe.py`, `video/`, `gpu_worker/` | Verified L0 cache, actual CPU MP4 tests, private queue; Wan/Comfy code is human-only and unverified. |
+| Video | `core/recipe.py`, `video/`, `gpu_worker/` | Verified recipe cache, CPU assembly, durable photo-motion capture and measured native Wan preview; Comfy quality remains unverified. |
 | Evaluation | `benchmarks/`, `bench/`, `tests/` | Frozen synthetic comparisons, blinded human packets, grouped intervals and offline contracts. |
 
 These are explicit Python agents and workflow nodes, not a deployed autonomous agent service.
@@ -121,3 +123,11 @@ not deployed. No token or environment file is bundled into either image.
 
 See [research](RESEARCH.md), [go-live prerequisites](GO_LIVE.md), [decision details](DECISIONS.md),
 [video limits](VIDEO.md), [Graph retry semantics](INSTAGRAM.md), and the [ADR index](adr/README.md).
+
+## Production generation update
+
+The non-demo CLI selects a stored frozen constitution instead of redrafting a brand. It uses
+source facts and a physical-motion catalog, private atomic native cassettes, exact replay,
+budget-aware checkpoint resume and a review gallery. Photo animation precedes loading the
+caption model and retains byte-exact conditioning. [Production generation](PRODUCTION_GENERATION.md)
+describes this implemented path. Instagram and live reward/learning remain separate pending work.

@@ -1,10 +1,11 @@
 # Go-live runbook
 
-The offline prototype is verified. A real campaign is not ready to run. There is no production
-LLM client/recorder, complete live drafting workflow, calibrated native evidence or verified live
-Instagram post. Native publishing consumes already prepared non-demo database posts. Completing
-the eight build-phase gates does not remove these prerequisites. Keep `INSTABAY_MODE=dry_run`.
-[Current engineering backlog](BACKLOG.md) distinguishes missing code from human preparation.
+The offline prototype, real local generation and private recording/replay are implemented.
+The [production generation workflow](PRODUCTION_GENERATION.md) creates non-demo mixed content
+under a stored human-frozen brand and stops at approval. Instagram is deliberately pending.
+No live account, public media host, calibrated native evidence or live reward/learning is
+verified. Keep `INSTABAY_MODE=dry_run` until the separate Instagram preparation is complete.
+[Current backlog](BACKLOG.md) distinguishes implemented generation from remaining launch work.
 
 ## 1. Reproduce the offline system
 
@@ -37,11 +38,11 @@ in [VIDEO.md](VIDEO.md); those previews remain reference-only and cannot go live
 
 ## 2. Close the engineering prerequisites
 
-A production `LLMClient` must return measured model/usage data through the existing typed
-boundary. Implement human-invoked cassette recording before using `make record`; that target
-currently refuses to run. Integrate the real client into a non-demo drafting/check workflow,
-including retry, budget, redaction and exact prompt provenance. An API key alone does not turn
-the current FakeLLM demo into a real generator.
+Use `instabay generate` with the pinned private native client or an explicit recorded replay.
+`make record ARGS="..."` now records private cassettes, and native generation captures them
+automatically. [PRODUCTION_GENERATION.md](PRODUCTION_GENERATION.md) describes source preparation,
+photo animation, frozen-brand selection, budgets, retry, resume and review. The default
+FakeLLM demo remains an offline demo and is not relabeled as real inference.
 
 Keep live observations out of the optimizer until a reviewed bounded reward and calibrated
 executed-arm evidence are wired. Real interaction types overlap; the simulator's exclusive
@@ -72,7 +73,9 @@ Leave absent/failed cells judge-only; never use synthetic profiles to authorize 
 # HUMAN: run Phase 0 spikes on gpu-box through Tailscale and record `docs/adr/0000-spikes.md`.
 Use the prepared `main` environment; verify compatibility without replacing its CUDA torch
 build. Prepare pinned local model/config hashes and record actual package/GPU/driver/image
-identity. Confirm memory fit and selected checkpoint FLF behavior; no model fit has been measured.
+identity. The measured Wan5B photo-to-video preset and NF4 Qwen8B fit the prepared 16 GB GPU, one model at
+a time. Those trials do not establish FLF support, cross-machine determinism or calibrated
+semantic quality. Preserve their recipe/runtime evidence.
 
 Approve photo crops, rights, guests/signs and semantic fidelity before native motion. Generated
 stills may depict mood, not invented amenities. Generated footage requires EN/AR caption
@@ -97,9 +100,8 @@ Those pages were inaccessible during this phase's verification. Example values a
 platform guarantee. Store credentials only in git-ignored `.env` or CI secrets.
 
 Copy `config/instagram.example.yaml` to a reviewed account configuration with your immutable
-public media host allowlist. Keep tokens out of YAML. Use a separate non-demo run under the
-frozen brand; the CLI does not create this production workflow for you. Prepare it through the
-reviewed application/repository integration after the missing drafting work is complete.
+public media host allowlist. Keep tokens out of YAML. Use `generate` to prepare a separate non-demo run under the frozen brand. Review the resulting
+photos, carousels, reels and exact post snapshots before the distinct publishing step.
 
 Attach verified `MediaManifest` bytes/metadata/public HTTPS URLs to the post before checks and
 approval. Feed assets need verified source/rights/specs; reels also need the exact stored recipe,

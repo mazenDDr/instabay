@@ -15,13 +15,16 @@ The intended weekly loop is brand → plan → native EN/AR content → checks �
 The offline prototype includes a resumable weekly content loop, mandatory exact-content human
 approval, constrained Thompson sampling, a frozen simulator, five-metric benchmark harness,
 guarded Instagram adapters, scoped decision calibration and a recipe-cached Video Studio.
-**252 offline tests** cover the software boundaries. A synthetic 15-second CPU reel renders at
+**327 offline tests** cover the software boundaries. A synthetic 15-second CPU reel renders at
 1080×1920/30 fps; uncached replay matches all 450 decoded frames on its tested runtime.
 
-Default generation uses canned `FakeLLM` responses and judge samples. Production LLM/recording
-integration, real bilingual calibration/ratings, approved resort crops, native GPU quality and
-end-to-end live publishing/learning remain pending. No real model accuracy, Instagram uplift,
-paid savings or GPU fit is claimed. Build-phase completion is not go-live authorization.
+The default demo uses canned `FakeLLM` responses. Real local generation is also implemented:
+[production drafting](docs/PRODUCTION_GENERATION.md) loads an already human-frozen brand,
+animates approved photographs, generates mixed EN/AR posts, records/replays native calls and
+stops at approval. The owner accepted the demonstrated photo-to-video direction. Instagram,
+live learning and calibrated quality claims remain pending; reference media stays protected.
+No acceptance of a demo is converted into a stored publication approval.
+See [native generation and offline replay evidence](docs/production-generation-verification.json).
 
 Phase 8 provides the documentation and reproducible fresh-clone Docker gate. Read
 [architecture](docs/ARCHITECTURE.md), [research](docs/RESEARCH.md), [go-live prerequisites](docs/GO_LIVE.md),
@@ -173,7 +176,8 @@ a provider whose API does not expose preflight usage cannot guarantee an exact s
 
 The default configuration is `dry_run`. Secrets belong in git-ignored `.env` or CI secrets;
 `.env.example` contains empty credential fields. Native Graph publishing and insights adapters
-are available for HUMAN-invoked, prepared non-demo posts; no real LLM adapter exists yet.
+are available for HUMAN-invoked, prepared non-demo posts. The opt-in local LLM adapter and
+private recording/replay are implemented; Instagram integration remains pending.
 Dry-run publishing requires the **latest stored APPROVED/EDITED decision for the exact
 content hash**. Changing content invalidates approval. SQLite holds a write transaction
 across the guard, artifact write and receipt, so edits cannot race an export. Invalid hard-rule
@@ -265,7 +269,7 @@ from offline demos, calibrated benchmarks, brand freezing and post approval.
 - # HUMAN: record actual GPU/Laya/FLF/runtime spikes in `docs/adr/0000-spikes.md`.
 - # HUMAN: create provider/Meta keys, freeze verified brand facts and approve photo crops.
 - # HUMAN: provide independent benchmark/calibration labels and native video QA.
-- # HUMAN: real cassette recording awaits the missing recorder; `make record` currently refuses.
+- # HUMAN: native recording is available through `make record ARGS="..."`; captures remain private.
 - # HUMAN: approve the next backlog/deployment scope; no native job or live publish starts automatically.
 
 The simulator was committed separately in `29fed9c` before optimizer code in `98c9202`.

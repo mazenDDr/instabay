@@ -1,0 +1,95 @@
+{
+  "validation_date": "2026-10-12",
+  "scope": "Non-demo workflow validation with historical Reethi Faru reference media and a disposable synthetic frozen-brand fixture; not a customer brand freeze, quality certification or post approval.",
+  "brand_fixture_actor": "__synthetic_validation_fixture_not_customer_brand__",
+  "local_checks": {
+    "offline_tests_passed": 327,
+    "ruff": "passed",
+    "mypy_strict": "passed",
+    "pre_commit": "passed",
+    "github_ci": "excluded as a gate by explicit owner instruction; billing and workflow settings unchanged"
+  },
+  "generation": {
+    "mode": "native",
+    "model": "Qwen/Qwen3-8B:nf4@b968826d9c46dd6066d109eabc6255188de91218",
+    "formats": {
+      "photo": 3,
+      "carousel": 2,
+      "reel": 2
+    },
+    "usage": {
+      "calls": 24,
+      "tokens": 59684,
+      "cost_usd": 0.0
+    },
+    "capture_entries": 24,
+    "capture_statuses": {
+      "complete": 24
+    },
+    "invalid_schema_attempts": 1,
+    "raw_capture_scope": "private ignored outputs only"
+  },
+  "motion": {
+    "new_native_jobs_completed": 1,
+    "native_recipe_hash": "3634eeaeb0f73c7d54fd7e688b6815c9187f8021d2cf10b4a5b65be9b506dee5",
+    "raw_clip_sha256": "6b454d565eb6ef76844592aee5aff4211560e7c1c4060b832e7764c674d03bc5",
+    "seed": 2900,
+    "native_width": 576,
+    "native_height": 1024,
+    "native_frames": 61,
+    "native_fps": 12,
+    "steps": 40,
+    "guidance": 5,
+    "shift": 3,
+    "inference_seconds": 371.8266779749829,
+    "total_worker_seconds": 392.2107806199929,
+    "peak_torch_allocated_bytes": 14767928320,
+    "ai_disclosure": true,
+    "reference_only": true,
+    "quality_status": "awaiting visual review; not publish approved"
+  },
+  "replay": {
+    "exact_bilingual_copy_and_formats_match": true,
+    "mac": "passed",
+    "docker_network_none": "passed",
+    "new_provider_calls": 0,
+    "stored_conditioning_reused_across_ffmpeg_builds": true,
+    "standalone_recorded_requests_after_repeat": 1
+  },
+  "chrome": {
+    "browser": "154.0.8037.99",
+    "videos": [
+      {
+        "duration": 15,
+        "width": 1080,
+        "height": 1920,
+        "time": 1.177218,
+        "error": null
+      },
+      {
+        "duration": 15,
+        "width": 1080,
+        "height": 1920,
+        "time": 0,
+        "error": null
+      }
+    ],
+    "errors": [],
+    "overflow": false,
+    "carousel_navigation": true,
+    "arabic_captions": true
+  },
+  "state": {
+    "demo": false,
+    "status": "approval_pending",
+    "stored_post_approvals": 0,
+    "published": false,
+    "instagram_calls": 0
+  },
+  "cleanup": {
+    "caption_server": "stopped",
+    "dedicated_ssh_tunnel": "stopped",
+    "gpu_memory_mib": 496,
+    "gpu_utilization_percent": 0
+  }
+}
