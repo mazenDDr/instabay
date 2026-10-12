@@ -35,7 +35,7 @@ class ArabicWriter:
                 template_name="grounded_copy_ar",
                 slot_id=slot.id,
                 inputs=inputs,
-                output_type=caption_schema(visual_context, previous_openings or []),
+                output_type=caption_schema(visual_context),
                 max_output_tokens=800,
             )
             if draft.fact_id not in {f.id for f in visual_context.facts}:

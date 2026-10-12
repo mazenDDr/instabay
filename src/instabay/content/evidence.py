@@ -151,10 +151,8 @@ class EvidenceCopyDraft(Boundary):
     fact_id: Identifier
 
 
-def caption_schema(
-    context: EvidenceCopyContext, previous_openings: list[str]
-) -> type[EvidenceCopyDraft]:
-    """FR-04: reject unsupported fact IDs and exact repeated hooks at the provider boundary."""
+def caption_schema(context: EvidenceCopyContext) -> type[EvidenceCopyDraft]:
+    """FR-04: reject unsupported facts; style defects remain visible in pending review."""
     from collections.abc import Callable
     from typing import cast
 
@@ -165,8 +163,6 @@ def caption_schema(
     def grounded(draft: EvidenceCopyDraft) -> EvidenceCopyDraft:
         if draft.fact_id not in ids:
             raise ValueError("Caption cites an unknown visual fact")
-        if draft.opening.casefold().strip() in {v.casefold().strip() for v in previous_openings}:
-            raise ValueError("Opening exactly repeats a previous post")
         return draft
 
     return cast(

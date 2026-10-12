@@ -57,7 +57,28 @@ class VideoDirector:
                 if len({b.object_id for b in intent.beats}) != len(intent.beats):
                     raise ValueError("Each scenic scene needs a distinct source object")
                 if [b.object_id for b in intent.beats] in (previous_scene_orders or []):
-                    raise ValueError("Choose a different scene order for this pillar's film")
+                    # Editorial diversity is mechanical, not a reason to invent more scenery.
+                    beats = intent.beats[1:] + intent.beats[:1]
+                    beats = [
+                        b.model_copy(
+                            update={
+                                "role": "hook"
+                                if i == 0
+                                else "cta"
+                                if i == len(beats) - 1
+                                else "reveal",
+                                "brief_anchor": "hook"
+                                if i == 0
+                                else "cta"
+                                if i == len(beats) - 1
+                                else "visual_description",
+                            }
+                        )
+                        for i, b in enumerate(beats)
+                    ]
+                    intent = ScenicIntent.model_validate(
+                        intent.model_copy(update={"beats": beats}).model_dump()
+                    )
                 VideoBoard(
                     brief=brief,
                     brief_hash=canonical_hash(brief),
