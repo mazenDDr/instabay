@@ -62,12 +62,16 @@ class LayaLocalEngine:
                     LocalRouter,
                     module.Router(
                         device="cuda",
-                        models={k: str(v) for k, v in self.models.items()},
+                        models={
+                            **{k: str(v) for k, v in self.models.items()},
+                            "typed_decisions": None,
+                        },
                         max_loaded=1,
                         preload=False,
+                        auto_task_detection=False,
                     ),
                 )
             raw = self.router.predict(state, {k: v.wire() for k, v in questions.items()})
-        except (ImportError, RuntimeError, OSError):
+        except (ImportError, AttributeError, TypeError, RuntimeError, OSError):
             raise DecisionUnavailableError("Optional Laya runtime/checkpoint unavailable") from None
         return normalize_answers(raw, questions)
