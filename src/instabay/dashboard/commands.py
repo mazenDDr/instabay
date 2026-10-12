@@ -6,6 +6,7 @@ from typing import Annotated
 import typer
 
 from instabay.assets.commands import (
+    VIEW_REVISION,
     VISION_ORIGIN,
     WORKSPACE,
     BrandFile,
@@ -21,8 +22,6 @@ from instabay.assets.variants import (
     ViewBackend,
     make_view,
 )
-
-VIEW_REVISION = "main"  # HUMAN: pin the FLUX.2-klein-4B commit once measured on gpu-box.
 
 
 def register_dashboard_commands(app: typer.Typer) -> None:

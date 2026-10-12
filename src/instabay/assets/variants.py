@@ -222,21 +222,30 @@ def make_view(
             people=None,
         )
     if judge is not None:
-        try:
-            answers = judge.decide(
-                "Original resort photograph, then a generated camera view of it.",
-                fidelity_questions(),
-                [library.path(parent), library.path(view)],
-            )
-            library.record_fidelity(
-                view.id,
-                {
-                    "engine": judge.engine_id,
-                    "synthetic": judge.synthetic,
-                    "same_place": answers["same_place"].noul,
-                    "photoreal": answers["photoreal"].noul,
-                },
-            )
-        except DecisionUnavailableError as error:
-            library.record_fidelity(view.id, {"engine": judge.engine_id, "error": str(error)})
+        check_fidelity(library, view, judge)
+    return library.get(view.id)
+
+
+def check_fidelity(library: AssetLibrary, view: Asset, judge: VisionDecisionEngine) -> Asset:
+    """Rule 6: d3-flash compares (original, view); the score informs, the owner decides."""
+    if view.parent_id is None:
+        raise ValueError("Only generated views have an original to compare with")
+    parent = library.get(view.parent_id)
+    try:
+        answers = judge.decide(
+            "Original resort photograph, then a generated camera view of it.",
+            fidelity_questions(),
+            [library.path(parent), library.path(view)],
+        )
+        library.record_fidelity(
+            view.id,
+            {
+                "engine": judge.engine_id,
+                "synthetic": judge.synthetic,
+                "same_place": answers["same_place"].noul,
+                "photoreal": answers["photoreal"].noul,
+            },
+        )
+    except DecisionUnavailableError as error:
+        library.record_fidelity(view.id, {"engine": judge.engine_id, "error": str(error)})
     return library.get(view.id)

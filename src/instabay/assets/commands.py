@@ -1,5 +1,6 @@
 """FR-04: `instabay assets ...` for owners who prefer the terminal to the dashboard."""
 
+import json
 from datetime import date
 from pathlib import Path
 from typing import Annotated
@@ -24,6 +25,7 @@ from instabay.decisions.vision import (
 WORKSPACE = Path("data/workspace")
 VISION_ORIGIN = "http://127.0.0.1:18790"
 D3_REVISION = "main"  # HUMAN: pin the downloaded commit hash once d3-flash is verified on gpu-box.
+VIEW_REVISION = "main"  # HUMAN: pin the FLUX.2-klein-4B commit once measured on gpu-box.
 
 Workspace = Annotated[Path, typer.Option(help="Asset library folder under the project root")]
 BrandFile = Annotated[Path, typer.Option(help="Frozen brand constitution YAML")]
@@ -49,6 +51,7 @@ def register_asset_commands(app: typer.Typer) -> None:
     """FR-04: add, classify, review, plan and export the owner's photo library."""
     assets = typer.Typer(help="Brand owner photo library", no_args_is_help=True)
     app.add_typer(assets, name="assets")
+    register_view_commands(assets)
 
     @assets.command("add")
     def add(
@@ -179,3 +182,62 @@ def register_asset_commands(app: typer.Typer) -> None:
         with AssetLibrary(workspace) as library:
             _, catalog = export_library(library, load_brand(brand), workspace / "export")
         typer.echo(f"{len(catalog.objects)} photos exported: {workspace / 'export'}")
+
+
+def register_view_commands(assets: typer.Typer) -> None:
+    """FR-06: batch camera views, then batch d3 checks (one model swap instead of many)."""
+    from instabay.assets.variants import (
+        PRESETS,
+        HTTPViewBackend,
+        StubViewBackend,
+        ViewBackend,
+        check_fidelity,
+        make_view,
+    )
+
+    @assets.command("views")
+    def views(
+        asset_ids: list[str],
+        preset: Annotated[list[str] | None, typer.Option(help="Repeat; default all")] = None,
+        seed: Annotated[int, typer.Option(min=0)] = 0,
+        backend: Annotated[str, typer.Option(help="stub or gpu")] = "stub",
+        origin: Annotated[str, typer.Option()] = VISION_ORIGIN,
+        confirm_gpu: Annotated[bool, typer.Option()] = False,
+        workspace: Workspace = WORKSPACE,
+    ) -> None:
+        """FR-06: new camera views of owner photos; each waits for owner approval."""
+        renderer: ViewBackend = (
+            StubViewBackend()
+            if backend == "stub"
+            else HTTPViewBackend(origin, confirm_gpu=confirm_gpu)
+        )
+        with AssetLibrary(workspace) as library:
+            for asset_id in asset_ids:
+                for name in preset or list(PRESETS):
+                    view = make_view(
+                        library,
+                        library.get(asset_id),
+                        name,
+                        seed,
+                        backend=renderer,
+                        revision=VIEW_REVISION,
+                    )
+                    typer.echo(f"{view.id}\t{asset_id}\t{name}\t{view.width}x{view.height}")
+
+    @assets.command("check-views")
+    def check_views(
+        workspace: Workspace = WORKSPACE,
+        engine: Annotated[str, typer.Option()] = "fake",
+        fixtures: Annotated[Path, typer.Option()] = Path("tests/fixtures/vision"),
+        origin: Annotated[str, typer.Option()] = VISION_ORIGIN,
+        confirm_external: Annotated[bool, typer.Option()] = False,
+        force: Annotated[bool, typer.Option()] = False,
+    ) -> None:
+        """Rule 6: d3-flash same-place/photoreal scores for generated views."""
+        judge = vision_engine(engine, fixtures, origin, confirm_external)
+        with AssetLibrary(workspace) as library:
+            for view in library.all():
+                if view.origin != "generated" or (view.fidelity and not force):
+                    continue
+                checked = check_fidelity(library, view, judge)
+                typer.echo(f"{checked.id}\t{json.dumps(checked.fidelity)}")
