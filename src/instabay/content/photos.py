@@ -14,6 +14,9 @@ from instabay.video.direction import ResortObject
 from instabay.video.files import RenderError, digest, local_file
 from instabay.video.keyframes import runtime_identity
 
+MIN_SOURCE_PX = 400
+FEED_SIZE = (1080, 1350)
+
 
 class PhotoRecipe(Boundary):
     """NFR-03: source bytes, rights, ordered images and actual rendering implementation."""
@@ -60,8 +63,9 @@ class ContainPhotoRenderer:
     def render(self, source: Path, output: Path, recipe: PhotoRecipe) -> None:
         with Image.open(source) as original:
             image = ImageOps.exif_transpose(original).convert("RGB")
-            if image.width < 1080 or image.height < 1350:
-                raise RenderError("A feed photograph needs sufficient original resolution")
+            # Small owner photos are upscaled to the feed size; review flags say so (FR-08).
+            if min(image.size) < MIN_SOURCE_PX:
+                raise RenderError("A feed photograph needs at least 400 px on its short side")
             image = ImageOps.contain(image, (recipe.width, recipe.height), Image.Resampling.LANCZOS)
         canvas = Image.new("RGB", (recipe.width, recipe.height), recipe.background)
         canvas.paste(
