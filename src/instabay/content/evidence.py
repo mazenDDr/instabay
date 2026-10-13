@@ -67,7 +67,9 @@ class EvidenceBrief(Boundary):
 
     brief: Brief
     media_ids: list[Identifier] = Field(min_length=1, max_length=5)
-    fact_ids: list[Identifier] = Field(min_length=1)
+    # Filled by code from the selected photos (validate_selection still requires a fact per
+    # image); a model-sent [] failed the whole post before code could fill it (2026-10-13).
+    fact_ids: list[Identifier] = Field(default_factory=list)
     pillar_intent: str = Field(min_length=1, max_length=500)
     sequence_reason: str = Field(min_length=1, max_length=500)
     cta_kind: Literal["save", "compare", "comment", "swipe"] = "save"

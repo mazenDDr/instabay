@@ -267,7 +267,8 @@ class Brief(Boundary):
     visual_description: str
     photo_uri: str
     cta: str
-    must_not: list[str]
+    # Qwen3.5-9B sometimes omits this list; an empty list means "no extra exclusions".
+    must_not: list[str] = Field(default_factory=list)
     reel_concept: ReelConcept | None = None
 
 
