@@ -1,0 +1,114 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 620" width="1000" height="620" role="img" aria-labelledby="t d">
+  <title id="t">Insta Bay architecture</title>
+  <desc id="d">The Mac runs the studio, the pipeline, the LangGraph week runner and SQLite files. A dedicated SSH tunnel over Tailscale reaches gpu-box, which hosts one model at a time: d3-flash, Qwen3.5-9B, FLUX.2-klein and Wan. Publishing goes to the Instagram Graph API only after a stored approval.</desc>
+  <style>
+    .bg { fill: #ffffff; }
+    .zone { fill: #f6f8fa; stroke: #d0d7de; stroke-width: 1.5; }
+    .box { fill: #ffffff; stroke: #d0d7de; stroke-width: 1.5; }
+    .gpu { fill: #f0f6ff; stroke: #8db6ff; stroke-width: 1.5; }
+    .db { fill: #fff8e6; stroke: #e0b44c; stroke-width: 1.5; }
+    .ig { fill: #fdf0f6; stroke: #e58bb3; stroke-width: 1.5; }
+    .zt { font: 800 16px -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; fill: #1f2328; }
+    .bt { font: 700 13.5px -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; fill: #1f2328; }
+    .bs { font: 400 11.5px -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; fill: #59636e; }
+    .mono { font: 500 11px ui-monospace, SFMono-Regular, Menlo, monospace; fill: #59636e; }
+    .line { stroke: #8c959f; stroke-width: 1.6; fill: none; marker-end: url(#a); }
+    .tunnel { stroke: #0866ff; stroke-width: 3; fill: none; stroke-dasharray: 8 6; animation: dash 1.6s linear infinite; }
+    .tl { font: 700 12px -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; fill: #0866ff; }
+    @keyframes dash { to { stroke-dashoffset: -28; } }
+    @media (prefers-color-scheme: dark) {
+      .bg { fill: #0d1117; } .zone { fill: #11161d; stroke: #30363d; } .box { fill: #161b22; stroke: #30363d; }
+      .gpu { fill: #0f1d33; stroke: #2f6fd6; } .db { fill: #251d0c; stroke: #a67c1e; } .ig { fill: #2a1320; stroke: #a4497a; }
+      .zt, .bt { fill: #e6edf3; } .bs, .mono { fill: #9198a1; } .line { stroke: #6e7681; } .tunnel { stroke: #4493f8; } .tl { fill: #4493f8; }
+    }
+    @media (prefers-reduced-motion: reduce) { .tunnel { animation: none; } }
+  </style>
+  <defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="#8c959f"/></marker></defs>
+  <rect class="bg" width="1000" height="620" rx="16"/>
+
+  <!-- Mac -->
+  <rect class="zone" x="20" y="20" width="560" height="580" rx="14"/>
+  <text class="zt" x="40" y="50">Mac · the studio</text>
+  <text class="bs" x="40" y="68">code, data and your decisions live here</text>
+
+  <rect class="box" x="40" y="86" width="520" height="70" rx="10"/>
+  <text class="bt" x="56" y="110">Owner studio (Meta Business Suite style)</text>
+  <text class="bs" x="56" y="129">Home · Content · Planner · Insights · Media · Settings — FastAPI on 127.0.0.1:8780</text>
+  <text class="mono" x="56" y="146">src/instabay/dashboard/ (app.py · index.html · data.py)</text>
+
+  <rect class="box" x="40" y="172" width="250" height="132" rx="10"/>
+  <text class="bt" x="56" y="196">Week pipeline</text>
+  <text class="bs" x="56" y="215">autopilot or step by step</text>
+  <text class="bs" x="56" y="236">sort → plan → new shots →</text>
+  <text class="bs" x="56" y="253">freeze brand → write + reels</text>
+  <text class="bs" x="56" y="274">stop · resume · new version</text>
+  <text class="mono" x="56" y="294">dashboard/jobs.py</text>
+
+  <rect class="box" x="310" y="172" width="250" height="132" rx="10"/>
+  <text class="bt" x="326" y="196">LangGraph week runner</text>
+  <text class="bs" x="326" y="215">plan → draft → render reel →</text>
+  <text class="bs" x="326" y="232">checks → human approval ⏸ →</text>
+  <text class="bs" x="326" y="249">publish (only if approved)</text>
+  <text class="bs" x="326" y="274">pauses and resumes from disk</text>
+  <text class="mono" x="326" y="294">graph.py</text>
+
+  <rect class="box" x="40" y="320" width="160" height="112" rx="10"/>
+  <text class="bt" x="54" y="344">Planner</text>
+  <text class="bs" x="54" y="363">pillar limits · your mix</text>
+  <text class="bs" x="54" y="380">Thompson-sampling</text>
+  <text class="bs" x="54" y="397">bandit (not an LLM)</text>
+  <text class="mono" x="54" y="420">core/planner.py</text>
+
+  <rect class="box" x="210" y="320" width="170" height="112" rx="10"/>
+  <text class="bt" x="224" y="344">Photo pools</text>
+  <text class="bs" x="224" y="363">each image once a week</text>
+  <text class="bs" x="224" y="380">one spot per post</text>
+  <text class="bs" x="224" y="397">"missing" → new shots</text>
+  <text class="mono" x="224" y="420">assets/plan.py</text>
+
+  <rect class="box" x="390" y="320" width="170" height="112" rx="10"/>
+  <text class="bt" x="404" y="344">Checks + memory</text>
+  <text class="bs" x="404" y="363">rules · facts · disclosure</text>
+  <text class="bs" x="404" y="380">your rejections + edits</text>
+  <text class="bs" x="404" y="397">→ writer notes</text>
+  <text class="mono" x="404" y="420">content/feedback.py</text>
+
+  <rect class="db" x="40" y="448" width="520" height="132" rx="10"/>
+  <text class="bt" x="56" y="472">SQLite files (one owner, one machine, no server)</text>
+  <text class="mono" x="56" y="496">data/workspace/assets.sqlite</text><text class="bs" x="332" y="496">photos · pillars · activity · undo</text>
+  <text class="mono" x="56" y="516">outputs/studio/week-…/posts.sqlite</text><text class="bs" x="332" y="516">posts · approvals · LLM calls · metrics</text>
+  <text class="mono" x="56" y="536">outputs/studio/week-…/checkpoints.sqlite</text><text class="bs" x="332" y="536">pause/resume state</text>
+  <text class="bs" x="56" y="562">Approve-then-publish runs inside one locked transaction (BEGIN IMMEDIATE).</text>
+
+  <!-- tunnel -->
+  <path class="tunnel" d="M 580 250 C 620 250 640 250 680 250"/>
+  <text class="tl" x="590" y="236">SSH tunnel</text>
+  <text class="tl" x="588" y="272">Tailscale</text>
+
+  <!-- gpu-box -->
+  <rect class="zone" x="680" y="20" width="300" height="420" rx="14"/>
+  <text class="zt" x="700" y="50">gpu-box · RTX 5060 Ti 16 GB</text>
+  <text class="bs" x="700" y="68">one model in VRAM at a time</text>
+  <rect class="gpu" x="700" y="86" width="260" height="62" rx="10"/>
+  <text class="bt" x="714" y="109">d3-flash</text><text class="bs" x="714" y="128">pillars · same-place check · 14.8 GB</text>
+  <rect class="gpu" x="700" y="158" width="260" height="62" rx="10"/>
+  <text class="bt" x="714" y="181">Qwen3.5-9B (4-bit)</text><text class="bs" x="714" y="200">judge + EN/AR writer · sees photos · 7.9 GB</text>
+  <rect class="gpu" x="700" y="230" width="260" height="62" rx="10"/>
+  <text class="bt" x="714" y="253">FLUX.2-klein-4B</text><text class="bs" x="714" y="272">new shots / angles · 10 GB</text>
+  <rect class="gpu" x="700" y="302" width="260" height="62" rx="10"/>
+  <text class="bt" x="714" y="325">Wan 2.2 (5B)</text><text class="bs" x="714" y="344">moving photos (needs ≥1080×1920)</text>
+  <text class="mono" x="700" y="390">gpu_worker/vision_server.py :8790</text>
+  <text class="mono" x="700" y="408">gpu_worker/catalog_motion.py</text>
+
+  <!-- instagram -->
+  <rect class="ig" x="680" y="460" width="300" height="140" rx="14"/>
+  <text class="zt" x="700" y="490">Instagram Graph API</text>
+  <text class="bs" x="700" y="512">default mode: dry run (outbox only)</text>
+  <text class="bs" x="700" y="530">live needs a token + --confirm-live</text>
+  <text class="bs" x="700" y="548">+ a stored APPROVED/EDITED decision</text>
+  <text class="bs" x="700" y="566">for the exact post content</text>
+  <text class="mono" x="700" y="588">adapters/graph_publisher.py</text>
+  <path class="line" d="M 560 290 C 620 420 620 520 676 530"/>
+  <text class="bs" x="590" y="420">approved</text>
+  <text class="bs" x="590" y="436">posts only</text>
+</svg>

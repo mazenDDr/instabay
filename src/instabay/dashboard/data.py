@@ -121,7 +121,9 @@ def summaries(dbs: list[Path], root: Path) -> list[dict[str, JsonValue]]:
         except (sqlite3.Error, ValueError, KeyError, IndexError):
             continue
         with sqlite3.connect(f"file:{path}?mode=ro", uri=True) as db:
-            meta = {r[0]: (r[1], bool(r[2])) for r in db.execute("SELECT * FROM workflow_run")}
+            # Named columns: SELECT * put brand_hash where demo was read, so every week said demo.
+            query = "SELECT id, week_start, demo FROM workflow_run"
+            meta = {r[0]: (r[1], bool(r[2])) for r in db.execute(query)}
         for run_id, posts in grouped.items():
             week, demo = meta.get(run_id, ("", False))
             rows.append(

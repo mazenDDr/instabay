@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 300" width="1000" height="300" role="img" aria-labelledby="t d">
+  <title id="t">How a photo gets its pillar</title>
+  <desc id="d">d3-flash gives a probability for every pillar. If the top probability is at least 0.5 the label is used; otherwise Qwen3.5-9B looks at the photo and picks a pillar with a one-line reason. The owner's corrections always win and are used to measure both models.</desc>
+  <style>
+    .bg { fill: #ffffff; } .box { fill: #f6f8fa; stroke: #d0d7de; stroke-width: 1.5; }
+    .ok { fill: #e9f7ee; stroke: #3fa35b; stroke-width: 1.5; } .warn { fill: #fff4dc; stroke: #d08a00; stroke-width: 1.5; }
+    .you { fill: #eef4ff; stroke: #0866ff; stroke-width: 2; }
+    .t { font: 700 14px -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; fill: #1f2328; }
+    .s { font: 400 12px -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; fill: #59636e; }
+    .k { font: 700 12px -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; fill: #59636e; }
+    .bar { fill: #0866ff; } .barb { fill: #dfe6ef; }
+    .line { stroke: #8c959f; stroke-width: 1.6; fill: none; marker-end: url(#a); }
+    .grow { transform-box: fill-box; transform-origin: left; animation: grow 3s ease-out infinite alternate; }
+    @keyframes grow { from { transform: scaleX(.35); } to { transform: scaleX(1); } }
+    @media (prefers-color-scheme: dark) {
+      .bg { fill: #0d1117; } .box { fill: #161b22; stroke: #30363d; } .ok { fill: #10261a; stroke: #3fa35b; } .warn { fill: #2b2111; stroke: #e3a32e; }
+      .you { fill: #0f1d33; stroke: #4493f8; } .t { fill: #e6edf3; } .s, .k { fill: #9198a1; } .bar { fill: #4493f8; } .barb { fill: #262c36; } .line { stroke: #6e7681; }
+    }
+    @media (prefers-reduced-motion: reduce) { .grow { animation: none; } }
+  </style>
+  <defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="#8c959f"/></marker></defs>
+  <rect class="bg" width="1000" height="300" rx="16"/>
+
+  <g transform="translate(20 30)">
+    <rect class="box" width="250" height="240" rx="12"/>
+    <text class="t" x="16" y="28">1 · d3-flash</text>
+    <text class="s" x="16" y="48">a probability for every pillar</text>
+    <text class="k" x="16" y="82">Relaxation</text><rect class="barb" x="100" y="72" width="130" height="12" rx="6"/><rect class="bar grow" x="100" y="72" width="99" height="12" rx="6"/>
+    <text class="k" x="16" y="108">Setting</text><rect class="barb" x="100" y="98" width="130" height="12" rx="6"/><rect class="bar" x="100" y="98" width="20" height="12" rx="6" opacity=".55"/>
+    <text class="k" x="16" y="134">Stay</text><rect class="barb" x="100" y="124" width="130" height="12" rx="6"/><rect class="bar" x="100" y="124" width="9" height="12" rx="6" opacity=".55"/>
+    <text class="k" x="16" y="160">Water</text><rect class="barb" x="100" y="150" width="130" height="12" rx="6"/><rect class="bar" x="100" y="150" width="2" height="12" rx="1" opacity=".55"/>
+    <text class="k" x="16" y="186">Planning</text><rect class="barb" x="100" y="176" width="130" height="12" rx="6"/><rect class="bar" x="100" y="176" width="2" height="12" rx="1" opacity=".55"/>
+    <text class="s" x="16" y="220">~3 s per photo · 14.8 GB VRAM</text>
+  </g>
+
+  <path class="line" d="M 270 110 L 336 70"/>
+  <path class="line" d="M 270 190 L 336 222"/>
+
+  <g transform="translate(340 30)">
+    <rect class="ok" width="290" height="80" rx="12"/>
+    <text class="t" x="16" y="30">top ≥ 0.5 → use d3's label</text>
+    <text class="s" x="16" y="52">11 of 13 owner photos with visual pillar</text>
+    <text class="s" x="16" y="68">wording (7 of 13 with abstract wording)</text>
+  </g>
+  <g transform="translate(340 170)">
+    <rect class="warn" width="290" height="100" rx="12"/>
+    <text class="t" x="16" y="30">top &lt; 0.5 → VLM judge</text>
+    <text class="s" x="16" y="52">Qwen3.5-9B looks at the photo and</text>
+    <text class="s" x="16" y="68">answers one pillar + a one-line reason,</text>
+    <text class="s" x="16" y="84">shown on the photo in Media</text>
+  </g>
+
+  <path class="line" d="M 630 70 L 696 140"/>
+  <path class="line" d="M 630 220 L 696 160"/>
+
+  <g transform="translate(700 70)">
+    <rect class="you" width="280" height="160" rx="12"/>
+    <text class="t" x="16" y="30">3 · You (always wins)</text>
+    <text class="s" x="16" y="54">fix any pillar in one click,</text>
+    <text class="s" x="16" y="72">or set many at once</text>
+    <text class="s" x="16" y="100">every correction is a label: Settings</text>
+    <text class="s" x="16" y="118">shows how often d3 and the VLM agree</text>
+    <text class="s" x="16" y="136">with you (accuracy + Cohen's κ)</text>
+  </g>
+</svg>

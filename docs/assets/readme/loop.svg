@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 440" width="960" height="440" role="img" aria-labelledby="t d">
+  <title id="t">Insta Bay weekly loop</title>
+  <desc id="d">Photos are sorted into pillars, the week is planned, missing shots are created, posts and reels are written, checked, approved by the owner, published, measured, and the lessons feed the next week.</desc>
+  <style>
+    .bg { fill: #ffffff; }
+    .card { fill: #f5f7fb; stroke: #d0d7de; stroke-width: 1.5; }
+    .human { fill: #fff4dc; stroke: #d08a00; stroke-width: 2; }
+    .ttl { font: 700 15px -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; fill: #1f2328; }
+    .sub { font: 400 12px -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; fill: #59636e; }
+    .num { font: 700 12px -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; fill: #ffffff; }
+    .dot { fill: #0866ff; }
+    .badge { fill: #0866ff; }
+    .ring { fill: none; stroke: #0866ff; stroke-width: 2.5; stroke-dasharray: 6 7; opacity: .45; }
+    .head { font: 800 20px -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; fill: #1f2328; }
+    .mid { font: 600 13px -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; fill: #59636e; }
+    .flow { animation: flow 9s linear infinite; }
+    @keyframes flow { to { stroke-dashoffset: -130; } }
+    @media (prefers-color-scheme: dark) {
+      .bg { fill: #0d1117; } .card { fill: #161b22; stroke: #30363d; } .human { fill: #2b2111; stroke: #e3a32e; }
+      .ttl, .head { fill: #e6edf3; } .sub, .mid { fill: #9198a1; } .ring { stroke: #4493f8; } .badge, .dot { fill: #4493f8; }
+    }
+    @media (prefers-reduced-motion: reduce) { .flow, .dot { animation: none !important; } .dot { display: none; } }
+  </style>
+  <rect class="bg" width="960" height="440" rx="16"/>
+  <ellipse class="ring flow" cx="480" cy="222" rx="372" ry="160"/>
+  <circle class="dot" r="7">
+    <animateMotion dur="14s" repeatCount="indefinite" path="M 852 222 A 372 160 0 1 1 108 222 A 372 160 0 1 1 852 222"/>
+  </circle>
+  <text class="head" x="480" y="214" text-anchor="middle">One week, every week</text>
+  <text class="mid" x="480" y="238" text-anchor="middle">LLMs write · statistics decide · you approve</text>
+
+  <!-- 1 photos -->
+  <g transform="translate(398 22)"><rect class="card" width="164" height="58" rx="10"/><circle class="badge" cx="18" cy="18" r="10"/><text class="num" x="18" y="22" text-anchor="middle">1</text><text class="ttl" x="34" y="24">Your photos</text><text class="sub" x="14" y="44">drop in Media</text></g>
+  <!-- 2 sort -->
+  <g transform="translate(640 46)"><rect class="card" width="190" height="58" rx="10"/><circle class="badge" cx="18" cy="18" r="10"/><text class="num" x="18" y="22" text-anchor="middle">2</text><text class="ttl" x="34" y="24">Sort into pillars</text><text class="sub" x="14" y="44">d3-flash, then a VLM judge</text></g>
+  <!-- 3 plan -->
+  <g transform="translate(770 140)"><rect class="card" width="176" height="58" rx="10"/><circle class="badge" cx="18" cy="18" r="10"/><text class="num" x="18" y="22" text-anchor="middle">3</text><text class="ttl" x="34" y="24">Plan the week</text><text class="sub" x="14" y="44">your mix · unique photos</text></g>
+  <!-- 4 shots -->
+  <g transform="translate(770 248)"><rect class="card" width="176" height="58" rx="10"/><circle class="badge" cx="18" cy="18" r="10"/><text class="num" x="18" y="22" text-anchor="middle">4</text><text class="ttl" x="34" y="24">New shots</text><text class="sub" x="14" y="44">FLUX, only where short</text></g>
+  <!-- 5 write -->
+  <g transform="translate(640 340)"><rect class="card" width="190" height="58" rx="10"/><circle class="badge" cx="18" cy="18" r="10"/><text class="num" x="18" y="22" text-anchor="middle">5</text><text class="ttl" x="34" y="24">Write EN + AR</text><text class="sub" x="14" y="44">Qwen3.5-9B sees the photos</text></g>
+  <!-- 6 reels+checks -->
+  <g transform="translate(398 362)"><rect class="card" width="164" height="58" rx="10"/><circle class="badge" cx="18" cy="18" r="10"/><text class="num" x="18" y="22" text-anchor="middle">6</text><text class="ttl" x="34" y="24">Reels + checks</text><text class="sub" x="14" y="44">photo tours · rules</text></g>
+  <!-- 7 approve (human) -->
+  <g transform="translate(130 340)"><rect class="human" width="190" height="58" rx="10"/><circle class="badge" cx="18" cy="18" r="10" style="fill:#d08a00"/><text class="num" x="18" y="22" text-anchor="middle">7</text><text class="ttl" x="34" y="24">You approve</text><text class="sub" x="14" y="44">edit · reject with a reason</text></g>
+  <!-- 8 publish -->
+  <g transform="translate(14 248)"><rect class="card" width="176" height="58" rx="10"/><circle class="badge" cx="18" cy="18" r="10"/><text class="num" x="18" y="22" text-anchor="middle">8</text><text class="ttl" x="34" y="24">Publish</text><text class="sub" x="14" y="44">dry run until you go live</text></g>
+  <!-- 9 insights -->
+  <g transform="translate(14 140)"><rect class="card" width="176" height="58" rx="10"/><circle class="badge" cx="18" cy="18" r="10"/><text class="num" x="18" y="22" text-anchor="middle">9</text><text class="ttl" x="34" y="24">Insights</text><text class="sub" x="14" y="44">reach · saves · eng. rate</text></g>
+  <!-- 10 learn -->
+  <g transform="translate(130 46)"><rect class="card" width="190" height="58" rx="10"/><circle class="badge" cx="18" cy="18" r="11"/><text class="num" x="18" y="22" text-anchor="middle">10</text><text class="ttl" x="36" y="24">Learn</text><text class="sub" x="14" y="44">your notes · bandit update</text></g>
+</svg>

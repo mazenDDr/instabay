@@ -23,6 +23,9 @@ def test_dashboard_lists_runs_and_stores_hash_bound_decisions(tmp_path: Path) ->
     )
     listed = client.get("/api/runs").json()
     assert [r["run_id"] for r in listed] == ["2026-w42"]
+    stored = Repository(runs / "demo" / "db.sqlite")
+    assert listed[0]["demo"] is stored.run("2026-w42").demo
+    stored.close()
     posts = listed[0]["posts"]
     assert len(posts) == len(result.post_ids) and all(p["decision"] is None for p in posts)
     db = listed[0]["db"]

@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 250" width="1000" height="250" role="img" aria-labelledby="t d">
+  <title id="t">Autopilot and step-by-step modes</title>
+  <desc id="d">Both modes run the same five stages: sort, plan, new shots, freeze brand, write the week. Autopilot runs straight through; step by step pauses after sort, plan and new shots until the owner presses Continue. Both stop at the owner's approval.</desc>
+  <style>
+    .bg { fill: #ffffff; } .st { fill: #f6f8fa; stroke: #d0d7de; stroke-width: 1.5; } .end { fill: #fff4dc; stroke: #d08a00; stroke-width: 2; }
+    .t { font: 700 13.5px -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; fill: #1f2328; }
+    .s { font: 400 11.5px -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; fill: #59636e; }
+    .lab { font: 800 14px -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; fill: #0866ff; }
+    .pause { font: 700 11px -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; fill: #d08a00; }
+    .line { stroke: #8c959f; stroke-width: 1.6; fill: none; marker-end: url(#a); }
+    .run { fill: #0866ff; }
+    @media (prefers-color-scheme: dark) {
+      .bg { fill: #0d1117; } .st { fill: #161b22; stroke: #30363d; } .end { fill: #2b2111; stroke: #e3a32e; }
+      .t { fill: #e6edf3; } .s { fill: #9198a1; } .lab { fill: #4493f8; } .line { stroke: #6e7681; } .run { fill: #4493f8; } .pause { fill: #e3a32e; }
+    }
+    @media (prefers-reduced-motion: reduce) { .run { display: none; } }
+  </style>
+  <defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="#8c959f"/></marker></defs>
+  <rect class="bg" width="1000" height="250" rx="16"/>
+  <text class="lab" x="20" y="34">Autopilot · drop photos, come back to finished posts (~12 min)</text>
+  <text class="lab" x="20" y="150">Step by step · check each stage, then Continue</text>
+    <g transform="translate(20 50)"><rect class="st" width="150" height="58" rx="10"/><text class="t" x="12" y="24">1 Sort</text><text class="s" x="12" y="42">new photos only</text></g>
+    <g transform="translate(200 50)"><rect class="st" width="150" height="58" rx="10"/><text class="t" x="12" y="24">2 Plan</text><text class="s" x="12" y="42">mix · unique pools</text></g>
+    <g transform="translate(380 50)"><rect class="st" width="150" height="58" rx="10"/><text class="t" x="12" y="24">3 New shots</text><text class="s" x="12" y="42">kept if ≥ 0.8</text></g>
+    <g transform="translate(560 50)"><rect class="st" width="150" height="58" rx="10"/><text class="t" x="12" y="24">4 Freeze brand</text><text class="s" x="12" y="42">your name</text></g>
+    <g transform="translate(740 50)"><rect class="st" width="120" height="58" rx="10"/><text class="t" x="12" y="24">5 Write</text><text class="s" x="12" y="42">posts + reels</text></g>
+    <g transform="translate(880 50)"><rect class="end" width="100" height="58" rx="10"/><text class="t" x="12" y="24">You</text><text class="s" x="12" y="42">approve</text></g>
+  <path class="line" d="M170 79 L196 79"/><path class="line" d="M350 79 L376 79"/><path class="line" d="M530 79 L556 79"/><path class="line" d="M710 79 L736 79"/><path class="line" d="M860 79 L876 79"/>
+  <circle class="run" r="6" cy="118"><animate attributeName="cx" values="30;970" dur="6s" repeatCount="indefinite"/></circle>
+
+  <g transform="translate(20 166)"><rect class="st" width="150" height="58" rx="10"/><text class="t" x="12" y="24">1 Sort</text><text class="s" x="12" y="42">look in Media</text></g>
+  <text class="pause" x="174" y="232">⏸ Continue</text>
+  <g transform="translate(200 166)"><rect class="st" width="150" height="58" rx="10"/><text class="t" x="12" y="24">2 Plan</text><text class="s" x="12" y="42">look in Planner</text></g>
+  <text class="pause" x="354" y="232">⏸ Continue</text>
+  <g transform="translate(380 166)"><rect class="st" width="150" height="58" rx="10"/><text class="t" x="12" y="24">3 New shots</text><text class="s" x="12" y="42">you approve each</text></g>
+  <text class="pause" x="534" y="232">⏸ Continue</text>
+  <g transform="translate(560 166)"><rect class="st" width="150" height="58" rx="10"/><text class="t" x="12" y="24">4 Freeze brand</text><text class="s" x="12" y="42">your name</text></g>
+  <g transform="translate(740 166)"><rect class="st" width="120" height="58" rx="10"/><text class="t" x="12" y="24">5 Write</text><text class="s" x="12" y="42">posts + reels</text></g>
+  <g transform="translate(880 166)"><rect class="end" width="100" height="58" rx="10"/><text class="t" x="12" y="24">You</text><text class="s" x="12" y="42">approve</text></g>
+  <path class="line" d="M170 195 L196 195"/><path class="line" d="M350 195 L376 195"/><path class="line" d="M530 195 L556 195"/><path class="line" d="M710 195 L736 195"/><path class="line" d="M860 195 L876 195"/>
+</svg>

@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 330" width="1000" height="330" role="img" aria-labelledby="t d">
+  <title id="t">When a new AI shot is made, and when it is kept</title>
+  <desc id="d">A new shot is made only when a post lacks photos of its own pillar and that pillar has at least one owner photo. FLUX builds it from one or two owner photos. Near-copies are dropped, and autopilot keeps a shot only when d3-flash says it shows the same place with at least 0.8. Every post using it carries the AI disclosure.</desc>
+  <style>
+    .bg { fill: #ffffff; } .box { fill: #f6f8fa; stroke: #d0d7de; stroke-width: 1.5; }
+    .no { fill: #fdecee; stroke: #d1242f; stroke-width: 1.5; } .yes { fill: #e9f7ee; stroke: #3fa35b; stroke-width: 1.5; }
+    .t { font: 700 14px -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; fill: #1f2328; }
+    .s { font: 400 12px -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; fill: #59636e; }
+    .q { font: 700 11px -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; fill: #59636e; }
+    .line { stroke: #8c959f; stroke-width: 1.6; fill: none; marker-end: url(#a); }
+    .pulse { animation: pulse 2.4s ease-in-out infinite; }
+    @keyframes pulse { 50% { opacity: .55; } }
+    @media (prefers-color-scheme: dark) {
+      .bg { fill: #0d1117; } .box { fill: #161b22; stroke: #30363d; } .no { fill: #2c1215; stroke: #f85149; } .yes { fill: #10261a; stroke: #3fa35b; }
+      .t { fill: #e6edf3; } .s, .q { fill: #9198a1; } .line { stroke: #6e7681; }
+    }
+    @media (prefers-reduced-motion: reduce) { .pulse { animation: none; } }
+  </style>
+  <defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="#8c959f"/></marker></defs>
+  <rect class="bg" width="1000" height="330" rx="16"/>
+
+  <g transform="translate(20 40)"><rect class="box" width="170" height="90" rx="12"/><text class="t" x="14" y="28">Post lacks photos</text><text class="t" x="14" y="46">of its pillar?</text><text class="s" x="14" y="72">from the week's plan</text></g>
+  <path class="line" d="M 190 85 L 226 85"/>
+  <g transform="translate(230 40)"><rect class="box" width="180" height="90" rx="12"/><text class="t" x="14" y="28">Pillar has at least</text><text class="t" x="14" y="46">one of your photos?</text><text class="s" x="14" y="72">otherwise nothing is made</text></g>
+  <path class="line" d="M 320 130 L 320 196"/><text class="q" x="328" y="168">no</text>
+  <g transform="translate(230 200)"><rect class="no" width="180" height="96" rx="12"/><text class="t" x="14" y="28">Skip and tell you</text><text class="s" x="14" y="50">"No photos for Water:</text><text class="s" x="14" y="66">add some, nothing was</text><text class="s" x="14" y="82">invented"</text></g>
+  <path class="line" d="M 410 85 L 446 85"/><text class="q" x="416" y="76">yes</text>
+  <g transform="translate(450 40)"><rect class="box pulse" width="170" height="90" rx="12"/><text class="t" x="14" y="28">FLUX.2-klein</text><text class="s" x="14" y="50">a new photo from 1–2</text><text class="s" x="14" y="66">of your photos; only</text><text class="s" x="14" y="82">what is in them · ~25 s</text></g>
+  <path class="line" d="M 620 85 L 656 85"/>
+  <g transform="translate(660 40)"><rect class="box" width="150" height="90" rx="12"/><text class="t" x="14" y="28">Near-copy?</text><text class="s" x="14" y="50">image hash distance</text><text class="s" x="14" y="66">&lt; 64 of 256 bits</text><text class="s" x="14" y="82">(copies were ~30)</text></g>
+  <path class="line" d="M 735 130 L 735 196"/><text class="q" x="743" y="168">yes → drop</text>
+  <path class="line" d="M 810 85 L 836 85"/>
+  <g transform="translate(840 40)"><rect class="box" width="140" height="90" rx="12"/><text class="t" x="14" y="28">d3: same</text><text class="t" x="14" y="46">place ≥ 0.8?</text><text class="s" x="14" y="72">both images shown</text></g>
+  <path class="line" d="M 910 130 L 910 196"/>
+  <g transform="translate(660 200)"><rect class="no" width="150" height="96" rx="12"/><text class="t" x="14" y="28">Hidden</text><text class="s" x="14" y="50">autopilot drops it;</text><text class="s" x="14" y="66">step-by-step shows it</text><text class="s" x="14" y="82">for you to judge</text></g>
+  <g transform="translate(830 200)"><rect class="yes" width="150" height="96" rx="12"/><text class="t" x="14" y="28">Kept</text><text class="s" x="14" y="50">used once, marked</text><text class="s" x="14" y="66">"AI shot"; EN + AR</text><text class="s" x="14" y="82">disclosure on posts</text></g>
+</svg>
