@@ -60,6 +60,21 @@ How it decides:
 Photos under 1080 px (for example 545×545 downloads) are upscaled and flagged. Upload the original
 files before going live.
 
+### Everyday actions
+
+- **Media**: click a photo's circle (or Shift/⌘-click) to select several, then use **Move to
+  Trash**, **Set pillar**, **Hide** or **Approve AI shots**. Search with `/`.
+- **Undo**: every library change shows an **Undo** button. ⌘Z / Ctrl+Z also works, and
+  Settings → Activity lists everything with an Undo per entry.
+- **Trash**: restore photos, or **Delete forever** (photos used in a week are kept).
+- **Photo drawer**: Download, Sort again, Try another shot (AI shots), Move to Trash.
+- **Content**: edit the English and Arabic captions before approving, **Undo decision**,
+  select several posts to approve, reject or undo them together, Copy and Download, and
+  **Grid preview** to see the week as your Instagram profile.
+- **Prepare week**: **Stop** a running week, start it again (finished work is kept), or tick
+  *fresh version* to keep the old week and make a new one. **Remove week** moves a week to
+  `data/backup-runs/`.
+
 ## 4. Try Insights before Instagram (simulated)
 
 Real Insights need published Instagram posts. To see the screens working now, run the offline
