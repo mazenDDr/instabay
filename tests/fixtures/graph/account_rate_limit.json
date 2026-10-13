@@ -1,0 +1,80 @@
+{
+  "provenance": "synthetic_contract_fixture",
+  "exchanges": [
+    {
+      "method": "GET",
+      "path": "/1000",
+      "params": {
+        "fields": "user_id,username,account_type,followers_count,media_count"
+      },
+      "response": {
+        "status_code": 200,
+        "body": {
+          "user_id": "1000",
+          "username": "instabay_test",
+          "account_type": "BUSINESS",
+          "followers_count": 412,
+          "media_count": 3
+        }
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/1000/media",
+      "params": {
+        "fields": "id,caption,media_type,media_product_type,timestamp,permalink,like_count,comments_count",
+        "limit": "25"
+      },
+      "response": {
+        "status_code": 200,
+        "body": {
+          "data": [
+            {
+              "id": "3001",
+              "caption": "Sunset on the pier",
+              "media_type": "IMAGE",
+              "media_product_type": "FEED",
+              "timestamp": "2026-10-09T15:30:00+0000",
+              "permalink": "https://www.instagram.com/p/AAA/",
+              "like_count": 40,
+              "comments_count": 3
+            },
+            {
+              "id": "3002",
+              "caption": "Reef morning",
+              "media_type": "VIDEO",
+              "media_product_type": "REELS",
+              "timestamp": "2026-10-10T06:00:00+0000",
+              "permalink": "https://www.instagram.com/reel/BBB/",
+              "like_count": 90,
+              "comments_count": 7
+            },
+            {
+              "id": "3003",
+              "caption": "Old post",
+              "media_type": "CAROUSEL_ALBUM",
+              "media_product_type": "FEED",
+              "timestamp": "2024-01-02T10:00:00+0000",
+              "permalink": "https://www.instagram.com/p/CCC/"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/3001/insights",
+      "params": {
+        "metric": "views,reach,likes,comments,saved,shares"
+      },
+      "response": {
+        "status_code": 429,
+        "body": {
+          "error": {
+            "code": 4
+          }
+        }
+      }
+    }
+  ]
+}
