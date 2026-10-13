@@ -3,7 +3,7 @@ export UV_CACHE_DIR := $(CURDIR)/.uv-cache
 export UV_PYTHON_INSTALL_DIR := $(CURDIR)/.uv-python
 export PRE_COMMIT_HOME := $(CURDIR)/.pre-commit-cache
 
-.PHONY: setup lint test check smoke demo bench record render golden verify-clone vision-up vision-down studio instagram-check
+.PHONY: setup lint test check smoke demo bench record render golden verify-clone vision-up vision-down studio instagram-check instagram-post
 
 setup:
 	$(UV) sync --frozen
@@ -64,6 +64,11 @@ vision-down:
 instagram-check:
 	INSTABAY_MODE=live $(UV) run --env-file .env --offline --no-sync instabay graph-check \
 	  --config "$(IG_CONFIG)" --confirm-live
+
+# HUMAN: publishes publicly. Token needs instagram_business_content_publish; asks you to confirm.
+instagram-post:
+	INSTABAY_MODE=live $(UV) run --env-file .env --offline --no-sync instabay instagram-post \
+	  --db "$(DB)" --post-id "$(POST)" --actor "$(ACTOR)" --config "$(IG_CONFIG)" --confirm-live
 
 studio:
 	mkdir -p "$(RUNS)"

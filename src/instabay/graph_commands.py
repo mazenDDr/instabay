@@ -1,13 +1,16 @@
 """FR-09 to FR-11: explicit HUMAN-only native commands, separate from fixture demo/cycle."""
 
+import time
 from pathlib import Path
 from typing import Annotated
+from urllib.parse import urlsplit
 
 import typer
 import yaml
+from sqlmodel import Session, select
 
 from instabay.adapters.graph_account import ACCOUNT_DB, AccountStore, analyze, fetch_account
-from instabay.adapters.graph_http import HttpxGraphTransport, HttpxMediaVerifier
+from instabay.adapters.graph_http import HttpxGraphTransport, HttpxMediaVerifier, graph_request
 from instabay.adapters.graph_insights import GraphInsights
 from instabay.adapters.graph_models import (
     GraphAPIError,
@@ -17,6 +20,9 @@ from instabay.adapters.graph_models import (
     LiveConfigurationError,
 )
 from instabay.adapters.graph_publisher import GraphPublisher
+from instabay.adapters.media_tunnel import manifest, photo_files, public_files, ready
+from instabay.core.schemas import ApprovalRequest
+from instabay.core.tables import PublicationRow
 from instabay.repository import Repository
 
 
@@ -42,6 +48,17 @@ def register_graph_commands(app: typer.Typer) -> None:
     ) -> None:
         """HUMAN: ingest a published parent's real counts without bandit learning."""
         _run(post_id, db, config, confirm_live, insights=True)
+
+    @app.command("instagram-post")
+    def instagram_post(
+        post_id: Annotated[str, typer.Option()],
+        db: Annotated[Path, typer.Option()],
+        actor: Annotated[str, typer.Option(help="Your name, stored with the approval")],
+        config: Annotated[Path, typer.Option()] = Path("config/instagram.example.yaml"),
+        confirm_live: Annotated[bool, typer.Option()] = False,
+    ) -> None:
+        """HUMAN: publish one photo/carousel post now through a temporary public tunnel."""
+        _post_now(post_id, db, actor, config, confirm_live)
 
     @app.command("graph-check")
     def check(
@@ -92,8 +109,6 @@ def _run(post_id: str, db: Path, config_path: Path, confirm_live: bool, *, insig
     verifier: HttpxMediaVerifier | None = None
     try:
         # Check approval before even loading native credentials or constructing HTTP clients.
-        from sqlmodel import Session
-
         with Session(repository.engine) as session:
             repository._authorized_post(session, post_id)
         config = GraphConfig.model_validate(yaml.safe_load(config_path.read_text()))
@@ -147,3 +162,78 @@ def _safe(error: Exception) -> str:
     if isinstance(error, LiveConfigurationError):
         return str(error)
     return "see docs/INSTAGRAM.md"
+
+
+def _post_now(post_id: str, db: Path, actor: str, config_path: Path, confirm_live: bool) -> None:
+    """FR-09, FR-10: attach the exact bytes, ask for approval of that snapshot, then publish."""
+    repository = Repository(db)
+    transport: HttpxGraphTransport | None = None
+    verifier: HttpxMediaVerifier | None = None
+    try:
+        settings = GraphConfig.model_validate(yaml.safe_load(config_path.read_text()))
+        credentials = GraphCredentials.from_env()
+        transport = HttpxGraphTransport(settings, credentials, confirm_live=confirm_live)
+        with Session(repository.engine) as session:
+            if session.exec(
+                select(PublicationRow).where(PublicationRow.post_id == post_id)
+            ).first():
+                raise ValueError("This post was already published")
+        post = repository.post(post_id)
+        files = photo_files(post, Path.cwd())
+        profile = graph_request(transport, "GET", f"/{credentials.user_id}", {"fields": "username"})
+        username = str(profile.get("username", ""))
+        typer.echo(f"Opening a temporary public link for {len(files)} photo(s)...")
+        with public_files(files) as base:
+            settings = settings.model_copy(update={"media_hosts": (urlsplit(base).hostname,)})
+            post = ready(post, manifest(post, files, base, actor))
+            repository.save_post(post)
+            typer.echo("\n--- Caption that will be posted ---")
+            typer.echo(GraphPublisher.caption(post))
+            typer.echo("--- Photos ---")
+            for path, asset in zip(files, post.media_manifest.assets, strict=True):  # type: ignore[union-attr]
+                typer.echo(f"{path}  ({asset.width}x{asset.height})")
+            started = time.monotonic()
+            typed = typer.prompt(
+                f"\nThis posts publicly to @{username}. Type {username} to approve and publish "
+                "(anything else cancels)"
+            )
+            if typed.strip().lstrip("@") != username:
+                typer.echo("Cancelled. Nothing was posted. The post now waits for approval again.")
+                return
+            repository.approve(
+                post_id,
+                ApprovalRequest(
+                    decision="APPROVED", actor=actor, seconds_spent=time.monotonic() - started
+                ),
+            )
+            typer.echo("Approved. Publishing (Instagram may take a minute to process)...")
+            verifier = HttpxMediaVerifier(settings)
+            receipt = GraphPublisher(
+                repository,
+                settings,
+                transport,
+                account_id=credentials.user_id,
+                confirm_live=confirm_live,
+                verifier=verifier,
+            ).publish(post_id)
+            link = graph_request(transport, "GET", f"/{receipt.media_id}", {"fields": "permalink"})
+        typer.echo(f"Published to @{username}: {link.get('permalink', receipt.media_id)}")
+        typer.echo("The temporary link is closed. Instagram keeps its own copy of the photo.")
+    except GraphAPIError as error:
+        typer.echo(
+            f"Instagram stopped the post: {type(error).__name__}; code={error.code}, "
+            f"subcode={error.subcode}. Code 10 or 200 means the token lacks "
+            "instagram_business_content_publish.",
+            err=True,
+        )
+        raise typer.Exit(2) from None
+    except (ValueError, RuntimeError, PermissionError, ConnectionError, OSError) as error:
+        # Our own messages only: Graph errors are numeric and tokens never enter exceptions.
+        typer.echo(f"Post stopped: {error}", err=True)
+        raise typer.Exit(2) from None
+    finally:
+        if verifier is not None:
+            verifier.close()
+        if transport is not None:
+            transport.close()
+        repository.close()
