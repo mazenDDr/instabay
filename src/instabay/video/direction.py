@@ -190,17 +190,24 @@ class CreativePlan(Boundary):
             raise ValueError("Hook and CTA must explicitly serve the brief")
         if sum(b.frames for b in self.beats if b.overlay.en or b.overlay.ar) > frames * 0.5:
             raise ValueError("Let the resort carry the story: text occupies at most half the film")
-        for index, beat in enumerate(self.beats):
-            for language, text in (("en", beat.overlay.en), ("ar", beat.overlay.ar)):
-                # 45 characters is the legibility limit; a brief CTA such as "Save this for your
-                # next Red Sea getaway" (8 words, 39 chars) is still one short line.
-                if len(text) > 45 or len(text.split()) > 8:
-                    raise ValueError(
-                        "On-screen copy must be a short thought, not a caption paragraph: "
-                        f"beats[{index}] ({beat.role}) overlay.{language} has "
-                        f"{len(text.split())} words and {len(text)} characters; "
-                        "use at most 8 words and 45 characters"
-                    )
+        # 45 characters is the legibility limit; a brief CTA such as "Save this for your next
+        # Red Sea getaway" (8 words, 39 chars) is still one short line. Every violation is listed
+        # at once: reporting only the first left the director a second one to fail on (2026-10-13).
+        long = [
+            f"beats[{index}] ({beat.role}) overlay.{language} has {len(text.split())} words and "
+            f"{len(text)} characters"
+            for index, beat in enumerate(self.beats)
+            for language, text in (("en", beat.overlay.en), ("ar", beat.overlay.ar))
+            if len(text) > 45 or len(text.split()) > 8
+        ]
+        if long:
+            raise ValueError(
+                "On-screen copy must be a short thought, not a caption paragraph: "
+                + "; ".join(long)
+                + ". Use at most 8 words and 45 characters each; do not copy the brief's hook "
+                "or CTA if they are longer"
+            )
+        for beat in self.beats:
             if bool(beat.overlay.en) != bool(beat.overlay.ar):
                 raise ValueError("Each text beat needs independently written EN and AR versions")
         if self.edit_style == "scenic" and any(

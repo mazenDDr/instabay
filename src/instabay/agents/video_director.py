@@ -207,6 +207,9 @@ class VideoDirector:
             },
             max_output_tokens=3000,
             images=scene_images(catalog, [o.id for o in catalog.objects]) if see_images else None,
+            # Reel plans have several independent rules (text length, roles, timing); one extra
+            # corrected attempt is cheaper than failing the whole week at the last reel.
+            attempts=3,
         )
         if intent.reel_id != reel_id:
             raise ValueError("Director returned a different reel ID")

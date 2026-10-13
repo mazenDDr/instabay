@@ -82,6 +82,7 @@ class LLMService:
         temperature: float = 0,
         max_output_tokens: int = 512,
         images: list[ImageInput] | None = None,
+        attempts: int = 2,
     ) -> Output:
         """NFR-03: validate JSON, retry once, cache by all generation-affecting inputs."""
         if not re.fullmatch(r"[a-z][a-z0-9_]*", template_name):
@@ -114,7 +115,7 @@ class LLMService:
                 self._log(request, cache_key, "cached", attempt=0, latency_ms=0)
                 return result
 
-        for attempt in (1, 2):
+        for attempt in range(1, attempts + 1):
             with self._usage_lock:
                 self._check_budget(before_call=True)
                 self.usage.calls += 1
@@ -181,7 +182,7 @@ class LLMService:
                 self._check_budget(before_call=False)
                 self.store.put_cached(cache_key, result.model_dump_json())
                 return result
-        raise LLMOutputError("LLM output failed schema validation on both attempts")
+        raise LLMOutputError(f"LLM output failed schema validation on all {attempts} attempts")
 
     def _check_budget(self, *, before_call: bool) -> None:
         calls_exceeded = (
