@@ -61,7 +61,18 @@ CREATE TABLE IF NOT EXISTS setting (
   value_json TEXT NOT NULL,
   updated_at TEXT NOT NULL
 );
+CREATE TABLE IF NOT EXISTS activity (
+  sequence INTEGER PRIMARY KEY AUTOINCREMENT,
+  at TEXT NOT NULL,
+  actor TEXT NOT NULL,
+  kind TEXT NOT NULL,
+  summary TEXT NOT NULL,
+  undo_json TEXT,
+  undone INTEGER NOT NULL DEFAULT 0
+);
 """
+# Owner-editable asset fields an activity entry can restore.
+UNDOABLE = ("owner_pillar", "note_en", "note_ar", "approved", "rejected", "deleted_at")
 
 
 NEAR_COPY = 64  # dHash bits of 256: shots ~30 from their source looked identical (2026-10-13)
@@ -113,6 +124,7 @@ class Asset(Boundary):
     vlm_pillar: str | None = None
     vlm_reason: str | None = None
     note_source: str | None = None
+    deleted_at: str | None = None
 
     @model_validator(mode="after")
     def lineage(self) -> Self:
@@ -159,7 +171,7 @@ class Asset(Boundary):
     @property
     def usable(self) -> bool:
         """FR-04, rule 6: labelled and (for generated views) owner-approved."""
-        if self.rejected or not self.rights_confirmed or self.pillar is None:
+        if self.rejected or self.deleted_at or not self.rights_confirmed or self.pillar is None:
             return False
         return self.origin == "owner" or self.approved
 
@@ -208,7 +220,7 @@ class AssetLibrary:
         self.db.execute("PRAGMA foreign_keys = ON")
         self.db.executescript(SCHEMA)
         columns = {row[1] for row in self.db.execute("PRAGMA table_info(asset)")}
-        for name in ("vlm_pillar", "vlm_reason", "note_source"):
+        for name in ("vlm_pillar", "vlm_reason", "note_source", "deleted_at"):
             if name not in columns:
                 self.db.execute(f"ALTER TABLE asset ADD COLUMN {name} TEXT")
         self.db.commit()
@@ -252,6 +264,10 @@ class AssetLibrary:
         sha = hashlib.sha256(data).hexdigest()
         existing = self.find_sha(sha)
         if existing:
+            if existing.deleted_at:
+                with self.transaction() as db:
+                    db.execute("UPDATE asset SET deleted_at = NULL WHERE id = ?", (existing.id,))
+                return self.get(existing.id)
             return existing
         folder = self.workspace / "assets" / ("originals" if origin == "owner" else "generated")
         folder.mkdir(parents=True, exist_ok=True)
@@ -319,10 +335,91 @@ class AssetLibrary:
             raise KeyError(asset_id)
         return self._row(row)
 
-    def all(self) -> list[Asset]:
+    def all(self, *, trash: bool = False) -> list[Asset]:
+        """FR-04: library photos, or (trash=True) the ones the owner deleted."""
+        where = "deleted_at IS NOT NULL" if trash else "deleted_at IS NULL"
         return [
-            self._row(r) for r in self.db.execute("SELECT * FROM asset ORDER BY created_at, id")
+            self._row(r)
+            for r in self.db.execute(f"SELECT * FROM asset WHERE {where} ORDER BY created_at, id")
         ]
+
+    # -- owner actions with undo -------------------------------------------------------------
+
+    def _snapshot(self, ids: list[str]) -> dict[str, dict[str, object]]:
+        rows = self.db.execute(
+            f"SELECT id, {', '.join(UNDOABLE)} FROM asset WHERE id IN ({','.join('?' * len(ids))})",
+            ids,
+        ).fetchall()
+        return {r["id"]: {k: r[k] for k in UNDOABLE} for r in rows}
+
+    def act(self, actor: str, kind: str, summary: str, ids: list[str], **changes: object) -> int:
+        """FR-09: change owner fields on many assets in one step that can be undone."""
+        unknown = set(changes) - set(UNDOABLE)
+        if unknown or not ids:
+            raise ValueError("Unknown change or no photos selected")
+        before = self._snapshot(ids)
+        if len(before) != len(set(ids)):
+            raise KeyError("Unknown photo")
+        with self.transaction() as db:
+            for asset_id in ids:
+                assignments = ", ".join(f"{k} = ?" for k in changes)
+                values = [int(v) if isinstance(v, bool) else v for v in changes.values()]
+                db.execute(f"UPDATE asset SET {assignments} WHERE id = ?", [*values, asset_id])
+            cursor = db.execute(
+                "INSERT INTO activity (at, actor, kind, summary, undo_json) VALUES (?,?,?,?,?)",
+                (now(), actor, kind, summary, json.dumps(before)),
+            )
+        return int(cursor.lastrowid or 0)
+
+    def log(self, actor: str, kind: str, summary: str) -> None:
+        """FR-09: actions that cannot be undone here (e.g. post decisions) still appear."""
+        with self.transaction() as db:
+            db.execute(
+                "INSERT INTO activity (at, actor, kind, summary) VALUES (?,?,?,?)",
+                (now(), actor, kind, summary),
+            )
+
+    def undo(self, sequence: int | None = None) -> str:
+        """FR-09: restore the asset fields an action changed (latest undoable by default)."""
+        query = "SELECT * FROM activity WHERE undo_json IS NOT NULL AND undone = 0"
+        row = self.db.execute(
+            query + (" AND sequence = ?" if sequence else "") + " ORDER BY sequence DESC LIMIT 1",
+            (sequence,) if sequence else (),
+        ).fetchone()
+        if row is None:
+            raise ValueError("Nothing to undo")
+        before: dict[str, dict[str, object]] = json.loads(row["undo_json"])
+        with self.transaction() as db:
+            for asset_id, fields in before.items():
+                assignments = ", ".join(f"{k} = ?" for k in fields)
+                db.execute(
+                    f"UPDATE asset SET {assignments} WHERE id = ?", [*fields.values(), asset_id]
+                )
+            db.execute("UPDATE activity SET undone = 1 WHERE sequence = ?", (row["sequence"],))
+        return str(row["summary"])
+
+    def activity(self, limit: int = 100) -> list[dict[str, object]]:
+        return [
+            {k: r[k] for k in ("sequence", "at", "actor", "kind", "summary", "undone")}
+            | {"undoable": r["undo_json"] is not None and not r["undone"]}
+            for r in self.db.execute(
+                "SELECT * FROM activity ORDER BY sequence DESC LIMIT ?", (limit,)
+            )
+        ]
+
+    def purge(self, ids: list[str], in_use: set[str]) -> int:
+        """FR-04: permanently remove trashed photos no generated post still uses."""
+        removed = 0
+        for asset in self.all(trash=True):
+            if asset.id not in ids or asset.id in in_use:
+                continue
+            with self.transaction() as db:
+                db.execute("DELETE FROM classification WHERE asset_id = ?", (asset.id,))
+                db.execute("UPDATE asset SET parent_id = NULL WHERE parent_id = ?", (asset.id,))
+                db.execute("DELETE FROM asset WHERE id = ?", (asset.id,))
+            self.path(asset).unlink(missing_ok=True)
+            removed += 1
+        return removed
 
     def record_classification(
         self,

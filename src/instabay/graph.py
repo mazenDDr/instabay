@@ -476,7 +476,11 @@ class WeekRunner:
         for post_id in state["post_ids"]:
             post = self.repository.post(post_id)
             decision = self.repository.latest_approval(post_id)
-            if decision is None or decision.content_hash != post.content_hash:
+            if (
+                decision is None
+                or decision.decision == "REVOKED"
+                or decision.content_hash != post.content_hash
+            ):
                 raise ApprovalPendingError("Some posts still need current stored human decisions")
         return {"status": "checked"}
 
@@ -553,7 +557,11 @@ class WeekRunner:
         for post_id in current.post_ids:
             post = self.repository.post(post_id)
             decision = self.repository.latest_approval(post_id)
-            if decision is None or decision.content_hash != post.content_hash:
+            if (
+                decision is None
+                or decision.decision == "REVOKED"
+                or decision.content_hash != post.content_hash
+            ):
                 raise ApprovalPendingError("Stored human decisions are still pending")
         with tracing_context(enabled=False):
             if current.status == "in_progress":

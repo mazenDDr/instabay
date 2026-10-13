@@ -25,7 +25,8 @@ CAIRO = ZoneInfo("Africa/Cairo")
 PostFormat = Literal["photo", "carousel", "reel"]
 HookStyle = Literal["question", "statement", "number"]
 TimeBucket = Literal["morning_08_10", "noon_12_14", "evening_19_21", "late_21_23"]
-ApprovalDecision = Literal["APPROVED", "EDITED", "REJECTED"]
+# REVOKED undoes an earlier decision: the post is pending again (history stays append-only).
+ApprovalDecision = Literal["APPROVED", "EDITED", "REJECTED", "REVOKED"]
 Identifier = Annotated[str, Field(pattern=r"^[A-Za-z0-9][A-Za-z0-9_-]*$")]
 Hash = Annotated[str, Field(pattern=r"^[0-9a-f]{64}$")]
 

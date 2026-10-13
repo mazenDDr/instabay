@@ -62,12 +62,16 @@ class JobStatus(Boundary):
     run_id: str
     output: str
     started_at: str
-    state: Literal["running", "paused", "done", "failed"]
+    state: Literal["running", "paused", "done", "failed", "cancelled"]
     steps: list[Step]
     paused_after: str | None = None
     error: str | None = None
     posts: int = Field(default=0, ge=0)
     new_shots: list[str] = Field(default_factory=list)
+
+
+class Cancelled(Exception):
+    """FR-09: the owner stopped the run; finished stages stay on disk."""
 
 
 class VisionService(Protocol):
@@ -154,16 +158,31 @@ class Pipeline:
         self.status: JobStatus | None = None
         self.thread: threading.Thread | None = None
         self.resume_event = threading.Event()
+        self.cancel_event = threading.Event()
 
     def current(self) -> JobStatus | None:
         return self.status
 
-    def start(self, actor: str, week_start: date, mode: Mode, *, wait: bool = False) -> JobStatus:
+    def start(
+        self,
+        actor: str,
+        week_start: date,
+        mode: Mode,
+        *,
+        wait: bool = False,
+        again: bool = False,
+    ) -> JobStatus:
+        """FR-09: `again` keeps the previous version of this week and writes a new one."""
         if self.thread and self.thread.is_alive():
             raise ValueError("A week is already being prepared")
         if week_start.weekday() != 0:
             raise ValueError("A week starts on Monday")
         run_id = f"week-{week_start.isoformat()}"
+        if again:
+            version = 2
+            while (self.runs / f"{run_id}-v{version}").exists():
+                version += 1
+            run_id = f"{run_id}-v{version}"
         output = self.runs / run_id
         self.status = JobStatus(
             id=f"{run_id}-{int(time.time())}",
@@ -176,6 +195,7 @@ class Pipeline:
         )
         self._save()
         self.resume_event.clear()
+        self.cancel_event.clear()
         self.thread = threading.Thread(
             target=self._run, args=(actor, week_start, output, mode), daemon=True
         )
@@ -191,6 +211,18 @@ class Pipeline:
         self._update(state="running", paused_after=None)
         self.resume_event.set()
         return self.status
+
+    def cancel(self) -> JobStatus:
+        """FR-09: stop after the current step; a paused run stops at once."""
+        if self.status is None or self.status.state not in ("running", "paused"):
+            raise ValueError("Nothing is running")
+        self.cancel_event.set()
+        self.resume_event.set()
+        return self.status
+
+    def _check(self) -> None:
+        if self.cancel_event.is_set():
+            raise Cancelled()
 
     # -- internals -------------------------------------------------------------------------
 
@@ -227,6 +259,7 @@ class Pipeline:
         self.resume_event.clear()
         self._update(state="paused", paused_after=key)
         self.resume_event.wait()
+        self._check()
 
     def _library(self) -> AssetLibrary:
         return AssetLibrary(self.workspace, root=self.root)
@@ -257,6 +290,7 @@ class Pipeline:
             self._pause(key, mode)
 
             # 2. Plan: slots and the photos reserved for each post.
+            self._check()
             key, started = "plan", time.perf_counter()
             self._step(key, "running")
             slots, assets = self._slots(week_start)
@@ -271,6 +305,7 @@ class Pipeline:
             self._pause(key, mode)
 
             # 3. New shots: only where a post lacks images of its own pillar.
+            self._check()
             key, started = "shots", time.perf_counter()
             if not missing or self.views is None:
                 self._step(
@@ -302,6 +337,7 @@ class Pipeline:
                 self._pause(key, mode)
 
             # 4. Freeze: the owner ticked the brand confirmation when starting.
+            self._check()
             key, started = "freeze", time.perf_counter()
             self._step(key, "running")
             output.mkdir(parents=True, exist_ok=True)
@@ -313,6 +349,7 @@ class Pipeline:
             self._step(key, "done", f"frozen by {actor} ({digest[:10]})", started)
 
             # 5. Write: planner → visual briefs → EN/AR captions → checks → photo layouts.
+            self._check()
             key, started = "write", time.perf_counter()
             self._step(
                 key, "running", "briefs → English and Arabic captions → photos → reel videos"
@@ -321,6 +358,9 @@ class Pipeline:
             self._update(posts=len(result))
             self._step(key, "done", f"{len(result)} posts waiting for your approval", started)
             self._update(state="done")
+        except Cancelled:
+            self._step(key, "failed", "stopped by you", started)
+            self._update(state="cancelled", error="Stopped by you")
         except Exception as error:
             message = str(error).splitlines()[0][:300] if str(error) else type(error).__name__
             self._step(key, "failed", message, started)
@@ -350,6 +390,7 @@ class Pipeline:
                         empty.append(pillar)
                     continue
                 for n in range(need):
+                    self._check()
                     if len(created) >= MAX_NEW_SHOTS:
                         break
                     parents = [sources[n % len(sources)]]

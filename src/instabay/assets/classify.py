@@ -53,6 +53,7 @@ def classify_assets(
     *,
     force: bool = False,
     judge: PillarJudge | None = None,
+    only: set[str] | None = None,
 ) -> ClassifyReport:
     """FR-04: unclassified (or all, with force) photos; one failure never blocks the rest.
 
@@ -64,6 +65,8 @@ def classify_assets(
     unsure: list[Asset] = []
     options = {p.id: p.description for p in brand.pillars}
     for asset in library.all():
+        if only is not None and asset.id not in only:
+            continue
         if asset.rejected or (asset.model_pillar and not force):
             skipped += 1
             continue

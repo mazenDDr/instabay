@@ -21,6 +21,7 @@ from instabay.assets.variants import (
     HTTPViewBackend,
     StubViewBackend,
     ViewBackend,
+    make_shot,
     make_view,
 )
 
@@ -96,6 +97,35 @@ def register_dashboard_commands(app: typer.Typer) -> None:
                     origin, WRITER_MODEL, confirm_external=True
                 ),
             )
+
+        def retry(library: AssetLibrary, old: Asset) -> Asset:
+            """FR-06: same sources and direction, next seed; the old attempt is kept."""
+            assert backend is not None and old.recipe is not None
+            seed = int(str(old.recipe.get("seed", 0))) + 1
+            parents = [library.get(str(i)) for i in old.recipe.get("parents") or [old.parent_id]]  # type: ignore[union-attr]
+            preset = str(old.recipe.get("preset", ""))
+            if old.recipe.get("kind") == "new-shot-v1":
+                _, pillar, variant = [*preset.split(":"), "", "", "0"][:3]
+                return make_shot(
+                    library,
+                    parents,
+                    pillar or str(old.pillar),
+                    int(variant or 0),
+                    seed,
+                    backend=backend,
+                    revision=VIEW_REVISION,
+                    judge=decider,
+                )
+            return make_view(
+                library,
+                parents[0],
+                preset,
+                seed,
+                backend=backend,
+                revision=VIEW_REVISION,
+                judge=decider,
+            )
+
         application = create_app(
             workspace=workspace,
             brand=load_brand(brand),
@@ -103,6 +133,7 @@ def register_dashboard_commands(app: typer.Typer) -> None:
             engine=decider,
             judge=pillar_judge(judge, vision_origin, confirm_external),
             variants=render if backend else None,
+            shots=retry if backend else None,
             presets={k: v[0] for k, v in PRESETS.items()},
             pipeline=pipeline,
         )

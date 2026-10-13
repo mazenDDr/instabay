@@ -97,7 +97,11 @@ def approval_queue(
     for current_id in ids:
         post = repository.post(current_id)
         decision = repository.latest_approval(current_id)
-        if decision is not None and decision.content_hash == post.content_hash:
+        if (
+            decision is not None
+            and decision.decision != "REVOKED"
+            and decision.content_hash == post.content_hash
+        ):
             console.print(f"Already reviewed: {current_id} ({decision.decision})")
             continue
         started = perf_counter()
