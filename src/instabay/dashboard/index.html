@@ -272,6 +272,7 @@ td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
           </div>
           <div class="card"><h2>Connections</h2><p class="sub">Models on gpu-box and your Instagram account.</p><div id="connections"></div></div>
         </div>
+        <div class="card" style="margin-top: 16px"><h2>What the writer learned from you</h2><p class="sub">Your rejection reasons and caption edits. The next week's writers read the newest of these as “avoid” and “prefer” notes. No model is retrained.</p><div class="log" id="lessons"></div></div>
         <div class="card" style="margin-top: 16px"><div class="row spread"><div><h2>Activity</h2><p class="sub">Everything changed from this studio. Library changes can be undone.</p></div></div><div class="log" id="activity"></div></div>
       </section>
     </div>
@@ -303,7 +304,7 @@ const api = async (path, options = {}) => {
 let toastTimer;
 const toast = (t, action) => {
   const el = $("#toast");
-  el.replaceChildren(h("span", { text: t }), action ? h("button", { type: "button", onclick: () => { el.hidden = true; action[1](); } }, action[0]) : null);
+  el.replaceChildren(...[h("span", { text: t }), action ? h("button", { type: "button", onclick: () => { el.hidden = true; action[1](); } }, action[0]) : null].filter(Boolean));
   el.hidden = false; clearTimeout(toastTimer); toastTimer = setTimeout(() => (el.hidden = true), action ? 7000 : 3500);
 };
 async function undo(sequence) {
@@ -470,11 +471,10 @@ async function bulkDecide(run, decision) {
   const actor = store.get("actor");
   if (!actor) return toast("Add your name in Settings first");
   const ids = [...selectedPosts];
-  const flagged = run.posts.some((p) => ids.includes(p.id) && p.flags.length);
   let reason = "";
-  if (decision === "REJECTED" || (decision === "APPROVED" && flagged)) {
-    reason = window.prompt(decision === "REJECTED" ? "Why are you rejecting these posts?" : "These posts have review notes. Why are they OK to approve?") || "";
-    if (!reason.trim()) return toast("A reason is needed");
+  if (decision === "REJECTED") {
+    reason = window.prompt("Why are you rejecting these posts? The writer learns from this.") || "";
+    if (!reason.trim()) return toast("A reason is needed to reject");
   }
   try {
     const r = await api("/api/decision/bulk", { method: "POST", body: JSON.stringify({ db: run.db, post_ids: ids, decision, actor, reason }) });
@@ -493,12 +493,13 @@ const drawerHead = (title) => h("header", {}, h("h3", { id: "drawer-title", text
 
 function postDrawer(run, p) {
   const started = performance.now();
-  const reason = h("textarea", { "aria-label": "Reason", placeholder: p.flags.length ? "Reason (required: this post has review notes)" : "Reason (optional; required to reject)", maxlength: 600 });
+  const reason = h("textarea", { "aria-label": "Reason", placeholder: "Why reject? (only needed to reject; the writer learns from it)", maxlength: 600 });
   const en = h("textarea", { "aria-label": "English caption", maxlength: 2200, style: "min-height: 120px" }); en.value = p.caption_en;
   const ar = h("textarea", { "aria-label": "Arabic caption", maxlength: 2200, dir: "rtl", lang: "ar", style: "min-height: 120px" }); ar.value = p.caption_ar;
   const send = async (decision, btn, extra = {}) => {
     const actor = store.get("actor");
     if (!actor) { toast("Add your name in Settings first: it is stored with each approval"); return; }
+    if (decision === "REJECTED" && !reason.value.trim()) { toast("Write why you are rejecting it: the writer learns from this"); reason.focus(); return; }
     btn.disabled = true;
     try {
       await api("/api/decision", { method: "POST", body: JSON.stringify({ db: run.db, post_id: p.id, decision, actor, reason: reason.value, seconds_spent: (performance.now() - started) / 1000, ...extra }) });
@@ -856,7 +857,18 @@ function renderSettings() {
     row(s.variants_enabled, "Camera views · FLUX.2-klein-4B", s.variants_enabled ? "Create views from any photo in Media" : "Start with --views gpu"),
     row(s.instagram.configured, "Instagram", s.instagram.configured ? `Token found · mode ${s.instagram.mode}` : "Add INSTAGRAM_ACCESS_TOKEN and INSTAGRAM_USER_ID to .env"),
   );
+  renderLessons();
   renderActivity();
+}
+async function renderLessons() {
+  let f;
+  try { f = await api("/api/feedback"); } catch (e) { return; }
+  const forget = async (id, all = false) => { try { await api("/api/feedback/forget", { method: "POST", body: JSON.stringify(all ? { restore_all: true } : { id }) }); toast(all ? "All notes are back" : "Forgotten: the writer won't see this note"); renderLessons(); } catch (e) { toast(e.message); } };
+  const rows = f.lessons.map((x) => h("div", {}, h("span", { class: "badge " + (x.kind === "rejected" ? "bad" : "ok"), text: x.kind === "rejected" ? "Avoid" : x.language === "ar" ? "Prefer · AR" : "Prefer · EN" }),
+    h("span", { style: "flex: 1", dir: x.language === "ar" ? "auto" : null }, h("span", { text: x.text }), x.example ? h("small", { class: "muted", style: "display: block", text: `on: ${x.example}` }) : null),
+    h("button", { class: "btn small", type: "button", onclick: () => forget(x.id) }, "Forget")));
+  $("#lessons").replaceChildren(...(rows.length ? rows : [h("p", { class: "muted", text: "Nothing yet. Reject a post with a reason, or edit a caption before approving." })]),
+    ...[f.forgotten ? h("div", {}, h("span", { class: "muted", style: "flex: 1", text: `${f.forgotten} forgotten note${f.forgotten === 1 ? "" : "s"}` }), h("button", { class: "btn small", type: "button", onclick: () => forget(null, true) }, "Bring them back")) : null].filter(Boolean));
 }
 async function renderActivity() {
   let rows = [];

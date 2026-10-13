@@ -23,6 +23,7 @@ from instabay.agents.judge import Judge, write_bilingual
 from instabay.agents.video_director import VideoDirector
 from instabay.agents.visual_brief import VisualBriefWriter, scene_images
 from instabay.content.evidence import ContentEvidence, EvidenceCopyContext
+from instabay.content.feedback import OwnerFeedback
 from instabay.content.photos import PhotoRecipe, PhotoStudio
 from instabay.content.quality import quality_report
 from instabay.core.hashtags import select_hashtags
@@ -114,6 +115,7 @@ class WeekRunner:
         cadence: Cadence | None = None,
         asset_pools: Callable[[list[Slot]], dict[str, list[str]]] | None = None,
         multimodal: bool = False,
+        feedback: OwnerFeedback | None = None,
     ) -> None:
         self._stack = ExitStack()
         self.repository = Repository(db)
@@ -144,6 +146,7 @@ class WeekRunner:
         self.preferences = preferences
         self.cadence, self.asset_pools = cadence, asset_pools
         self.multimodal = multimodal
+        self.feedback = feedback
         self.decision_engine, self.calibration = decision_engine, calibration
         self.allow_synthetic_decisions = allow_synthetic_decisions
         self.video_studio, self.approved_stills = video_studio, approved_stills or []
@@ -246,6 +249,7 @@ class WeekRunner:
                         used_photo_scenes,
                         pools.get(slot.id),
                         see_images=self.multimodal,
+                        feedback=self.feedback,
                     )
                     brief = selection.brief
                     context = EvidenceCopyContext(
@@ -283,6 +287,7 @@ class WeekRunner:
                     images=scene_images(self.content_catalog, list(context.selection.media_ids))
                     if self.multimodal and context and self.content_catalog
                     else None,
+                    feedback=self.feedback,
                 )
                 post = Post(
                     id=slot.id,

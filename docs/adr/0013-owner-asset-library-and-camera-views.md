@@ -113,3 +113,16 @@ from two different resorts and were used only for this test.
 - **Known weak spot:** the Arabic from the 9B NF4 writer has word errors ("بركة" for pool,
   invented words). Every post stays flagged for human review; a 4B-bf16 vs 9B-NF4 writer
   comparison is the next measurement.
+
+## Addendum (2026-10-13): reasons only for rejections; feedback memory
+
+- **Owner decision:** approving a post, even one with review notes, needs no reason. Rejecting
+  still requires one. The notes stay visible in the drawer, and the approval is the owner's
+  statement.
+- **Feedback memory, not fine-tuning:** the latest decision per post is read from every run
+  database. Rejection reasons become `owner_feedback.avoid` for the brief writer and both caption
+  writers. Caption edits (from the stored EDITED diffs) become `owner_feedback.prefer`, per
+  language. At most 8 notes per list, newest first. An undone rejection (REVOKED) is not a lesson.
+  The owner can **Forget** single notes or bring them all back in Settings. No weights change.
+  When there are no notes, the inputs are unchanged, so earlier cache keys and recordings still
+  apply.

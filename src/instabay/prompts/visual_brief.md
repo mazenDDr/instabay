@@ -35,3 +35,6 @@ any value is fine. All brief fields are strings except must_not and reel_concept
 reel_concept is null for photo/carousel. For a reel it MUST be an object with hook, shots
 (semantic scene purposes only), overlay_en, overlay_ar, audio, cta, cover.
 Set cta_kind to save, compare, comment or swipe; brief.cta must mean the same action.
+
+owner_feedback.avoid, when present, lists why the owner rejected recent posts. Treat each as a
+rule for this brief: do not repeat the angle, wording or choice that was rejected.

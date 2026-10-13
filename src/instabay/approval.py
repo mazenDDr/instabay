@@ -106,16 +106,16 @@ def approval_queue(
             continue
         started = perf_counter()
         show_post(repository, current_id, console)
-        review = repository.review(current_id)
+        repository.review(current_id)
         while True:
             choice = typer.prompt("Decision: approve / edit / reject").strip().lower()
             if choice in {"approve", "edit", "reject"}:
                 break
             console.print("Enter approve, edit, or reject.")
-        required_reason = review.flagged or choice == "reject"
+        required_reason = choice == "reject"
         reason = typer.prompt("Reason", default="" if not required_reason else None)
         while required_reason and not reason.strip():
-            reason = typer.prompt("Reason is required for flagged or rejected content")
+            reason = typer.prompt("Reason is required to reject")
         en_caption = ar_caption = None
         if choice == "edit":
             en_caption = typer.prompt("English caption", default=post.en.caption)

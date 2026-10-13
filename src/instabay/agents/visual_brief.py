@@ -14,6 +14,7 @@ from instabay.content.evidence import (
     PhotoEvidenceBrief,
     ReelEvidenceBrief,
 )
+from instabay.content.feedback import OwnerFeedback
 from instabay.core.schemas import BrandConstitution, Slot
 from instabay.llm import LLMService
 from instabay.video.direction import ObjectCatalog
@@ -43,6 +44,7 @@ class VisualBriefWriter:
         used_photo_scenes: list[str] | None = None,
         pool: list[str] | None = None,
         see_images: bool = False,
+        feedback: OwnerFeedback | None = None,
     ) -> EvidenceBrief:
         """FR-04: distinct weekly angles, an ordered carousel and no unsupported facility claims.
 
@@ -67,6 +69,8 @@ class VisualBriefWriter:
             }
             for o in available
         ]
+        if feedback is not None and feedback.avoid:
+            inputs["owner_feedback"] = {"avoid": list(feedback.avoid)}
         inputs["post_format"] = slot.arm.format
         inputs["pillar_goal"] = evidence.pillar_guidance[slot.arm.pillar]
 

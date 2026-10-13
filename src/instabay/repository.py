@@ -674,13 +674,8 @@ class Repository:
                 row is None or row.content_hash != post.content_hash
             ):
                 raise ValueError("Post needs current checks before approval")
-            if (
-                request.decision != "REVOKED"
-                and row is not None
-                and json.loads(row.flags_json)
-                and not request.reason.strip()
-            ):
-                raise ValueError("Flagged posts need an explicit human reason")
+            # Owner decision (2026-10-13): only rejections need a reason; the review notes stay
+            # visible at approval and the approval itself is the owner's statement.
             diff = {}
             if request.decision == "EDITED":
                 before = post

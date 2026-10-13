@@ -9,6 +9,7 @@ from pathlib import Path
 from instabay.adapters.llm import LLMClient
 from instabay.content.evidence import ContentEvidence
 from instabay.content.export import export_gallery
+from instabay.content.feedback import OwnerFeedback
 from instabay.core.schemas import (
     BrandConstitution,
     BrandInput,
@@ -46,6 +47,7 @@ def generate_week(
     cadence: Cadence | None = None,
     asset_pools: Callable[[list[Slot]], dict[str, list[str]]] | None = None,
     multimodal: bool = False,
+    feedback: OwnerFeedback | None = None,
 ) -> WorkflowResult:
     """FR-09: draft/review only; approval and Instagram are separate explicit actions."""
     root, output = root.resolve(), output.resolve()
@@ -108,6 +110,7 @@ def generate_week(
         cadence=cadence,
         asset_pools=asset_pools,
         multimodal=multimodal,
+        feedback=feedback,
         content_evidence=evidence,
         content_root=root,
         video_catalog=catalog,

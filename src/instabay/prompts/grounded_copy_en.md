@@ -19,3 +19,7 @@ alt text from those facts. Set detail and alt_text to empty strings. Do not add 
 opening/action that the photos do not show: no facilities, activities, guest stories, species,
 sound, smell or temperature; time of day only if the photo clearly shows it. No hashtags,
 emojis, auditing language or technical jargon.
+
+owner_feedback, when present, is the owner's own direction: `avoid` lists why recent posts were
+rejected; `prefer` shows how the owner rewrote captions ("before" → "after"). Follow the style,
+words and length of the "after" versions and never repeat what was rejected.

@@ -24,10 +24,11 @@ from instabay.assets.export import PROPERTY_KEY
 from instabay.assets.judge import PillarJudge
 from instabay.assets.library import VIEW_OK, Asset, AssetLibrary
 from instabay.assets.plan import OwnerCadence, load_cadence, save_cadence, suggest_assets
+from instabay.content.feedback import collect, for_writers
 from instabay.core.planner import plan_week
 from instabay.core.schemas import ApprovalRequest, Boundary, BrandConstitution, canonical_hash
 from instabay.dashboard import data
-from instabay.dashboard.jobs import Pipeline, next_monday
+from instabay.dashboard.jobs import FORGOTTEN_KEY, Pipeline, next_monday
 from instabay.decisions.vision import VisionDecisionEngine
 
 PAGE = Path(__file__).with_name("index.html")
@@ -85,6 +86,11 @@ class AssetAction(Boundary):
     action: str = Field(pattern="^(delete|restore|hide|show|pillar|approve|unapprove)$")
     pillar: str | None = None
     actor: str = Field(default="owner", min_length=1, max_length=80)
+
+
+class Forget(Boundary):
+    id: str | None = Field(default=None, max_length=40)
+    restore_all: bool = False
 
 
 class Undo(Boundary):
@@ -491,6 +497,37 @@ def create_app(
                 return {"undone": lib.undo(item.sequence)}
             except ValueError as error:
                 raise HTTPException(409, str(error)) from None
+
+    def forgotten(lib: AssetLibrary) -> set[str]:
+        stored = lib.setting(FORGOTTEN_KEY)
+        return {str(i) for i in stored} if isinstance(stored, list) else set()
+
+    @app.get("/api/feedback")
+    def feedback() -> dict[str, JsonValue]:
+        """FR-04: the notes the writers will receive for the next week."""
+        with library() as lib:
+            skip = forgotten(lib)
+        lessons = collect(data.discover(runs), skip)
+        return {
+            "lessons": [x.model_dump(mode="json") for x in lessons],
+            "writers": for_writers(lessons).model_dump(mode="json"),
+            "forgotten": len(skip),
+        }
+
+    @app.post("/api/feedback/forget")
+    def forget(item: Forget) -> dict[str, int]:
+        with library() as lib:
+            skip = forgotten(lib) | ({item.id} if item.id else set())
+            if item.restore_all:
+                skip = set()
+            ids: list[JsonValue] = [*sorted(skip)]
+            lib.set_setting(FORGOTTEN_KEY, ids)
+            lib.log(
+                "owner",
+                "feedback",
+                "restored all notes" if item.restore_all else f"forgot note {item.id}",
+            )
+        return {"forgotten": len(skip)}
 
     @app.get("/api/activity")
     def activity() -> list[dict[str, JsonValue]]:

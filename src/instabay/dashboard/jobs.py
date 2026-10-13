@@ -26,9 +26,11 @@ from instabay.assets.judge import PillarJudge
 from instabay.assets.library import NEAR_COPY, VIEW_OK, Asset, AssetLibrary, distance
 from instabay.assets.plan import Suggestion, load_cadence, suggest_assets
 from instabay.assets.variants import ViewBackend, check_fidelity, make_shot
+from instabay.content.feedback import collect, for_writers
 from instabay.content.production import generate_week
 from instabay.core.planner import plan_week
 from instabay.core.schemas import Boundary, BrandConstitution, Slot, canonical_hash
+from instabay.dashboard import data
 from instabay.decisions.vision import VisionDecisionEngine
 from instabay.llm import RunBudget
 from instabay.repository import Repository
@@ -46,6 +48,7 @@ STAGES = (
 Mode = Literal["autopilot", "guided"]
 StepState = Literal["waiting", "running", "done", "failed", "skipped"]
 MAX_NEW_SHOTS = 8
+FORGOTTEN_KEY = "forgotten_feedback"
 
 
 class Step(Boundary):
@@ -157,6 +160,7 @@ class Pipeline:
         self.multimodal = multimodal
         self.status: JobStatus | None = None
         self.thread: threading.Thread | None = None
+        self.lessons_used = 0
         self.resume_event = threading.Event()
         self.cancel_event = threading.Event()
 
@@ -356,7 +360,10 @@ class Pipeline:
             )
             result = self._write(week_start, output)
             self._update(posts=len(result))
-            self._step(key, "done", f"{len(result)} posts waiting for your approval", started)
+            learned = f"; used {self.lessons_used} of your past notes" if self.lessons_used else ""
+            self._step(
+                key, "done", f"{len(result)} posts waiting for your approval{learned}", started
+            )
             self._update(state="done")
         except Cancelled:
             self._step(key, "failed", "stopped by you", started)
@@ -437,6 +444,11 @@ class Pipeline:
         def pools(slots: list[Slot]) -> dict[str, list[str]]:
             return {k: v.pool for k, v in suggest_assets(slots, assets).items()}
 
+        with self._library() as library:
+            stored = library.setting(FORGOTTEN_KEY)
+            forgotten = {str(i) for i in stored} if isinstance(stored, list) else set()
+        lessons = collect(data.discover(self.runs), forgotten)
+        self.lessons_used = len(lessons)
         recorder = RecordingLLMClient(self.client_factory(origin), output / "cassette.json")
         try:
             result = generate_week(
@@ -454,6 +466,7 @@ class Pipeline:
                 cadence=cadence,
                 asset_pools=pools,
                 multimodal=self.multimodal,
+                feedback=for_writers(lessons),
             )
         finally:
             recorder.close()

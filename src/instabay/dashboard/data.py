@@ -142,9 +142,6 @@ def decide(db_path: Path, post_id: str, request: ApprovalRequest) -> str:
     """FR-09: the owner's click is stored exactly like the CLI approval (hash-bound)."""
     repository = Repository(db_path)
     try:
-        review = repository.review(post_id)
-        if request.decision != "REVOKED" and review.flagged and not request.reason.strip():
-            raise ValueError("This post is flagged: write a short reason with your decision")
         return repository.approve(post_id, request).decision
     finally:
         repository.close()

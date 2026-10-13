@@ -29,9 +29,7 @@ def test_dashboard_lists_runs_and_stores_hash_bound_decisions(tmp_path: Path) ->
     flagged = next((p for p in posts if p["flags"]), None)
     target = flagged or posts[0]
     body = {"db": db, "post_id": target["id"], "decision": "APPROVED", "actor": "Owner"}
-    if flagged:
-        assert client.post("/api/decision", json=body).status_code == 422
-        body["reason"] = "Checked the flags"
+    # Flagged or not, approving needs no reason (owner decision 2026-10-13).
     assert client.post("/api/decision", json=body).json() == {"decision": "APPROVED"}
     assert client.post("/api/decision", json={**body, "db": "../x.sqlite"}).status_code == 404
     reject = {"db": db, "post_id": posts[-1]["id"], "decision": "REJECTED", "actor": "Owner"}
