@@ -21,8 +21,9 @@ from instabay.adapters.graph_models import (
 )
 from instabay.adapters.graph_publisher import GraphPublisher
 from instabay.adapters.media_tunnel import manifest, photo_files, public_files, ready
-from instabay.core.schemas import ApprovalRequest
+from instabay.core.schemas import ApprovalRequest, Post, Review
 from instabay.core.tables import PublicationRow
+from instabay.graph import evidence_review
 from instabay.repository import Repository
 
 
@@ -157,6 +158,19 @@ def _run(post_id: str, db: Path, config_path: Path, confirm_live: bool, *, insig
         repository.close()
 
 
+def _recheck(repository: Repository, post: Post) -> Review:
+    """FR-08: the new revision gets the same checks as the week did, before any approval."""
+    run_id = repository._post_run(post.slot_id)
+    previous = []
+    for slot in repository.slots(run_id):
+        if slot.id == post.slot_id:
+            break
+        previous.append(repository.post(slot.id))
+    review = evidence_review(post, repository.brand(post.brand_hash), previous)
+    repository.save_review(review)
+    return review
+
+
 def _safe(error: Exception) -> str:
     """NFR-04: only our own configuration messages are echoed; never provider bodies."""
     if isinstance(error, LiveConfigurationError):
@@ -187,8 +201,14 @@ def _post_now(post_id: str, db: Path, actor: str, config_path: Path, confirm_liv
             settings = settings.model_copy(update={"media_hosts": (urlsplit(base).hostname,)})
             post = ready(post, manifest(post, files, base, actor))
             repository.save_post(post)
+            review = _recheck(repository, post)
+            if not review.rules.passed:
+                raise ValueError("Checks failed: " + "; ".join(review.rules.violations))
             typer.echo("\n--- Caption that will be posted ---")
             typer.echo(GraphPublisher.caption(post))
+            typer.echo("--- Review notes ---")
+            for flag in review.flags:
+                typer.echo(f"- {flag}")
             typer.echo("--- Photos ---")
             for path, asset in zip(files, post.media_manifest.assets, strict=True):  # type: ignore[union-attr]
                 typer.echo(f"{path}  ({asset.width}x{asset.height})")

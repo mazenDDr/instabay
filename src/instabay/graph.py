@@ -85,6 +85,30 @@ class WorkflowRunner(Protocol):
         ...
 
 
+def evidence_review(post: Post, brand: BrandConstitution, previous: list[Post]) -> Review:
+    """FR-08: deterministic rules + quality flags for an evidence post; a human decides."""
+    if post.evidence is None:
+        raise ValueError("Evidence-first workflow lost a source attachment")
+    context = EvidenceCopyContext.model_validate(post.evidence.context)
+    report = quality_report(post, context.selection, previous)
+    rules = check_rules(post, brand)
+    return Review(
+        post_id=post.id,
+        content_hash=post.content_hash,
+        rules=rules,
+        judge=None,
+        check_path="human_pending",
+        flagged=True,
+        flags=[
+            "Human source/caption/appeal review pending",
+            *rules.violations,
+            *report.flags,
+            *media_flags(post),
+        ],
+        decision_trace=report.model_dump(mode="json"),
+    )
+
+
 class WeekRunner:
     """FR-09: an offline graph that survives command/process restarts."""
 
@@ -425,26 +449,7 @@ class WeekRunner:
                 post = self.repository.post(slot.id)
                 if post.evidence is None:
                     raise ValueError("Evidence-first workflow lost a source attachment")
-                context = EvidenceCopyContext.model_validate(post.evidence.context)
-                report = quality_report(post, context.selection, previous)
-                rules = check_rules(post, brand)
-                self.repository.save_review(
-                    Review(
-                        post_id=post.id,
-                        content_hash=post.content_hash,
-                        rules=rules,
-                        judge=None,
-                        check_path="human_pending",
-                        flagged=True,
-                        flags=[
-                            "Human source/caption/appeal review pending",
-                            *rules.violations,
-                            *report.flags,
-                            *media_flags(post),
-                        ],
-                        decision_trace=report.model_dump(mode="json"),
-                    )
-                )
+                self.repository.save_review(evidence_review(post, brand, previous))
                 previous.append(post)
             return {"status": "checked"}
         judge = CheckCascade(
