@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import Literal, Self
 
 import yaml
-from pydantic import Field, model_validator
+from pydantic import Field, field_validator, model_validator
 
 from instabay.core.schemas import Boundary, Brief, Copy, Identifier, ReelConcept, Slot
 from instabay.video.direction import ObjectCatalog
@@ -177,6 +177,15 @@ class EvidenceCopyDraft(Boundary):
     action: str = Field(min_length=1, max_length=100)
     alt_text: str = Field(default="", max_length=600)
     fact_id: Identifier
+
+    @field_validator("detail", "alt_text", mode="before")
+    @classmethod
+    def compiled_by_code(cls, value: object) -> str:
+        """FR-04: factual body and alt text come from the facts; model text here is dropped.
+
+        Qwen3.5-9B filled `detail` with 400+ characters and failed the whole post twice.
+        """
+        return ""
 
 
 def caption_schema(context: EvidenceCopyContext) -> type[EvidenceCopyDraft]:

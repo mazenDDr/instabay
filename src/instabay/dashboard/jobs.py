@@ -23,7 +23,7 @@ from instabay.adapters.llm import LLMClient
 from instabay.assets.classify import classify_assets
 from instabay.assets.export import export_library
 from instabay.assets.judge import PillarJudge
-from instabay.assets.library import VIEW_OK, Asset, AssetLibrary
+from instabay.assets.library import NEAR_COPY, VIEW_OK, Asset, AssetLibrary, distance
 from instabay.assets.plan import Suggestion, load_cadence, suggest_assets
 from instabay.assets.variants import ViewBackend, check_fidelity, make_shot
 from instabay.content.production import generate_week
@@ -281,16 +281,21 @@ class Pipeline:
                 )
             else:
                 self._step(key, "running", "creating new shots with FLUX.2-klein")
-                created, kept = self._fill(slots, plan, mode)
+                created, kept, empty = self._fill(slots, plan, mode)
                 self._update(new_shots=created)
                 self._step(
                     key,
                     "done",
                     f"{len(created)} new shots; "
                     + (
-                        f"{kept} kept (d3 same-place and photoreal ≥ {VIEW_OK:.0%})"
+                        f"{kept} kept (same place ≥ {VIEW_OK:.0%}, not a near-copy)"
                         if mode == "autopilot"
-                        else "approve the ones you like in Media"
+                        else f"{kept} look good; approve the ones you like in Media"
+                    )
+                    + (
+                        f". No photos for {', '.join(empty)}: add some, nothing was invented"
+                        if empty
+                        else ""
                     ),
                     started,
                 )
@@ -322,19 +327,28 @@ class Pipeline:
 
     def _fill(
         self, slots: list[Slot], plan: dict[str, Suggestion], mode: Mode
-    ) -> tuple[list[str], int]:
-        """FR-06: one new shot per missing image, from 1-2 owner photos of that pillar."""
+    ) -> tuple[list[str], int, list[str]]:
+        """FR-06: new shots only from owner photos of the same pillar; never invent a pillar.
+
+        Autopilot keeps a shot when d3 says it is the same place (>= VIEW_OK) and it is not a
+        near-copy of its source. d3's photoreal answer is shown but not used to decide: it rated
+        clearly real room shots 0.45-0.59 on the owner's photos (2026-10-13).
+        """
         assert self.views is not None
         self.service.ensure()
         created: list[str] = []
+        empty: list[str] = []
         with self._library() as library:
             owners = [a for a in library.all() if a.origin == "owner" and a.usable]
             for slot in slots:
-                need = plan[slot.id].missing
-                pillar = slot.arm.pillar
-                sources = [a for a in owners if a.pillar == pillar] or owners
+                need, pillar = plan[slot.id].missing, slot.arm.pillar
+                sources = [a for a in owners if a.pillar == pillar]
+                if need and not sources:
+                    if pillar not in empty:
+                        empty.append(pillar)
+                    continue
                 for n in range(need):
-                    if len(created) >= MAX_NEW_SHOTS or not sources:
+                    if len(created) >= MAX_NEW_SHOTS:
                         break
                     parents = [sources[n % len(sources)]]
                     if len(sources) > 1:
@@ -348,18 +362,27 @@ class Pipeline:
                         backend=self.views,
                         revision=self.view_revision,
                     )
-                    created.append(shot.id)
+                    if shot.id not in created:
+                        created.append(shot.id)
             if self.engine is not None:
                 for shot_id in created:
                     check_fidelity(library, library.get(shot_id), self.engine)
             kept = 0
-            if mode == "autopilot":
-                for shot_id in created:
-                    shot = library.get(shot_id)
-                    good = shot.view_score is not None and shot.view_score >= VIEW_OK
+            for shot_id in created:
+                shot = library.get(shot_id)
+                parents = [library.get(str(p)) for p in (shot.recipe or {}).get("parents") or []]  # type: ignore[union-attr]
+                copy = any(
+                    distance(library.path(shot), library.path(p)) < NEAR_COPY for p in parents
+                )
+                same = (shot.fidelity or {}).get("same_place")
+                good = isinstance(same, float) and same >= VIEW_OK and not copy
+                library.record_fidelity(
+                    shot_id, {**(shot.fidelity or {}), "near_copy": copy, "kept": good}
+                )
+                if mode == "autopilot":
                     library.review(shot_id, approved=good, rejected=not good)
-                    kept += good
-        return created, kept
+                kept += good
+        return created, kept, empty
 
     def _write(self, week_start: date, output: Path) -> list[str]:
         origin = self.service.ensure()

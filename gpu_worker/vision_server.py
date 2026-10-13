@@ -211,7 +211,7 @@ class VLMRequest(BaseModel):
 
 
 class ViewRequest(BaseModel):
-    image: str
+    images: list[str] = Field(min_length=1, max_length=3)
     recipe: dict[str, Any]
 
 
@@ -249,9 +249,12 @@ def systemone(request: SystemOneRequest) -> dict[str, Any]:
 def views(request: ViewRequest) -> dict[str, Any]:
     enabled()
     recipe = request.recipe
-    if recipe.get("model") != VIEW_MODEL or recipe.get("kind") != "camera-view-v1":
+    if recipe.get("model") != VIEW_MODEL or recipe.get("kind") not in (
+        "camera-view-v1",
+        "new-shot-v1",
+    ):
         raise HTTPException(422, "Unsupported view recipe")
-    source = decode_image(request.image)
+    sources = [decode_image(i) for i in request.images]
     torch = importlib.import_module("torch")
     with _lock:
         pipe = load_view()
@@ -260,7 +263,7 @@ def views(request: ViewRequest) -> dict[str, Any]:
         generator = torch.Generator(device="cpu").manual_seed(int(recipe["seed"]))
         image = pipe(
             prompt=recipe["prompt"],
-            image=[source],
+            image=sources,
             width=int(recipe["width"]),
             height=int(recipe["height"]),
             guidance_scale=float(recipe["guidance"]),
@@ -288,6 +291,7 @@ def vlm_answer(
     system: str | None = None,
     images: list[tuple[str, Any]] | None = None,
     temperature: float = 0,
+    prefill: str = "",
 ) -> tuple[str, int, int]:
     """FR-04, FR-08: one thinking-disabled answer; labelled images precede the text."""
     torch = importlib.import_module("torch")
@@ -303,14 +307,24 @@ def vlm_answer(
     if system:
         messages.append({"role": "system", "content": [{"type": "text", "text": system}]})
     messages.append({"role": "user", "content": content})
-    inputs = processor.apply_chat_template(
-        messages,
-        add_generation_prompt=True,
-        tokenize=True,
-        return_dict=True,
-        return_tensors="pt",
-        enable_thinking=False,
-    ).to(model.device)
+    if prefill:
+        # Start the assistant turn with the JSON object so the model cannot echo the schema.
+        text_prompt = processor.apply_chat_template(
+            messages, add_generation_prompt=True, tokenize=False, enable_thinking=False
+        )
+        pictures = [part["image"] for m in messages for part in m["content"] if part.get("image")]
+        inputs = processor(
+            text=[text_prompt + prefill], images=pictures or None, return_tensors="pt"
+        ).to(model.device)
+    else:
+        inputs = processor.apply_chat_template(
+            messages,
+            add_generation_prompt=True,
+            tokenize=True,
+            return_dict=True,
+            return_tensors="pt",
+            enable_thinking=False,
+        ).to(model.device)
     kwargs: dict[str, Any] = {"max_new_tokens": max_new_tokens, "do_sample": temperature > 0}
     if temperature > 0:
         kwargs["temperature"] = temperature
@@ -318,7 +332,7 @@ def vlm_answer(
         output = model.generate(**inputs, **kwargs)
     prompt_tokens = int(inputs["input_ids"].shape[1])
     generated = output[0][prompt_tokens:]
-    text = str(processor.decode(generated, skip_special_tokens=True)).strip()
+    text = prefill + str(processor.decode(generated, skip_special_tokens=True)).strip()
     return text, prompt_tokens, int(generated.shape[0])
 
 
@@ -383,6 +397,9 @@ def generate(request: WriterRequest) -> dict[str, Any]:
     )
     if request.validation_feedback:
         system += "\nCorrect these validation failures: " + request.validation_feedback
+    system += "\nWrite the JSON object itself (an instance), never the schema."
+    keys = list((request.output_schema.get("properties") or {}).keys())
+    prefill = '{"' + keys[0] + '":' if keys else "{"
     pictures = []
     for item in request.images:
         picture = decode_image(item.data)
@@ -397,6 +414,7 @@ def generate(request: WriterRequest) -> dict[str, Any]:
             system=system,
             images=pictures or [],
             temperature=request.temperature,
+            prefill=prefill,
         )
     if text.startswith("```"):
         text = text.split("\n", 1)[-1].rsplit("```", 1)[0].strip()

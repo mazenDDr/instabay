@@ -64,6 +64,25 @@ CREATE TABLE IF NOT EXISTS setting (
 """
 
 
+NEAR_COPY = 64  # dHash bits of 256: shots ~30 from their source looked identical (2026-10-13)
+
+
+def dhash(path: Path, size: int = 16) -> list[bool]:
+    """FR-06: perceptual gradient hash; small distances mean the same picture."""
+    with Image.open(path) as image:
+        gray = ImageOps.exif_transpose(image).convert("L").resize((size + 1, size))
+        px = list(gray.tobytes())
+    return [
+        px[r * (size + 1) + c] > px[r * (size + 1) + c + 1]
+        for r in range(size)
+        for c in range(size)
+    ]
+
+
+def distance(a: Path, b: Path) -> int:
+    return sum(x != y for x, y in zip(dhash(a), dhash(b), strict=True))
+
+
 def now() -> str:
     return datetime.now(UTC).isoformat()
 
