@@ -553,10 +553,12 @@ async function renderPlanner() {
 
 async function renderAccount() {
   const el = $("#ig-account");
-  try { S.instagram = await api("/api/instagram"); } catch (e) { S.instagram = { connected: false }; }
+  const sample = store.get("igSample") === "1";
+  try { S.instagram = await api("/api/instagram" + (sample ? "?sample=1" : "")); } catch (e) { S.instagram = { connected: false }; }
   const a = S.instagram;
+  const toggle = h("button", { class: "btn small", type: "button", onclick: () => { store.set("igSample", sample ? "0" : "1"); renderAccount(); } }, sample ? "Hide sample data" : "Show sample data");
   if (!a.connected) {
-    el.replaceChildren(h("h2", { text: "Your Instagram account" }), h("p", { class: "sub", text: "Not read yet. Put INSTAGRAM_ACCESS_TOKEN and INSTAGRAM_USER_ID in .env, then run make instagram-check in the terminal. It only reads: nothing is posted." }));
+    el.replaceChildren(h("div", { class: "row", style: "justify-content: space-between" }, h("h2", { text: "Your Instagram account" }), toggle), h("p", { class: "sub", text: "Not read yet. Put INSTAGRAM_ACCESS_TOKEN and INSTAGRAM_USER_ID in .env, then run make instagram-check in the terminal. It only reads: nothing is posted." }));
     return;
   }
   const n = a.analysis, metric = (m, k) => (m.metrics.find((x) => x.name === k) || {}).value;
@@ -566,7 +568,8 @@ async function renderAccount() {
   const bars = (rows, label, fmt, color) => rows.length ? rows.map((r) => [`${label(r.key)} (${r.posts})`, r.median, fmt(r.median), color(r.key)]) : null;
   const block = (title, sub, rows) => h("div", {}, h("h3", { text: title, style: "margin: 14px 0 2px; font-size: 14px" }), h("p", { class: "muted", text: sub, style: "margin: 0 0 8px; font-size: 12px" }), rows ? (() => { const d = h("div", { class: "bars" }); barList(d, rows); return d; })() : h("p", { class: "muted", text: "Not enough posts with insights yet." }));
   el.replaceChildren(
-    h("div", { class: "row", style: "justify-content: space-between" }, h("h2", { text: `@${a.username}` }, h("span", { class: "badge ok", text: "Real · read-only", style: "margin-left: 8px" })), h("span", { class: "muted", text: `Read ${new Date(a.observed_at).toLocaleString()} · refresh with make instagram-check` })),
+    h("div", { class: "row", style: "justify-content: space-between" }, h("h2", { text: `@${a.username}` }, a.sample ? h("span", { class: "badge sim", text: "Sample · not real", style: "margin-left: 8px" }) : h("span", { class: "badge ok", text: "Real · read-only", style: "margin-left: 8px" })), h("span", { class: "row", style: "gap: 10px" }, h("span", { class: "muted", text: a.sample ? "Invented numbers to show how this page works" : `Read ${new Date(a.observed_at).toLocaleString()} · refresh with make instagram-check` }), toggle)),
+    a.sample ? h("div", { class: "banner", style: "margin-top: 10px" }, h("b", { text: "Sample data." }), h("span", { text: " These posts and numbers are made up. Turn this off to see your real account." })) : null,
     h("div", { class: "kpis", style: "margin-top: 10px" }, kpi("Followers", fmtN(a.followers)), kpi("Posts on account", fmtN(a.media_count)), kpi("Posts read", `${n.posts}`, { cls: "flat", text: `${n.with_insights} with insights` }), kpi("Median reach", fmtN(mid(reach))), kpi("Median eng. rate", pct(mid(rates)))),
     h("div", { class: "grid cols-2" },
       block("Engagement rate by format", "Median per post · (number of posts)", bars(n.engagement_by_format, (k) => FORMAT[k] || k, pct, (k) => `var(--${k}, var(--blue))`)),
@@ -575,7 +578,7 @@ async function renderAccount() {
       block("Engagement rate by time of day", "Cairo time · median", bars(n.engagement_by_time, (k) => k, pct, () => "var(--blue)"))),
     h("h3", { text: "Recent posts", style: "margin: 18px 0 8px; font-size: 14px" }),
     h("div", { class: "scroll" }, h("table", {}, h("thead", {}, h("tr", {}, ...["Posted", "Type", "Caption", "Reach", "Views", "Likes", "Saves", "Eng. rate"].map((t, i) => h("th", { class: i > 2 ? "num" : "", text: t })))),
-      h("tbody", {}, ...a.media.map((m) => h("tr", { onclick: () => m.permalink && window.open(m.permalink, "_blank", "noopener") },
+      h("tbody", {}, ...a.media.map((m) => h("tr", { onclick: () => m.permalink && !a.sample && window.open(m.permalink, "_blank", "noopener") },
         h("td", { text: new Date(m.posted_at).toLocaleDateString(undefined, { day: "numeric", month: "short", year: "2-digit" }) }),
         h("td", {}, h("span", { class: "badge " + m.format, text: FORMAT[m.format] || m.format })),
         h("td", {}, h("p", { text: m.caption || "—", style: "margin: 0; max-width: 320px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap" })),

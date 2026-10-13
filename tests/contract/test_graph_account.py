@@ -13,6 +13,7 @@ from instabay.adapters.graph_account import (
     AccountStore,
     analyze,
     fetch_account,
+    sample_snapshot,
 )
 from instabay.adapters.graph_models import GraphRateLimitError
 from instabay.adapters.graph_transport import FixtureGraphTransport
@@ -79,3 +80,20 @@ def test_snapshots_are_appended_and_the_dashboard_shows_the_latest(tmp_path: Pat
     assert body["connected"] and body["username"] == "instabay_test"
     assert body["media"][1]["engagement_rate"] == pytest.approx(0.13)
     assert client.get("/api/summary").json()["instagram"]["username"] == "instabay_test"
+
+
+def test_sample_data_is_labelled_deterministic_and_never_stored(tmp_path: Path) -> None:
+    pytest_socket.enable_socket()
+    pytest_socket.disable_socket(allow_unix_socket=True)
+    first, again = sample_snapshot(NOW), sample_snapshot(NOW)
+    assert first == again and len(first.media) == 24
+    assert first.api_version == "sample" and all(m.engagement_rate for m in first.media)
+    runs = tmp_path / "outputs"
+    runs.mkdir()
+    client = TestClient(
+        create_app(workspace=tmp_path / "ws", brand=demo_brand(), runs=runs, root=tmp_path)
+    )
+    assert client.get("/api/instagram").json() == {"connected": False}
+    body = client.get("/api/instagram?sample=1").json()
+    assert body["sample"] is True and body["analysis"]["with_insights"] == 24
+    assert not (tmp_path / ACCOUNT_DB).exists()

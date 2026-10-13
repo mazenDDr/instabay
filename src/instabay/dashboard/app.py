@@ -19,7 +19,7 @@ from fastapi.responses import FileResponse, HTMLResponse, Response
 from PIL import Image, ImageOps
 from pydantic import Field, JsonValue
 
-from instabay.adapters.graph_account import ACCOUNT_DB, AccountStore, view
+from instabay.adapters.graph_account import ACCOUNT_DB, AccountStore, sample_snapshot, view
 from instabay.assets.classify import agreement, classify_assets
 from instabay.assets.export import PROPERTY_KEY
 from instabay.assets.judge import PillarJudge
@@ -391,8 +391,10 @@ def create_app(
             raise HTTPException(409, str(error)) from None
 
     @app.get("/api/instagram")
-    def instagram() -> dict[str, JsonValue]:
-        """FR-11: the latest read-only account snapshot from `instabay graph-check`."""
+    def instagram(sample: bool = False) -> dict[str, JsonValue]:
+        """FR-11: the latest read-only account snapshot, or labelled sample numbers on request."""
+        if sample:
+            return {"connected": True, "sample": True, **view(sample_snapshot(datetime.now(UTC)))}
         snapshot = AccountStore(root / ACCOUNT_DB).latest()
         return {"connected": False} if snapshot is None else {"connected": True, **view(snapshot)}
 

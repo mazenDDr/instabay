@@ -5,10 +5,11 @@ owner and summarized with plain statistics, but never written into posteriors (N
 """
 
 import json
+import random
 import sqlite3
 from collections import defaultdict
 from collections.abc import Callable, Sequence
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from statistics import median
 from typing import Literal
@@ -222,3 +223,77 @@ def view(snapshot: AccountSnapshot) -> dict[str, JsonValue]:
     ]
     data["analysis"] = analyze(snapshot)
     return data
+
+
+SAMPLE_CAPTIONS = {
+    "reel": [
+        "Morning swim at the house reef",
+        "Sunset from the pier",
+        "A slow tour of the pool deck",
+    ],
+    "carousel": [
+        "Five corners of the resort",
+        "What breakfast looks like here",
+        "Rooms, from door to view",
+    ],
+    "photo": ["Evening light on the lounge", "Palm shade by the pool", "Dinner under the stars"],
+}
+
+
+def sample_snapshot(now: datetime, seed: int = 7) -> AccountSnapshot:
+    """NFR-07: invented demo numbers for an empty account; labelled Sample everywhere shown.
+
+    Rough shape only (reels reach more, carousels get saved more); not a forecast.
+    """
+    rng = random.Random(seed)
+    base = {"reel": 1800.0, "carousel": 900.0, "photo": 600.0}
+    rates = {
+        "reel": (0.055, 0.004, 0.012, 0.02),
+        "carousel": (0.065, 0.006, 0.03, 0.008),
+        "photo": (0.05, 0.004, 0.012, 0.005),
+    }
+    media: list[AccountMedia] = []
+    for index in range(24):
+        kind: Format = rng.choice(["reel", "reel", "carousel", "photo"])
+        posted = (now - timedelta(days=2 + index * 2.3)).replace(
+            hour=rng.choice([7, 9, 13, 16, 18, 19, 20, 21, 23]), minute=0, second=0, microsecond=0
+        ) - timedelta(hours=3)
+        reach = round(base[kind] * rng.lognormvariate(0, 0.45))
+        like, comment, save, share = (
+            max(0, round(reach * r * rng.uniform(0.6, 1.5))) for r in rates[kind]
+        )
+        views = round(reach * (2.4 if kind == "reel" else 1.5) * rng.uniform(0.9, 1.2))
+        values = {
+            "views": views,
+            "reach": reach,
+            "likes": like,
+            "comments": comment,
+            "saved": save,
+            "shares": share,
+        }
+        metrics = [GraphMetric(name=name, value=value) for name, value in values.items()]  # type: ignore[arg-type]
+        if kind == "reel":
+            metrics.append(
+                GraphMetric(name="ig_reels_avg_watch_time", value=rng.randint(3500, 9000))
+            )
+        media.append(
+            AccountMedia(
+                id=str(900000 + index),
+                format=kind,
+                posted_at=posted,
+                caption=rng.choice(SAMPLE_CAPTIONS[kind]),
+                like_count=like,
+                comments_count=comment,
+                metrics=metrics,
+            )
+        )
+    return AccountSnapshot(
+        account_id="900000",
+        username="sample_resort",
+        account_type="BUSINESS",
+        followers=2480,
+        media_count=len(media),
+        api_version="sample",
+        observed_at=now,
+        media=media,
+    )
