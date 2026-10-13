@@ -62,7 +62,8 @@ def generate_week(
         raise ValueError("Motion catalog changed the approved photo sources")
     if set(evidence.pillar_guidance) != {p.id for p in brand.pillars}:
         raise ValueError("Every brand pillar needs source-backed direction")
-    if not draft_only:
+    if not draft_only and catalog.edit_style == "scenic":
+        # Scenic reels need Wan motion per photo; photo-camera reels move over the stills.
         for obj in catalog.objects:
             if obj.clip is None:
                 raise ValueError("Animate source photos first, or request --draft-only")

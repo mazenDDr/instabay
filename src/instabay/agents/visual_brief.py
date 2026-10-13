@@ -71,6 +71,12 @@ class VisualBriefWriter:
         inputs["pillar_goal"] = evidence.pillar_guidance[slot.arm.pillar]
 
         def grounded(result: EvidenceBrief) -> EvidenceBrief:
+            if (
+                slot.arm.format == "reel"
+                and catalog.edit_style != "scenic"
+                and len(result.media_ids) < min(4, len(allowed))
+            ):
+                raise ValueError("A photo reel needs at least four different photos")
             if any(i not in allowed for i in result.media_ids):
                 raise ValueError("Choose an available scene; single photos must vary before reuse")
             # Facts and the lead photo path are source metadata, not a bookkeeping task for the

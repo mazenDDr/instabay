@@ -153,8 +153,20 @@ class LLMService:
                 )
                 self._check_budget(before_call=False)
                 # Validation errors may contain inputs or tokens. Send only paths and error codes.
+                # Our own rule messages (value_error) are fixed strings and safe to return; field
+                # errors stay as path + type only. A bare "value_error" left the director unable
+                # to fix an 8-word overlay on retry (2026-10-13).
                 feedback = json.dumps(
-                    [{"loc": item["loc"], "type": item["type"]} for item in error.errors()]
+                    [
+                        {"loc": item["loc"], "type": item["type"]}
+                        | (
+                            {"message": str(item["msg"]).removeprefix("Value error, ")[:200]}
+                            if item["type"] == "value_error"
+                            else {}
+                        )
+                        for item in error.errors()
+                    ],
+                    ensure_ascii=False,
                 )
                 request = request.model_copy(update={"validation_feedback": feedback})
             else:

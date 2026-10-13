@@ -314,7 +314,9 @@ class Pipeline:
 
             # 5. Write: planner → visual briefs → EN/AR captions → checks → photo layouts.
             key, started = "write", time.perf_counter()
-            self._step(key, "running", "briefs → English and Arabic captions → checks → photos")
+            self._step(
+                key, "running", "briefs → English and Arabic captions → photos → reel videos"
+            )
             result = self._write(week_start, output)
             self._update(posts=len(result))
             self._step(key, "done", f"{len(result)} posts waiting for your approval", started)
@@ -407,7 +409,7 @@ class Pipeline:
                 model=self.model,
                 client=recorder,
                 budget=RunBudget(max_calls=80, max_tokens=300000, max_cost_usd=1),
-                draft_only=True,
+                draft_only=False,
                 cadence=cadence,
                 asset_pools=pools,
                 multimodal=self.multimodal,

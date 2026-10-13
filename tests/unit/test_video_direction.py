@@ -142,3 +142,44 @@ def test_motion_window_uses_sustained_change_not_one_flash(tmp_path: Path, monke
     window = strongest_window(tmp_path / "clip.mp4", 1)
     assert window.start_s >= 15 / 12 and window.median_delta == 0.01
     assert window.near_static_fraction == 0
+
+
+@pytest.mark.parametrize("count", [4, 5])
+def test_default_still_reel_fits_its_shot_count_and_moves_the_camera(count: int) -> None:
+    base = intent()
+    roles = [*["hook", "reveal", "detail", "payoff"][: count - 1], "cta"]
+    beats = [
+        b.model_copy(
+            update={"action": "photo_camera", "camera": "static", "object_id": o, "role": r}
+        )
+        for b, o, r in zip(
+            [*base.beats[: count - 1], base.beats[-1]],
+            ["a", "b", "c", "d", "e"],
+            roles,
+            strict=False,
+        )
+    ]
+    plan = schedule_intent(base.model_copy(update={"beats": beats}))
+    total = sum(b.frames for b in plan.beats)
+    assert len(plan.beats) == count and 450 <= total <= 540 and total % 30 == 0
+    assert all(b.camera != "static" for b in plan.beats)
+    repeated = [*beats[:-1], beats[-1].model_copy(update={"object_id": "a"})]
+    with pytest.raises(ValueError, match="each photo once"):
+        schedule_intent(base.model_copy(update={"beats": repeated}))
+
+
+def test_bookend_repeats_become_unused_photos_or_move_the_cta() -> None:
+    from instabay.agents.video_director import unique_photos
+
+    base = intent()
+    beats = [
+        b.model_copy(update={"action": "photo_camera", "object_id": o})
+        for b, o in zip([*base.beats[:3], base.beats[-1]], ["a", "b", "c", "a"], strict=True)
+    ]
+    tour = base.model_copy(update={"beats": beats})
+    swapped = unique_photos(tour, ["a", "b", "c", "d"])
+    assert [b.object_id for b in swapped.beats] == ["a", "b", "c", "d"]
+    moved = unique_photos(tour, ["a", "b", "c"])
+    assert [b.object_id for b in moved.beats] == ["a", "b", "c"]
+    assert moved.beats[-1].role == beats[-1].role and moved.beats[-1].overlay == beats[-1].overlay
+    assert any(b.role == "reveal" for b in moved.beats)

@@ -360,7 +360,7 @@ class WeekRunner:
                         update={"objects": [catalog.get(i) for i in context.selection.media_ids]}
                     )
                 board = VideoDirector(self.service).direct(
-                    slot.id, post.brief, catalog, previous_scene_orders
+                    slot.id, post.brief, catalog, previous_scene_orders, see_images=self.multimodal
                 )
                 previous_scene_orders.append([b.object_id for b in board.plan.beats])
                 recipe = editorial_recipe(

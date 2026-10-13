@@ -13,7 +13,15 @@ from instabay.video.shotlist import FileRef
 PROPERTY_KEY = "property"
 
 
-def resort_object(asset: Asset, property_name: str) -> ResortObject:
+SCENIC_MIN = (1080, 1920)
+
+
+def scenic_ready(asset: Asset) -> bool:
+    """FR-06: Wan motion needs a full-resolution 9:16 scene; smaller photos get camera moves."""
+    return asset.width >= SCENIC_MIN[0] and asset.height >= SCENIC_MIN[1]
+
+
+def resort_object(asset: Asset, property_name: str, scenic: bool = True) -> ResortObject:
     """FR-08: owner rights confirmation is the approval; generated views stay reference-only."""
     generated = asset.origin == "generated"
     return ResortObject(
@@ -37,7 +45,7 @@ def resort_object(asset: Asset, property_name: str) -> ResortObject:
         reference_only=False,
         source="synthetic" if generated else "photo",
         approval_scope="owner_approved_view" if generated else "crop",
-        allowed_actions=("photo_camera", "scenic_motion"),
+        allowed_actions=("photo_camera", "scenic_motion") if scenic else ("photo_camera",),
         property_name=property_name,
     )
 
@@ -50,10 +58,11 @@ def export_library(
     chosen = [a for a in library.all() if a.usable]
     if not chosen:
         raise ValueError("No usable photos: sort them into pillars first")
+    scenic = all(scenic_ready(a) for a in chosen)
     catalog = ObjectCatalog(
         resort=property_name,
-        objects=[resort_object(a, property_name) for a in chosen],
-        edit_style="scenic",
+        objects=[resort_object(a, property_name, scenic) for a in chosen],
+        edit_style="scenic" if scenic else "detail_reveal",
     )
     output = output.resolve()
     output.mkdir(parents=True, exist_ok=True)

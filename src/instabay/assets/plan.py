@@ -8,7 +8,8 @@ from pydantic import Field, model_validator
 from instabay.assets.library import Asset, AssetLibrary
 from instabay.core.schemas import Boundary, BrandConstitution, Cadence, PostFormat, Slot
 
-NEEDED: dict[PostFormat, tuple[int, int]] = {"photo": (1, 1), "carousel": (2, 3), "reel": (3, 4)}
+# A photo-tour reel needs four different photos to fill 15 s with text under half the film.
+NEEDED: dict[PostFormat, tuple[int, int]] = {"photo": (1, 1), "carousel": (2, 3), "reel": (4, 4)}
 CADENCE_KEY = "cadence"
 MAX_IMAGES = 5
 
