@@ -126,6 +126,11 @@ def register_dashboard_commands(app: typer.Typer) -> None:
                 judge=decider,
             )
 
+        gpu_ready = None
+        if engine == "d3" or views == "gpu" or judge == "vlm":
+            from instabay.dashboard.jobs import SSHVisionService
+
+            gpu_ready = SSHVisionService().ensure
         application = create_app(
             workspace=workspace,
             brand=load_brand(brand),
@@ -136,6 +141,7 @@ def register_dashboard_commands(app: typer.Typer) -> None:
             shots=retry if backend else None,
             presets={k: v[0] for k, v in PRESETS.items()},
             pipeline=pipeline,
+            gpu_ready=gpu_ready,
         )
         typer.echo(f"Dashboard: http://127.0.0.1:{port}  (loopback only; Ctrl+C to stop)")
         uvicorn.run(application, host="127.0.0.1", port=port, log_level="warning")

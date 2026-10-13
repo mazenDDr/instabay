@@ -189,3 +189,30 @@ def test_owner_approved_ai_shot_can_be_a_reel_keyframe_but_not_other_synthetic()
     assert Keyframe(**base, approval_scope="owner_approved_view").source == "synthetic"
     with pytest.raises(ValueError, match="reference-only"):
         Keyframe(**base)
+
+
+def test_gpu_actions_reconnect_first_and_explain_when_gpu_box_is_off(library, tmp_path):
+    pytest_socket.enable_socket()
+    pytest_socket.disable_socket(allow_unix_socket=True)
+    calls = []
+
+    def down():
+        calls.append(1)
+        raise RuntimeError("ssh: connect timed out")
+
+    parent = owner_photo(library, 61, "spa")
+    runs = tmp_path / "outputs"
+    runs.mkdir()
+    client = TestClient(
+        create_app(
+            workspace=library.workspace,
+            brand=demo_brand(),
+            runs=runs,
+            root=tmp_path,
+            variants=lambda lib, a, preset, seed: a,
+            gpu_ready=down,
+        )
+    )
+    response = client.post(f"/api/assets/{parent.id}/variants", json={"preset": "aerial"})
+    assert response.status_code == 503 and "PC is on" in response.json()["detail"]
+    assert calls == [1]

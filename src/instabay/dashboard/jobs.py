@@ -115,7 +115,11 @@ class SSHVisionService:
         )
         subprocess.run(
             [
+                # A dedicated connection: a forward riding on a ControlPersist master dies when
+                # the idle master exits, which dropped the owner's image service (2026-10-13).
                 "ssh", "-f", "-N", "-o", "ExitOnForwardFailure=yes",
+                "-o", "ControlMaster=no", "-o", "ControlPath=none",
+                "-o", "ServerAliveInterval=30", "-o", "ServerAliveCountMax=4",
                 "-L", f"127.0.0.1:{self.port}:127.0.0.1:8790", self.host,
             ],
             check=False,

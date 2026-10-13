@@ -152,6 +152,7 @@ def create_app(
     shots: Callable[[AssetLibrary, Asset], Asset] | None = None,
     presets: dict[str, str] | None = None,
     pipeline: Pipeline | None = None,
+    gpu_ready: Callable[[], object] | None = None,
 ) -> FastAPI:
     """FR-04: one library connection per request keeps SQLite writes serialized."""
     root = (root or Path.cwd()).resolve()
@@ -162,6 +163,17 @@ def create_app(
 
     def library() -> AssetLibrary:
         return AssetLibrary(workspace, root=root)
+
+    def connect() -> None:
+        """NFR-06: reopen the gpu-box tunnel (or start the service) before GPU work."""
+        if gpu_ready is None:
+            return
+        try:
+            gpu_ready()
+        except Exception:
+            raise HTTPException(
+                503, "gpu-box is not reachable: make sure the PC is on and Tailscale is running"
+            ) from None
 
     def known(pillar: str | None) -> None:
         if pillar and pillar not in {p.id for p in brand.pillars}:
@@ -255,6 +267,7 @@ def create_app(
     def classify(force: bool = False) -> dict[str, JsonValue]:
         if engine is None:
             raise HTTPException(409, "Start the dashboard with a vision engine to classify")
+        connect()
         with library() as lib:
             report = classify_assets(lib, engine, brand, force=force, judge=judge)
             return report.model_dump(mode="json") | {
@@ -265,6 +278,7 @@ def create_app(
     def variant(asset_id: str, request: VariantRequest) -> dict[str, JsonValue]:
         if variants is None:
             raise HTTPException(409, "Start the dashboard with the gpu-box image service")
+        connect()
         with library() as lib:
             try:
                 parent = lib.get(asset_id)
@@ -554,6 +568,7 @@ def create_app(
     def reclassify(asset_id: str) -> dict[str, JsonValue]:
         if engine is None:
             raise HTTPException(409, "Start the dashboard with a vision engine to classify")
+        connect()
         with library() as lib:
             try:
                 lib.get(asset_id)
@@ -567,6 +582,7 @@ def create_app(
         """FR-06: a new attempt at an AI shot from the same photos; the old one stays."""
         if shots is None:
             raise HTTPException(409, "Start the studio with the gpu-box image service")
+        connect()
         with library() as lib:
             try:
                 old = lib.get(asset_id)
