@@ -97,21 +97,25 @@ def approval_queue(
     for current_id in ids:
         post = repository.post(current_id)
         decision = repository.latest_approval(current_id)
-        if decision is not None and decision.content_hash == post.content_hash:
+        if (
+            decision is not None
+            and decision.decision != "REVOKED"
+            and decision.content_hash == post.content_hash
+        ):
             console.print(f"Already reviewed: {current_id} ({decision.decision})")
             continue
         started = perf_counter()
         show_post(repository, current_id, console)
-        review = repository.review(current_id)
+        repository.review(current_id)
         while True:
             choice = typer.prompt("Decision: approve / edit / reject").strip().lower()
             if choice in {"approve", "edit", "reject"}:
                 break
             console.print("Enter approve, edit, or reject.")
-        required_reason = review.flagged or choice == "reject"
+        required_reason = choice == "reject"
         reason = typer.prompt("Reason", default="" if not required_reason else None)
         while required_reason and not reason.strip():
-            reason = typer.prompt("Reason is required for flagged or rejected content")
+            reason = typer.prompt("Reason is required to reject")
         en_caption = ar_caption = None
         if choice == "edit":
             en_caption = typer.prompt("English caption", default=post.en.caption)

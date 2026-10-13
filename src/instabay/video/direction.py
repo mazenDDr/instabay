@@ -175,7 +175,10 @@ class CreativePlan(Boundary):
             raise ValueError(
                 "Scenic films need three to five scene shots held for at least four seconds"
             )
-        if self.edit_style == "detail_reveal" and len(self.beats) < 6:
+        tour = all(b.action == "photo_camera" for b in self.beats) and 4 <= len(self.beats) <= 5
+        if tour and len({b.object_id for b in self.beats}) != len(self.beats):
+            raise ValueError("A photo tour shows each photo once; use a different photo per shot")
+        if self.edit_style == "detail_reveal" and len(self.beats) < 6 and not tour:
             raise ValueError("Detail-led edits need six or more beats")
         if self.edit_style == "detail_reveal" and self.beats[0].frames > 60:
             raise ValueError("The opening visual must change within two seconds")
@@ -187,11 +190,24 @@ class CreativePlan(Boundary):
             raise ValueError("Hook and CTA must explicitly serve the brief")
         if sum(b.frames for b in self.beats if b.overlay.en or b.overlay.ar) > frames * 0.5:
             raise ValueError("Let the resort carry the story: text occupies at most half the film")
+        # 45 characters is the legibility limit; a brief CTA such as "Save this for your next
+        # Red Sea getaway" (8 words, 39 chars) is still one short line. Every violation is listed
+        # at once: reporting only the first left the director a second one to fail on (2026-10-13).
+        long = [
+            f"beats[{index}] ({beat.role}) overlay.{language} has {len(text.split())} words and "
+            f"{len(text)} characters"
+            for index, beat in enumerate(self.beats)
+            for language, text in (("en", beat.overlay.en), ("ar", beat.overlay.ar))
+            if len(text) > 45 or len(text.split()) > 8
+        ]
+        if long:
+            raise ValueError(
+                "On-screen copy must be a short thought, not a caption paragraph: "
+                + "; ".join(long)
+                + ". Use at most 8 words and 45 characters each; do not copy the brief's hook "
+                "or CTA if they are longer"
+            )
         for beat in self.beats:
-            if not all(
-                len(t) <= 45 and len(t.split()) <= 7 for t in [beat.overlay.en, beat.overlay.ar]
-            ):
-                raise ValueError("On-screen copy must be a short thought, not a caption paragraph")
             if bool(beat.overlay.en) != bool(beat.overlay.ar):
                 raise ValueError("Each text beat needs independently written EN and AR versions")
         if self.edit_style == "scenic" and any(
@@ -239,7 +255,12 @@ class VideoBoard(Boundary):
             if beat.action not in item.allowed_actions:
                 raise ValueError("Requested action does not match the observed physical object")
         active = {b.object_id for b in self.plan.beats if b.action != "photo_camera"}
-        if self.plan.beats[0].action == "photo_camera" or len(active) < 2:
+        stills_only = all(
+            a == "photo_camera" for o in self.catalog.objects for a in o.allowed_actions
+        )
+        # A catalog that only allows camera moves (photos too small for Wan motion) makes a photo
+        # tour; motion rules apply when the catalog offers motion.
+        if not stills_only and (self.plan.beats[0].action == "photo_camera" or len(active) < 2):
             raise ValueError("Open with physical movement and stage two distinct active subjects")
         if self.plan.edit_style == "scenic" and any(
             b.action == "photo_camera" for b in self.plan.beats
@@ -259,6 +280,7 @@ class VideoBoard(Boundary):
 
 def schedule_intent(intent: CreativeIntent, duration_s: int | None = None) -> CreativePlan:
     """FR-06: frame-accurate constrained allocation; creative words never determine timing math."""
+    requested = duration_s is not None
     duration_s = duration_s or (len(intent.beats) * 5 if intent.edit_style == "scenic" else 18)
     target = duration_s * 30
     if not 450 <= target <= 900:
@@ -272,19 +294,32 @@ def schedule_intent(intent: CreativeIntent, duration_s: int | None = None) -> Cr
             for i, b in enumerate(intent.beats)
         ]
         return CreativePlan.model_validate(data)
+    # A still shot may hold up to 4 s (6 s with only three shots); the reel shortens to fit
+    # rather than failing. Five photo shots once asked for 18 s but could only fill 17.3 s.
+    cap = 120 if requested or n >= 5 else 140
+    if not requested:
+        target = max(450, min(target, (40 + cap * (n - 1)) // 30 * 30))
     frames = [40] + [20] * (n - 1)
     weights = [{"quick": 40, "steady": 80, "linger": 100}[b.pace] for b in intent.beats[1:]]
     desired = [40.0] + [(target - 40) * w / sum(weights) for w in weights]
     while sum(frames) < target:
-        candidates = [i for i in range(1, n) if frames[i] < 120]
+        candidates = [i for i in range(1, n) if frames[i] < cap]
         if not candidates:
             raise ValueError("Add more meaningful beats for this duration")
         i = max(candidates, key=lambda k: desired[k] - frames[k])
         frames[i] += min(10, target - sum(frames))
     data = intent.model_dump(exclude={"beats"})
+    moves = ("push_in", "pan_left", "pull_out", "pan_right")
     data["beats"] = [
-        b.model_dump(exclude={"pace"}) | {"frames": f}
-        for b, f in zip(intent.beats, frames, strict=True)
+        b.model_dump(exclude={"pace"})
+        | {"frames": f}
+        # A photo-camera shot with a static camera is a slideshow frame; give it a move.
+        | (
+            {"camera": moves[i % len(moves)]}
+            if b.action == "photo_camera" and b.camera == "static"
+            else {}
+        )
+        for i, (b, f) in enumerate(zip(intent.beats, frames, strict=True))
     ]
     return CreativePlan.model_validate(data)
 

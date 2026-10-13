@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import Literal, Self
 
 import yaml
-from pydantic import Field, model_validator
+from pydantic import Field, field_validator, model_validator
 
 from instabay.core.schemas import Boundary, Brief, Copy, Identifier, ReelConcept, Slot
 from instabay.video.direction import ObjectCatalog
@@ -21,6 +21,14 @@ class VisualFact(Boundary):
     caption_ar: str = Field(min_length=1)
 
 
+class Observation(Boundary):
+    """FR-04: what the multimodal brief writer saw in a selected photo without owner facts."""
+
+    media_id: Identifier
+    en: str = Field(min_length=1, max_length=240)
+    ar: str = Field(min_length=1, max_length=240)
+
+
 class ContentEvidence(Boundary):
     """NFR-04: one property, historical source scope and pillar-specific evidence instructions."""
 
@@ -28,7 +36,7 @@ class ContentEvidence(Boundary):
     geography: str
     source_date_note: str
     objects_file: str
-    facts: list[VisualFact] = Field(min_length=1)
+    facts: list[VisualFact] = Field(default_factory=list)
     pillar_guidance: dict[str, str]
     reference_only: bool = True
 
@@ -59,10 +67,32 @@ class EvidenceBrief(Boundary):
 
     brief: Brief
     media_ids: list[Identifier] = Field(min_length=1, max_length=5)
-    fact_ids: list[Identifier] = Field(min_length=1)
+    # Filled by code from the selected photos (validate_selection still requires a fact per
+    # image); a model-sent [] failed the whole post before code could fill it (2026-10-13).
+    fact_ids: list[Identifier] = Field(default_factory=list)
     pillar_intent: str = Field(min_length=1, max_length=500)
     sequence_reason: str = Field(min_length=1, max_length=500)
     cta_kind: Literal["save", "compare", "comment", "swipe"] = "save"
+    observations: list[Observation] = Field(
+        default_factory=list, max_length=5, exclude_if=lambda v: not v
+    )
+
+    def facts(self, evidence: "ContentEvidence") -> list[VisualFact]:
+        """FR-04: owner facts for the selected photos, then the writer's own observations."""
+        owned = [f for f in evidence.facts if f.scene_id in self.media_ids]
+        covered = {f.scene_id for f in owned}
+        seen = [
+            VisualFact(
+                id=f"{o.media_id}-seen",
+                scene_id=o.media_id,
+                text=o.en,
+                caption_en=o.en,
+                caption_ar=o.ar,
+            )
+            for o in self.observations
+            if o.media_id in self.media_ids and o.media_id not in covered
+        ]
+        return owned + seen
 
     def validate_selection(
         self, slot: Slot, evidence: ContentEvidence, catalog: ObjectCatalog
@@ -85,7 +115,7 @@ class EvidenceBrief(Boundary):
             raise ValueError("Renamed copies of one photograph are not media variety")
         if self.brief.photo_uri != selected[0].photo.uri:
             raise ValueError("The brief must use its first selected real photograph")
-        facts = {f.id: f for f in evidence.facts}
+        facts = {f.id: f for f in [*evidence.facts, *self.facts(evidence)]}
         if len(set(self.fact_ids)) != len(self.fact_ids):
             raise ValueError("Evidence facts must be distinct")
         for fact_id in self.fact_ids:
@@ -149,6 +179,15 @@ class EvidenceCopyDraft(Boundary):
     action: str = Field(min_length=1, max_length=100)
     alt_text: str = Field(default="", max_length=600)
     fact_id: Identifier
+
+    @field_validator("detail", "alt_text", mode="before")
+    @classmethod
+    def compiled_by_code(cls, value: object) -> str:
+        """FR-04: factual body and alt text come from the facts; model text here is dropped.
+
+        Qwen3.5-9B filled `detail` with 400+ characters and failed the whole post twice.
+        """
+        return ""
 
 
 def caption_schema(context: EvidenceCopyContext) -> type[EvidenceCopyDraft]:

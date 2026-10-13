@@ -101,7 +101,9 @@ def run_posts(db_path: Path, root: Path) -> dict[str, list[dict[str, JsonValue]]
                         root,
                     ),  # type: ignore[dict-item]
                     "flags": flags,
-                    "decision": decisions.get(r["id"]),
+                    "decision": None
+                    if decisions.get(r["id"]) == "REVOKED"
+                    else decisions.get(r["id"]),
                     "published": r["id"] in published,
                     "metrics": metrics.get(r["id"], {}),  # type: ignore[dict-item]
                     "metric_source": sources.get(r["id"]),
@@ -140,9 +142,22 @@ def decide(db_path: Path, post_id: str, request: ApprovalRequest) -> str:
     """FR-09: the owner's click is stored exactly like the CLI approval (hash-bound)."""
     repository = Repository(db_path)
     try:
-        review = repository.review(post_id)
-        if review.flagged and not request.reason.strip():
-            raise ValueError("This post is flagged: write a short reason with your decision")
         return repository.approve(post_id, request).decision
     finally:
         repository.close()
+
+
+def used_media(dbs: list[Path]) -> set[str]:
+    """FR-04: library photo IDs that any generated post still references."""
+    used: set[str] = set()
+    for path in dbs:
+        with sqlite3.connect(f"file:{path}?mode=ro", uri=True) as db:
+            columns = {r[1] for r in db.execute("PRAGMA table_info(post)")}
+            if "evidence_json" not in columns:
+                continue
+            for (raw,) in db.execute(
+                "SELECT evidence_json FROM post WHERE evidence_json IS NOT NULL"
+            ):
+                selection = json.loads(raw).get("context", {}).get("selection", {})
+                used.update(selection.get("media_ids", []))
+    return used

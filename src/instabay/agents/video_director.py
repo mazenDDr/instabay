@@ -5,6 +5,7 @@ from typing import Any, cast
 
 from pydantic import Field, JsonValue, create_model, model_validator
 
+from instabay.agents.visual_brief import scene_images
 from instabay.core.schemas import Brief, canonical_hash
 from instabay.llm import LLMService
 from instabay.video.direction import (
@@ -15,6 +16,41 @@ from instabay.video.direction import (
     VideoBoard,
     schedule_intent,
 )
+
+
+def unique_photos[Intent: CreativeIntent](intent: Intent, available: list[str]) -> Intent:
+    """FR-06: a photo tour shows each photo once, with text only on its first and last shot.
+
+    Qwen3.5-9B closed both real reels on the opening photo (a 'bookend'). The hook and CTA
+    roles stay where they are; only the repeated photo is swapped or, if none is left, dropped.
+    """
+    if any(b.action != "photo_camera" for b in intent.beats):
+        return intent
+    spare = [i for i in available if i not in {b.object_id for b in intent.beats}]
+    seen: set[str] = set()
+    beats: list[BeatIntent] = []
+    last = len(intent.beats) - 1
+    for index, beat in enumerate(intent.beats):
+        if beat.object_id in seen:
+            if spare:
+                beat = beat.model_copy(update={"object_id": spare.pop(0)})
+            elif index == last and beats:
+                # No unused photo: the previous shot carries the closing call to action.
+                keep = ("role", "overlay", "brief_anchor", "text_position", "purpose")
+                beats[-1] = beats[-1].model_copy(update={k: getattr(beat, k) for k in keep})
+                continue
+            else:
+                continue
+        seen.add(beat.object_id)
+        beats.append(beat)
+    if len(beats) > 2 and not any(b.role == "reveal" for b in beats):
+        beats[-2] = beats[-2].model_copy(update={"role": "reveal"})
+    # Text only on the opening and closing shots; the photos carry the middle of the tour.
+    blank = {"overlay": beats[0].overlay.model_copy(update={"en": "", "ar": ""})}
+    beats = [
+        b if i in (0, len(beats) - 1) else b.model_copy(update=blank) for i, b in enumerate(beats)
+    ]
+    return intent.model_copy(update={"beats": beats})
 
 
 class VideoDirector:
@@ -29,6 +65,7 @@ class VideoDirector:
         brief: Brief,
         catalog: ObjectCatalog,
         previous_scene_orders: list[list[str]] | None = None,
+        see_images: bool = False,
     ) -> VideoBoard:
         """FR-06: preserve the brief, reject unknown objects and surface missing real media."""
         output_type: type[CreativeIntent] = CreativeIntent
@@ -103,6 +140,50 @@ class VideoDirector:
                     },
                 ),
             )
+        else:
+            available = [o.id for o in catalog.objects]
+
+            def tour_checked(intent: CreativeIntent) -> CreativeIntent:
+                # Run the editor's own rules inside validation so the model gets the exact
+                # error and retries, instead of the reel failing after the call (2026-10-13).
+                if intent.reel_id != reel_id:
+                    raise ValueError("Director returned a different reel ID")
+                VideoBoard(
+                    brief=brief,
+                    brief_hash=canonical_hash(brief),
+                    plan=schedule_intent(unique_photos(intent, available)),
+                    catalog=catalog,
+                )
+                return intent
+
+            def blank_overlays(value: Any) -> Any:
+                # Middle tour shots carry no text; accept {} where the model left them blank.
+                if isinstance(value, dict) and isinstance(value.get("beats"), list):
+                    value = dict(value)
+                    value["beats"] = [
+                        {**b, "overlay": {"en": "", "ar": "", **(b.get("overlay") or {})}}
+                        if isinstance(b, dict)
+                        else b
+                        for b in value["beats"]
+                    ]
+                return value
+
+            output_type = cast(
+                type[CreativeIntent],
+                create_model(
+                    "BoundPhotoIntent",
+                    __base__=CreativeIntent,
+                    __validators__={
+                        "blank_overlays": cast(
+                            Callable[..., Any], model_validator(mode="before")(blank_overlays)
+                        ),
+                        "tour_checked": cast(
+                            Callable[..., CreativeIntent],
+                            model_validator(mode="after")(tour_checked),
+                        ),
+                    },
+                ),
+            )
         intent = self.service.generate(
             template_name="video_director",
             slot_id=reel_id,
@@ -125,8 +206,12 @@ class VideoDirector:
                 ],
             },
             max_output_tokens=3000,
+            images=scene_images(catalog, [o.id for o in catalog.objects]) if see_images else None,
+            # Reel plans have several independent rules (text length, roles, timing); one extra
+            # corrected attempt is cheaper than failing the whole week at the last reel.
+            attempts=3,
         )
         if intent.reel_id != reel_id:
             raise ValueError("Director returned a different reel ID")
-        plan = schedule_intent(intent)
+        plan = schedule_intent(unique_photos(intent, [o.id for o in catalog.objects]))
         return VideoBoard(brief=brief, brief_hash=canonical_hash(brief), plan=plan, catalog=catalog)

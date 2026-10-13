@@ -9,6 +9,7 @@ from pathlib import Path
 from instabay.adapters.llm import LLMClient
 from instabay.content.evidence import ContentEvidence
 from instabay.content.export import export_gallery
+from instabay.content.feedback import OwnerFeedback
 from instabay.core.schemas import (
     BrandConstitution,
     BrandInput,
@@ -45,6 +46,8 @@ def generate_week(
     draft_only: bool = False,
     cadence: Cadence | None = None,
     asset_pools: Callable[[list[Slot]], dict[str, list[str]]] | None = None,
+    multimodal: bool = False,
+    feedback: OwnerFeedback | None = None,
 ) -> WorkflowResult:
     """FR-09: draft/review only; approval and Instagram are separate explicit actions."""
     root, output = root.resolve(), output.resolve()
@@ -61,7 +64,8 @@ def generate_week(
         raise ValueError("Motion catalog changed the approved photo sources")
     if set(evidence.pillar_guidance) != {p.id for p in brand.pillars}:
         raise ValueError("Every brand pillar needs source-backed direction")
-    if not draft_only:
+    if not draft_only and catalog.edit_style == "scenic":
+        # Scenic reels need Wan motion per photo; photo-camera reels move over the stills.
         for obj in catalog.objects:
             if obj.clip is None:
                 raise ValueError("Animate source photos first, or request --draft-only")
@@ -77,6 +81,7 @@ def generate_week(
         "catalog_hash": canonical_hash(catalog),
         "model": model,
         "draft_only": draft_only,
+        **({"multimodal": True} if multimodal else {}),
         **({"cadence": cadence.model_dump(mode="json")} if cadence else {}),
         "prompt_hashes": {
             t: hashlib.sha256((prompts / f"{t}.md").read_bytes()).hexdigest() for t in TEMPLATES
@@ -104,6 +109,8 @@ def generate_week(
         run_budget=budget,
         cadence=cadence,
         asset_pools=asset_pools,
+        multimodal=multimodal,
+        feedback=feedback,
         content_evidence=evidence,
         content_root=root,
         video_catalog=catalog,

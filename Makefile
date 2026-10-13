@@ -50,16 +50,17 @@ RUNS ?= outputs/studio
 
 vision-up:
 	rsync -az --exclude=__pycache__ gpu_worker/ gpu-box:$(REMOTE)/gpu_worker/
-	ssh gpu-box 'tmux has-session -t instabay-vision 2>/dev/null || (cd $(REMOTE) && tmux new -d -s instabay-vision "PYTHONPATH=data/pydeps-d3:. INSTABAY_GPU_ENABLED=1 PYTHONUNBUFFERED=1 $$HOME/miniconda3/envs/main/bin/python -m uvicorn gpu_worker.vision_server:app --host 127.0.0.1 --port 8790 >> outputs/instabay-vision.log 2>&1")'
-	curl -s -m 3 127.0.0.1:18790/health || ssh -f -N -o ExitOnForwardFailure=yes -L 127.0.0.1:18790:127.0.0.1:8790 gpu-box
-	@echo "vision service: http://127.0.0.1:18790 (d3-flash, Qwen3.5-4B judge, FLUX.2-klein views)"
+	ssh gpu-box 'tmux has-session -t instabay-vision 2>/dev/null || (cd $(REMOTE) && tmux new -d -s instabay-vision "PYTHONPATH=data/pydeps-d3:. INSTABAY_GPU_ENABLED=1 INSTABAY_LLM_ENABLED=1 PYTHONUNBUFFERED=1 $$HOME/miniconda3/envs/main/bin/python -m uvicorn gpu_worker.vision_server:app --host 127.0.0.1 --port 8790 >> outputs/instabay-vision.log 2>&1")'
+	curl -s -m 3 127.0.0.1:18790/health || ssh -f -N -o ExitOnForwardFailure=yes -o ControlMaster=no -o ControlPath=none -o ServerAliveInterval=30 -o ServerAliveCountMax=4 -L 127.0.0.1:18790:127.0.0.1:8790 gpu-box
+	@echo "vision service: http://127.0.0.1:18790 (d3-flash, Qwen3.5-9B judge + writer, FLUX.2-klein shots)"
 
 vision-down:
 	-ssh gpu-box 'tmux kill-session -t instabay-vision'
 	-pkill -f "18790:127.0.0.1:8790"
+	-lsof -ti tcp:18790 -sTCP:LISTEN | xargs kill 2>/dev/null
 
 studio:
 	mkdir -p "$(RUNS)"
-	INSTABAY_DECISIONS_ENABLED=1 INSTABAY_GPU_ENABLED=1 $(UV) run --offline --no-sync instabay dashboard \
+	INSTABAY_DECISIONS_ENABLED=1 INSTABAY_GPU_ENABLED=1 INSTABAY_LLM_ENABLED=1 $(UV) run --offline --no-sync instabay dashboard \
 	  --brand "$(BRAND)" --workspace "$(WORKSPACE)" --runs "$(RUNS)" --engine d3 --judge vlm --views gpu \
-	  --confirm-external --confirm-gpu
+	  --confirm-external --confirm-gpu --generate

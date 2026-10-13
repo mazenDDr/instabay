@@ -19,7 +19,7 @@ class CallRecord(BaseModel):
     prompt_hash: str = Field(pattern=r"^[0-9a-f]{64}$")
     cache_key: str = Field(pattern=r"^[0-9a-f]{64}$")
     status: Literal["success", "invalid_output", "provider_error", "cached"]
-    attempt: int = Field(ge=0, le=2)
+    attempt: int = Field(ge=0, le=3)
     latency_ms: float = Field(ge=0, allow_inf_nan=False)
     input_tokens: int = Field(default=0, ge=0)
     output_tokens: int = Field(default=0, ge=0)

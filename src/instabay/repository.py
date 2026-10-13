@@ -663,12 +663,19 @@ class Repository:
             session.connection().exec_driver_sql("BEGIN IMMEDIATE")
             post = self._post(session, post_id)
             row = session.get(ReviewRow, post_id)
-            if request.decision != "REJECTED" and (
+            if request.decision == "REVOKED":
+                if session.exec(
+                    select(PublicationRow).where(PublicationRow.post_id == post_id)
+                ).first():
+                    raise ValueError("A published post cannot be un-approved")
+                if self._latest_approval(session, post_id) is None:
+                    raise ValueError("There is no decision to undo")
+            elif request.decision != "REJECTED" and (
                 row is None or row.content_hash != post.content_hash
             ):
                 raise ValueError("Post needs current checks before approval")
-            if row is not None and json.loads(row.flags_json) and not request.reason.strip():
-                raise ValueError("Flagged posts need an explicit human reason")
+            # Owner decision (2026-10-13): only rejections need a reason; the review notes stay
+            # visible at approval and the approval itself is the owner's statement.
             diff = {}
             if request.decision == "EDITED":
                 before = post

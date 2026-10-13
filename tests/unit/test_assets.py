@@ -198,35 +198,49 @@ def test_planner_honors_any_feasible_owner_mix(posts, reels, carousels):
         assert share <= math.floor(pillar.max_share * posts + 1e-9)
 
 
-def test_suggestions_prefer_pillar_photos_never_repeat_singles_and_flag_shortfall(library):
+def test_suggestions_reserve_unique_images_and_never_repeat_a_spot_in_a_post(library):
+    from instabay.assets.plan import family
+
     brand = demo_brand()
-    for index, pillar in enumerate(PILLARS * 2):
+    for index, pillar in enumerate(PILLARS * 4):
         owner_photo(library, 10 + index, pillar)
-    unapproved = library.add(
+    first = library.all()[0]
+    view = library.add(
         jpeg((250, 1, 1)),
         added_by="model",
         rights_confirmed=True,
         origin="generated",
-        parent_id=library.all()[0].id,
-        recipe={"preset": "low_waterline"},
-        note_en="Waterline view",
-        note_ar="منظر من مستوى الماء",
+        parent_id=first.id,
+        recipe={"preset": "waterline", "parents": [first.id]},
     )
-    library.review(unapproved.id, owner_pillar=PILLARS[0])
+    library.review(view.id, owner_pillar=first.pillar, approved=True)
+    mix = OwnerCadence(posts_per_week=7, reels_per_week=2, carousels_per_week=2)
+    slots = plan_week(brand, "a" * 64, "run", date(2026, 10, 12), cadence=mix.cadence(brand))
+    assets = {a.id: a for a in library.all()}
+    suggestions = suggest_assets(slots, list(assets.values()))
+    pools = [i for s in suggestions.values() for i in s.pool]
+    assert len(pools) == len(set(pools)), "an image was offered to two posts"
+    for s in suggestions.values():
+        assert len(s.pool) <= 5 and not s.reused
+        spots = [family(assets[i]) for i in s.pool]
+        assert all(not (a & b) for n, a in enumerate(spots) for b in spots[n + 1 :])
+        own = sum(assets[i].pillar == s.pillar for i in s.primary)
+        assert s.missing == len(s.primary) - own or s.missing >= len(s.primary) - own
+
+
+def test_scarce_photos_are_reused_last_and_reported_as_missing(library):
+    brand = demo_brand()
+    for index, pillar in enumerate(PILLARS):
+        owner_photo(library, 90 + index, pillar)
     mix = OwnerCadence(posts_per_week=7, reels_per_week=2, carousels_per_week=2)
     slots = plan_week(brand, "a" * 64, "run", date(2026, 10, 12), cadence=mix.cadence(brand))
     suggestions = suggest_assets(slots, library.all())
-    by_id = {a.id: a for a in library.all()}
-    singles = [i for s in suggestions.values() if s.format == "photo" for i in s.primary]
-    assert len(singles) == len(set(singles))
-    assert all(unapproved.id not in s.pool for s in suggestions.values())
-    for slot in slots:
-        s = suggestions[slot.id]
-        assert by_id[s.primary[0]].pillar == slot.arm.pillar
-        if s.format == "reel":
-            assert len(s.primary) == 4 and s.shortfall
-    library.review(unapproved.id, approved=True)
-    assert suggest_assets(slots, library.all()) != suggestions
+    assert sum(s.missing for s in suggestions.values()) > 0
+    assert any(s.reused for s in suggestions.values())
+    for s in suggestions.values():
+        assert len(s.pool) == len(set(s.pool)) and len(s.primary) >= (
+            3 if s.format == "reel" else 1
+        )
 
 
 def test_export_feeds_existing_evidence_contract(library):
@@ -235,7 +249,9 @@ def test_export_feeds_existing_evidence_contract(library):
         owner_photo(library, 60 + index, pillar)
     owner_photo(library, 99, "spa", note=False)
     evidence, catalog = export_library(library, brand, library.workspace / "export")
-    assert len(catalog.objects) == 5 and not evidence.reference_only
+    # The undescribed photo is still usable: the multimodal writer sees it directly.
+    assert len(catalog.objects) == 6 and len(evidence.facts) == 5
+    assert not evidence.reference_only
     assert set(evidence.pillar_guidance) == set(PILLARS)
     assert all(not o.reference_only and o.source == "photo" for o in catalog.objects)
     assert evidence.objects(library.root) == catalog
@@ -280,3 +296,36 @@ def test_unsure_d3_labels_go_to_the_vlm_judge(library):
     library.review(unsure.id, owner_pillar="guests")
     assert agreement(library.all(), "vlm").accuracy == 1.0
     assert agreement(library.all()).accuracy == 0.0
+
+
+def test_writer_observations_become_facts_only_for_undescribed_photos(library):
+    from instabay.content.evidence import EvidenceBrief, Observation
+    from instabay.core.schemas import Brief
+
+    described = owner_photo(library, 41, "spa")
+    plain = owner_photo(library, 42, "spa", note=False)
+    assert plain.usable and not plain.described and not plain.needs_review
+    evidence, catalog = export_library(library, demo_brand(), library.workspace / "export")
+    brief = Brief(
+        angle="a",
+        hook="h",
+        key_message="k",
+        visual_description="v",
+        photo_uri=catalog.get(described.id).photo.uri,
+        cta="Save it",
+        must_not=[],
+    )
+    selection = EvidenceBrief(
+        brief=brief,
+        media_ids=[described.id, plain.id],
+        fact_ids=["x"],
+        pillar_intent="p",
+        sequence_reason="s",
+        observations=[
+            Observation(media_id=plain.id, en="Loungers by a pool", ar="كراسي بجانب مسبح"),
+            Observation(media_id=described.id, en="ignored", ar="تجاهل"),
+        ],
+    )
+    facts = selection.facts(evidence)
+    assert [f.scene_id for f in facts] == [described.id, plain.id]
+    assert facts[1].id == f"{plain.id}-seen" and facts[1].caption_ar == "كراسي بجانب مسبح"

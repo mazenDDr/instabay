@@ -191,14 +191,17 @@ def test_latest_rejection_overrides_an_older_approval(tmp_path: Path) -> None:
         assert len(session.exec(select(ApprovalRow)).all()) == 2
 
 
-def test_flagged_content_needs_human_reason(tmp_path: Path) -> None:
+def test_only_rejections_need_a_human_reason(tmp_path: Path) -> None:
+    """Owner decision 2026-10-13: approving a flagged post needs no reason; rejecting does."""
     repository = Repository(tmp_path / "db.sqlite")
     post = draft_post(repository)
     save_review(repository, post, flagged=True)
     with pytest.raises(ValueError, match="reason"):
-        repository.approve(
-            post.id, ApprovalRequest(decision="APPROVED", actor="test-human", seconds_spent=1)
-        )
+        ApprovalRequest(decision="REJECTED", actor="test-human", seconds_spent=1)
+    approval = repository.approve(
+        post.id, ApprovalRequest(decision="APPROVED", actor="test-human", seconds_spent=1)
+    )
+    assert approval.decision == "APPROVED" and approval.reason == ""
 
 
 def test_writer_failure_rolls_back_receipt_and_retry_is_idempotent(tmp_path: Path) -> None:

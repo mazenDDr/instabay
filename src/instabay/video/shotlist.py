@@ -47,7 +47,11 @@ class Keyframe(FileRef):
             raise ValueError("Facility shots must originate from real photos")
         if self.source == "generated" and (not self.prompt or self.seed is None):
             raise ValueError("Generated stills need their prompt and seed")
-        if self.source == "synthetic" and not self.reference_only:
+        if (
+            self.source == "synthetic"
+            and not self.reference_only
+            and self.approval_scope != "owner_approved_view"
+        ):
             raise ValueError("Synthetic fixtures are reference-only")
         if self.approval_scope == "preview_source_use" and not self.reference_only:
             raise ValueError(

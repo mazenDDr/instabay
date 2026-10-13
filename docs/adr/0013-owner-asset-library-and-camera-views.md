@@ -91,3 +91,38 @@ from two different resorts and were used only for this test.
   Settings). Approve/Reject in Content stores the same hash-bound approval as the CLI, and
   flagged posts need a reason. Insights labels simulator numbers as *Simulated*. Publishing stays
   a terminal step.
+
+## Addendum (2026-10-13): multimodal writer, new shots, autopilot
+
+- **Multimodal writer.** `Qwen/Qwen3.5-9B` in NF4 (pinned c2022362; 7.9 GB, 8.3 s load) now
+  sees the photos. It serves the pillar judge, the visual brief and both caption languages from
+  the one gpu-box service. For photos without owner descriptions, the brief writer adds EN/AR
+  observations, which become the facts. Prefilling the reply with the object's first key fixed
+  schema echoing (0/2 → valid). Speed: brief ≈46 s, each caption ≈17 s, ≈6 min for a 7-post week.
+- **Uniqueness.** Pools are reserved per post. On the real week: 0/7 posts had two images of one
+  spot, and 14 distinct images filled 16 places; the 2 repeats were the last resort with 13
+  photos + 1 shot.
+- **New shots (FLUX.2-klein, multi-reference).** In the first real run 8 shots were made: a pillar
+  with no photos got an invented infinity pool, and single-source shots were near-copies (dHash
+  ≈30/256 vs ≥92 between distinct photos). Policy now: no shots for photo-less pillars (reported
+  to the owner), drop near-copies (< 64), keep when d3 same-place ≥ 0.8. d3 photoreal rated
+  clearly real shots 0.45–0.59, so it is shown but not used to decide. Second run: 8 shots, 1
+  kept — a new photo of guests dining at the same rooftop bar, with no invented elements.
+- **Modes.** Autopilot ran the whole week to approval on the owner's photos in 499 s (resumed
+  after the fixes). Step by step pauses after sort, plan and shots (tested offline).
+- **Known weak spot:** the Arabic from the 9B NF4 writer has word errors ("بركة" for pool,
+  invented words). Every post stays flagged for human review; a 4B-bf16 vs 9B-NF4 writer
+  comparison is the next measurement.
+
+## Addendum (2026-10-13): reasons only for rejections; feedback memory
+
+- **Owner decision:** approving a post, even one with review notes, needs no reason. Rejecting
+  still requires one. The notes stay visible in the drawer, and the approval is the owner's
+  statement.
+- **Feedback memory, not fine-tuning:** the latest decision per post is read from every run
+  database. Rejection reasons become `owner_feedback.avoid` for the brief writer and both caption
+  writers. Caption edits (from the stored EDITED diffs) become `owner_feedback.prefer`, per
+  language. At most 8 notes per list, newest first. An undone rejection (REVOKED) is not a lesson.
+  The owner can **Forget** single notes or bring them all back in Settings. No weights change.
+  When there are no notes, the inputs are unchanged, so earlier cache keys and recordings still
+  apply.

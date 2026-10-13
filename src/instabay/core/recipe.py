@@ -173,6 +173,8 @@ class RenderRecipe(Boundary):
             or self.post.recorded_motion is not None
             or any(s.source_clip and s.source_clip.generated for s in self.shots.shots)
             or any(s.keyframe.source == "generated" for s in self.shots.shots)
+            # An owner-approved AI camera shot (FLUX) is AI imagery: rule 6 disclosure.
+            or any(s.keyframe.approval_scope == "owner_approved_view" for s in self.shots.shots)
         )
 
     @property

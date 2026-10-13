@@ -160,6 +160,23 @@ td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
 [dir=rtl] { text-align: right; }
 .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #323436; color: #fff; padding: 10px 16px; border-radius: 8px; font-size: 14px; z-index: 30; max-width: calc(100% - 32px); }
 .toast[hidden] { display: none; }
+.toast { display: flex; gap: 14px; align-items: center; }
+.toast button { background: none; border: 0; color: #8ab4ff; font-weight: 700; cursor: pointer; padding: 0; }
+.bulkbar { position: sticky; top: 64px; z-index: 3; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; background: var(--blue-soft); border-radius: 8px; padding: 8px 12px; margin-bottom: 12px; }
+.bulkbar[hidden] { display: none; }
+.tile .check { position: absolute; top: 8px; right: 8px; width: 24px; height: 24px; border-radius: 50%; border: 2px solid #fff; background: rgb(0 0 0 / .35); display: grid; place-items: center; color: #fff; font-size: 14px; font-weight: 700; }
+.tile[aria-pressed="true"] { outline: 3px solid var(--blue); }
+.tile[aria-pressed="true"] .check { background: var(--blue); border-color: var(--blue); }
+.toolbar { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 10px; }
+.toolbar input[type=search] { min-width: 220px; flex: 1; max-width: 360px; border: 1px solid var(--line); background: var(--card); border-radius: 999px; padding: 7px 14px; font-size: 14px; }
+.iggrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 3px; max-width: 520px; margin: 0 auto; }
+.iggrid button { position: relative; aspect-ratio: 4 / 5; border: 0; padding: 0; background: var(--hover); cursor: pointer; overflow: hidden; }
+.iggrid img, .iggrid video { width: 100%; height: 100%; object-fit: cover; display: block; }
+.iggrid .ig-icon { position: absolute; top: 6px; right: 6px; color: #fff; font-size: 13px; text-shadow: 0 1px 3px rgb(0 0 0 / .6); }
+.check-cell { width: 34px; }
+.log { display: grid; gap: 2px; max-height: 420px; overflow-y: auto; }
+.log div { display: flex; gap: 10px; align-items: baseline; padding: 6px 4px; border-bottom: 1px solid var(--line-soft); font-size: 14px; }
+.log time { color: var(--ink-3); font-size: 12px; white-space: nowrap; }
 :focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
 @media (max-width: 760px) {
   .app { grid-template-columns: 1fr; }
@@ -241,7 +258,7 @@ td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
       </section>
 
       <section id="media" hidden>
-        <div class="chips" id="media-filters"></div>
+        <div id="media-filters"></div>
         <div class="library" id="library"></div>
       </section>
 
@@ -255,6 +272,8 @@ td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
           </div>
           <div class="card"><h2>Connections</h2><p class="sub">Models on gpu-box and your Instagram account.</p><div id="connections"></div></div>
         </div>
+        <div class="card" style="margin-top: 16px"><h2>What the writer learned from you</h2><p class="sub">Your rejection reasons and caption edits. The next week's writers read the newest of these as “avoid” and “prefer” notes. No model is retrained.</p><div class="log" id="lessons"></div></div>
+        <div class="card" style="margin-top: 16px"><div class="row spread"><div><h2>Activity</h2><p class="sub">Everything changed from this studio. Library changes can be undone.</p></div></div><div class="log" id="activity"></div></div>
       </section>
     </div>
   </main>
@@ -283,7 +302,21 @@ const api = async (path, options = {}) => {
   return body;
 };
 let toastTimer;
-const toast = (t) => { const el = $("#toast"); el.textContent = t; el.hidden = false; clearTimeout(toastTimer); toastTimer = setTimeout(() => (el.hidden = true), 3500); };
+const toast = (t, action) => {
+  const el = $("#toast");
+  el.replaceChildren(...[h("span", { text: t }), action ? h("button", { type: "button", onclick: () => { el.hidden = true; action[1](); } }, action[0]) : null].filter(Boolean));
+  el.hidden = false; clearTimeout(toastTimer); toastTimer = setTimeout(() => (el.hidden = true), action ? 7000 : 3500);
+};
+async function undo(sequence) {
+  try { const r = await api("/api/undo", { method: "POST", body: JSON.stringify(sequence ? { sequence } : {}) }); toast(`Undone: ${r.undone}`); await refresh(); await loadTrash(); rerender(); }
+  catch (e) { toast(e.message); }
+}
+const rerender = () => show(store.get("tab", "home"));
+document.addEventListener("keydown", (e) => {
+  const typing = ["INPUT", "TEXTAREA", "SELECT"].includes(document.activeElement?.tagName);
+  if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "z" && !typing) { e.preventDefault(); undo(); }
+  if (e.key === "/" && !typing && $("#media-search")) { e.preventDefault(); $("#media-search").focus(); }
+});
 const store = { get: (k, d = "") => { try { return localStorage.getItem(k) ?? d; } catch (e) { return d; } }, set: (k, v) => { try { localStorage.setItem(k, v); } catch (e) {} } };
 const S = { summary: null, assets: [], runs: [], mix: null, mediaFilter: "all", contentTab: "all", runKey: store.get("run"), week: "" };
 const FORMAT = { reel: "Reel", carousel: "Carousel", photo: "Photo" };
@@ -310,10 +343,11 @@ const currentRun = () => S.runs.find((r) => r.key === S.runKey) || S.runs[0];
 function renderTop(tab) {
   const right = $("#topright");
   right.replaceChildren();
+  if (["home", "content", "planner"].includes(tab)) right.append(h("button", { class: "btn primary", type: "button", onclick: generateDrawer }, "Prepare week"));
   if (tab === "content" && S.runs.length) {
     const sel = h("select", { "aria-label": "Weekly plan", onchange: (e) => { S.runKey = e.target.value; store.set("run", S.runKey); renderContent(); } });
     for (const r of S.runs) sel.append(h("option", { value: r.key, selected: r.key === currentRun().key, text: `${r.run_id} · week of ${r.week_start}${r.demo ? " · demo" : ""} · ${r.db}` }));
-    right.append(sel);
+    right.append(sel, h("button", { class: "btn small", type: "button", title: "Move this week's folder to a backup", onclick: deleteRun }, "Remove week"));
   }
   if (tab === "planner") right.append(h("input", { type: "date", "aria-label": "Week", value: S.week, onchange: (e) => { S.week = e.target.value; renderPlanner(); } }));
   if (tab === "insights") right.append(h("span", { class: "muted", text: "All weekly plans" }));
@@ -392,15 +426,26 @@ function status(p) {
 }
 const CONTENT_TABS = { all: ["All", () => true], pending: ["Needs approval", (p) => !p.decision && !p.published], approved: ["Approved", (p) => ["APPROVED", "EDITED"].includes(p.decision) && !p.published], published: ["Published", (p) => p.published] };
 function mediaThumb(src) { return !src ? h("div", { class: "thumb" }) : isVideo(src) ? h("video", { class: "thumb", src, muted: true, preload: "metadata" }) : h("img", { class: "thumb", src, alt: "", loading: "lazy" }); }
+const selectedPosts = new Set();
 function renderContent() {
   const run = currentRun();
-  if (!run) { $("#content-tabs").replaceChildren(); $("#content-table").replaceChildren(h("div", { class: "empty" }, "No generated weeks yet. Generate one from the terminal (docs/TEST_RUN.md).")); return; }
-  $("#content-tabs").replaceChildren(...Object.entries(CONTENT_TABS).map(([id, [label, test]]) => h("button", { type: "button", "aria-pressed": String(S.contentTab === id), onclick: () => { S.contentTab = id; renderContent(); } }, `${label} (${run.posts.filter(test).length})`)));
+  if (!run) { $("#content-tabs").replaceChildren(); $("#content-table").replaceChildren(h("div", { class: "empty" }, "No weeks yet. Click “Prepare week”.")); return; }
+  const tabs = [...Object.entries(CONTENT_TABS).map(([id, [label, test]]) => [id, `${label} (${run.posts.filter(test).length})`]), ["grid", "Grid preview"]];
+  $("#content-tabs").replaceChildren(...tabs.map(([id, label]) => h("button", { type: "button", "aria-pressed": String(S.contentTab === id), onclick: () => { S.contentTab = id; selectedPosts.clear(); renderContent(); } }, label)));
+  if (S.contentTab === "grid") return renderGrid(run);
   const posts = run.posts.filter(CONTENT_TABS[S.contentTab][1]);
   const sim = run.posts.some((p) => p.metric_source && !/graph|instagram/i.test(p.metric_source));
-  $("#content-table").replaceChildren(posts.length ? h("table", {},
-    h("thead", {}, h("tr", {}, h("th", { text: "Post" }), h("th", { text: "Type" }), h("th", { text: "Pillar" }), h("th", { text: "Scheduled" }), h("th", { text: "Status" }), h("th", { class: "num", text: sim ? "Reach (sim)" : "Reach" }), h("th", { class: "num", text: "Likes" }), h("th", { class: "num", text: "Saves" }), h("th", { class: "num", text: "Eng. rate" }))),
+  const bar = h("div", { class: "bulkbar", hidden: !selectedPosts.size },
+    h("b", { text: `${selectedPosts.size} selected` }),
+    h("button", { class: "btn small primary", type: "button", onclick: () => bulkDecide(run, "APPROVED") }, "Approve"),
+    h("button", { class: "btn small danger", type: "button", onclick: () => bulkDecide(run, "REJECTED") }, "Reject"),
+    h("button", { class: "btn small", type: "button", onclick: () => bulkDecide(run, "REVOKED") }, "Undo decision"),
+    h("button", { class: "btn small", type: "button", onclick: () => { selectedPosts.clear(); renderContent(); } }, "Clear"));
+  const all = h("input", { type: "checkbox", "aria-label": "Select all", checked: posts.length > 0 && posts.every((p) => selectedPosts.has(p.id)), onclick: (e) => { e.stopPropagation(); posts.forEach((p) => (e.target.checked ? selectedPosts.add(p.id) : selectedPosts.delete(p.id))); renderContent(); } });
+  $("#content-table").replaceChildren(bar, posts.length ? h("table", {},
+    h("thead", {}, h("tr", {}, h("th", { class: "check-cell" }, all), h("th", { text: "Post" }), h("th", { text: "Type" }), h("th", { text: "Pillar" }), h("th", { text: "Scheduled" }), h("th", { text: "Status" }), h("th", { class: "num", text: sim ? "Reach (sim)" : "Reach" }), h("th", { class: "num", text: "Likes" }), h("th", { class: "num", text: "Saves" }), h("th", { class: "num", text: "Eng. rate" }))),
     h("tbody", {}, ...posts.map((p) => h("tr", { onclick: () => postDrawer(run, p), tabindex: 0, onkeydown: (e) => e.key === "Enter" && postDrawer(run, p) },
+      h("td", { class: "check-cell", onclick: (e) => e.stopPropagation() }, h("input", { type: "checkbox", "aria-label": "Select post", checked: selectedPosts.has(p.id), onchange: (e) => { e.target.checked ? selectedPosts.add(p.id) : selectedPosts.delete(p.id); renderContent(); } })),
       h("td", {}, h("div", { class: "post-cell" }, mediaThumb(p.media[0]), h("div", {}, h("p", { text: p.hook || p.caption_en }), h("small", { text: p.flags.length ? `${p.flags.length} review note${p.flags.length > 1 ? "s" : ""}` : "" })))),
       h("td", {}, h("span", { class: "badge " + p.format, text: FORMAT[p.format] })),
       h("td", { text: pname(p.pillar) }),
@@ -408,8 +453,39 @@ function renderContent() {
       h("td", {}, status(p)),
       h("td", { class: "num", text: fmtN(p.metrics.reach) }), h("td", { class: "num", text: fmtN(p.metrics.likes) }), h("td", { class: "num", text: fmtN(p.metrics.saved) }), h("td", { class: "num", text: pct(p.metrics.engagement_rate) }))))) : h("div", { class: "empty" }, "No posts in this view."));
 }
+function renderGrid(run) {
+  const posts = [...run.posts].sort((a, b) => (b.scheduled_at || "").localeCompare(a.scheduled_at || ""));
+  const icon = (p) => (p.format === "reel" ? "▶" : p.format === "carousel" ? "❐" : "");
+  $("#content-table").replaceChildren(h("p", { class: "muted", style: "text-align: center", text: "How this week will look on your Instagram profile, newest first." }),
+    h("div", { class: "iggrid" }, ...posts.map((p) => h("button", { type: "button", "aria-label": `${FORMAT[p.format]} ${fdate(p.scheduled_at)}`, onclick: () => postDrawer(run, p) },
+      p.media[0] ? (isVideo(p.media[0]) ? h("video", { src: p.media[0] + "#t=0.5", muted: true, preload: "metadata" }) : h("img", { src: p.media[0], alt: "", loading: "lazy" })) : h("span", { class: "muted", style: "display: grid; place-items: center; height: 100%; padding: 8px; font-size: 12px", text: `${FORMAT[p.format]} not rendered yet` }),
+      h("span", { class: "ig-icon", text: icon(p) })))));
+}
+async function deleteRun() {
+  const run = currentRun();
+  if (!run || !window.confirm(`Remove ${run.run_id}? It moves to data/backup-runs and can be restored from there.`)) return;
+  try { const r = await api("/api/runs/delete", { method: "POST", body: JSON.stringify({ db: run.db }) }); toast(`Moved to ${r.moved_to}`); S.runKey = ""; await refresh(); renderTop("content"); renderContent(); }
+  catch (e) { toast(e.message); }
+}
+async function bulkDecide(run, decision) {
+  const actor = store.get("actor");
+  if (!actor) return toast("Add your name in Settings first");
+  const ids = [...selectedPosts];
+  let reason = "";
+  if (decision === "REJECTED") {
+    reason = window.prompt("Why are you rejecting these posts? The writer learns from this.") || "";
+    if (!reason.trim()) return toast("A reason is needed to reject");
+  }
+  try {
+    const r = await api("/api/decision/bulk", { method: "POST", body: JSON.stringify({ db: run.db, post_ids: ids, decision, actor, reason }) });
+    const failed = Object.keys(r.failed).length;
+    toast(`${r.done.length} ${decision === "REVOKED" ? "set back to pending" : decision.toLowerCase()}${failed ? `, ${failed} skipped` : ""}`);
+    selectedPosts.clear(); await refresh(); renderContent();
+  } catch (e) { toast(e.message); }
+}
+async function copyText(text) { try { await navigator.clipboard.writeText(text); toast("Copied"); } catch (e) { toast("Copy failed: select the text instead"); } }
 
-function openDrawer(...kids) { $("#drawer").replaceChildren(...kids); $("#drawer-back").hidden = false; $("#drawer").querySelector("button")?.focus(); }
+function openDrawer(...kids) { $("#drawer").replaceChildren(...kids.filter((k) => k !== null && k !== undefined && k !== false)); $("#drawer-back").hidden = false; $("#drawer").querySelector("button")?.focus(); }
 function closeDrawer() { $("#drawer-back").hidden = true; }
 $("#drawer-back").addEventListener("click", (e) => { if (e.target.id === "drawer-back") closeDrawer(); });
 document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeDrawer(); });
@@ -417,26 +493,39 @@ const drawerHead = (title) => h("header", {}, h("h3", { id: "drawer-title", text
 
 function postDrawer(run, p) {
   const started = performance.now();
-  const reason = h("textarea", { "aria-label": "Reason", placeholder: p.flags.length ? "Reason (required: this post has review notes)" : "Reason (optional; required to reject)", maxlength: 600 });
-  const decide = async (decision, btn) => {
+  const reason = h("textarea", { "aria-label": "Reason", placeholder: "Why reject? (only needed to reject; the writer learns from it)", maxlength: 600 });
+  const en = h("textarea", { "aria-label": "English caption", maxlength: 2200, style: "min-height: 120px" }); en.value = p.caption_en;
+  const ar = h("textarea", { "aria-label": "Arabic caption", maxlength: 2200, dir: "rtl", lang: "ar", style: "min-height: 120px" }); ar.value = p.caption_ar;
+  const send = async (decision, btn, extra = {}) => {
     const actor = store.get("actor");
     if (!actor) { toast("Add your name in Settings first: it is stored with each approval"); return; }
+    if (decision === "REJECTED" && !reason.value.trim()) { toast("Write why you are rejecting it: the writer learns from this"); reason.focus(); return; }
     btn.disabled = true;
     try {
-      await api("/api/decision", { method: "POST", body: JSON.stringify({ db: run.db, post_id: p.id, decision, actor, reason: reason.value, seconds_spent: (performance.now() - started) / 1000 }) });
-      toast(decision === "APPROVED" ? "Approved. Publishing is a separate step in the terminal." : "Rejected"); closeDrawer(); await refresh(); renderContent();
+      await api("/api/decision", { method: "POST", body: JSON.stringify({ db: run.db, post_id: p.id, decision, actor, reason: reason.value, seconds_spent: (performance.now() - started) / 1000, ...extra }) });
+      toast({ APPROVED: "Approved", EDITED: "Edited and approved", REJECTED: "Rejected", REVOKED: "Decision undone: the post needs approval again" }[decision]);
+      closeDrawer(); await refresh(); renderContent();
     } catch (e) { toast(e.message); btn.disabled = false; }
   };
+  const edited = () => en.value !== p.caption_en || ar.value !== p.caption_ar;
   const m = p.metrics;
+  const open = !p.decision && !p.published;
   openDrawer(drawerHead(`${FORMAT[p.format]} · ${fdate(p.scheduled_at)}`),
     p.media.length ? h("div", { class: "media" }, ...p.media.map((src) => isVideo(src) ? h("video", { src, controls: true, muted: true, playsinline: true }) : h("img", { src, alt: "" }))) : h("p", { class: "muted", text: "No media rendered for this post." }),
-    h("div", { class: "row", style: "margin-bottom: 10px" }, h("span", { class: "badge " + p.format, text: FORMAT[p.format] }), h("span", { class: "badge", text: pname(p.pillar) }), status(p), p.ai_disclosure ? h("span", { class: "badge warn" }, "Includes AI disclosure") : null),
-    h("div", { class: "muted", text: "English" }), h("div", { class: "caption", text: p.caption_en }),
-    h("div", { class: "muted", text: "العربية" }), h("div", { class: "caption", dir: "rtl", lang: "ar", text: p.caption_ar }),
+    h("div", { class: "row", style: "margin-bottom: 10px" }, h("span", { class: "badge " + p.format, text: FORMAT[p.format] }), h("span", { class: "badge", text: pname(p.pillar) }), status(p), p.ai_disclosure ? h("span", { class: "badge warn" }, "Includes AI disclosure") : null,
+      ...p.media.map((src, i) => h("a", { class: "btn small", href: src, download: "", style: "text-decoration: none" }, p.media.length > 1 ? `Download ${i + 1}` : "Download"))),
+    h("div", { class: "row spread" }, h("span", { class: "muted", text: open ? "English (you can edit)" : "English" }), h("button", { class: "btn small", type: "button", onclick: () => copyText(open ? en.value : p.caption_en) }, "Copy")),
+    open ? en : h("div", { class: "caption", text: p.caption_en }),
+    h("div", { class: "row spread", style: "margin-top: 8px" }, h("span", { class: "muted", text: open ? "العربية (يمكنك التعديل)" : "العربية" }), h("button", { class: "btn small", type: "button", onclick: () => copyText(open ? ar.value : p.caption_ar) }, "Copy")),
+    open ? ar : h("div", { class: "caption", dir: "rtl", lang: "ar", text: p.caption_ar }),
     p.flags.length ? h("div", { class: "flags" }, ...p.flags.map((f) => h("div", { text: f }))) : null,
     Object.keys(m).length ? h("div", { class: "kpis" }, kpi("Reach", fmtN(m.reach)), kpi("Likes", fmtN(m.likes)), kpi("Saves", fmtN(m.saved)), kpi("Eng. rate", pct(m.engagement_rate))) : null,
-    !p.decision && !p.published ? h("div", {}, reason, h("div", { class: "row", style: "margin-top: 10px" }, h("button", { class: "btn primary", type: "button", onclick: (e) => decide("APPROVED", e.currentTarget) }, "Approve"), h("button", { class: "btn danger", type: "button", onclick: (e) => decide("REJECTED", e.currentTarget) }, "Reject")))
-      : h("p", { class: "muted", text: p.published ? "Already published." : `Decision stored: ${p.decision.toLowerCase()}.` }));
+    open ? h("div", { style: "margin-top: 10px" }, reason, h("div", { class: "row", style: "margin-top: 10px" },
+        h("button", { class: "btn primary", type: "button", onclick: (e) => edited() ? send("EDITED", e.currentTarget, { en_caption: en.value !== p.caption_en ? en.value : null, ar_caption: ar.value !== p.caption_ar ? ar.value : null }) : send("APPROVED", e.currentTarget) }, "Approve"),
+        h("button", { class: "btn danger", type: "button", onclick: (e) => send("REJECTED", e.currentTarget) }, "Reject")),
+        h("p", { class: "muted", text: "If you change a caption, it is saved as your edit when you approve." }))
+      : p.published ? h("p", { class: "muted", text: "Already published." })
+      : h("div", { class: "row", style: "margin-top: 10px" }, h("span", { class: "muted", text: `Decision stored: ${p.decision.toLowerCase()}.` }), h("button", { class: "btn small", type: "button", onclick: (e) => send("REVOKED", e.currentTarget) }, "Undo decision")));
 }
 
 async function renderPlanner() {
@@ -524,61 +613,115 @@ function lineChart(el, points) {
 }
 
 const SOURCE = { owner: "you", d3: "d3", vlm: "VLM" };
+const selectedAssets = new Set();
+S.trash = [];
+S.query = "";
+S.sort = store.get("sort", "newest");
+async function mediaAction(action, ids, extra = {}) {
+  try {
+    const r = await api("/api/assets/action", { method: "POST", body: JSON.stringify({ ids, action, actor: store.get("actor") || "owner", ...extra }) });
+    toast(r.summary, ["Undo", () => undo(r.sequence)]);
+    selectedAssets.clear(); closeDrawer(); await refresh(); await loadTrash(); renderMedia();
+  } catch (e) { toast(e.message); }
+}
+async function loadTrash() { try { S.trash = await api("/api/trash"); } catch (e) { S.trash = []; } }
 function renderMedia() {
   const s = S.summary;
-  const opts = [["all", "All"], ["review", "Needs review"], ...s.pillars.map((p) => [p.id, p.name]), ["vlm", "Sorted by VLM"], ["generated", "AI camera views"]];
-  $("#media-filters").replaceChildren(...opts.map(([id, label]) => h("button", { type: "button", "aria-pressed": String(S.mediaFilter === id), onclick: () => { S.mediaFilter = id; renderMedia(); } }, label)));
+  const opts = [["all", "All"], ["review", "Needs review"], ...s.pillars.map((p) => [p.id, p.name]), ["vlm", "Sorted by VLM"], ["generated", "AI shots"], ["trash", `Trash${S.trash.length ? ` (${S.trash.length})` : ""}`]];
   const f = S.mediaFilter;
-  const shown = S.assets.filter((a) => f === "all" || (f === "review" ? a.needs_review : f === "generated" ? a.origin === "generated" : f === "vlm" ? a.pillar_source === "vlm" : a.pillar === f));
-  $("#library").replaceChildren(...(shown.length ? shown.map(tile) : [h("div", { class: "card empty", style: "grid-column: 1 / -1" }, S.assets.length ? "Nothing in this filter." : "No photos yet. Use “+ Add photos”.")]));
+  const search = h("input", { type: "search", id: "media-search", placeholder: "Search descriptions or IDs ( / )", value: S.query, oninput: (e) => { S.query = e.target.value; drawGrid(); } });
+  const sort = h("select", { "aria-label": "Sort", onchange: (e) => { S.sort = e.target.value; store.set("sort", S.sort); drawGrid(); } }, ...[["newest", "Newest first"], ["oldest", "Oldest first"], ["pillar", "By pillar"], ["confidence", "Least confident first"]].map(([v, t]) => h("option", { value: v, selected: S.sort === v, text: t })));
+  $("#media-filters").replaceChildren(
+    h("div", { class: "chips", style: "margin: 0 0 10px" }, ...opts.map(([id, label]) => h("button", { type: "button", "aria-pressed": String(f === id), onclick: () => { S.mediaFilter = id; selectedAssets.clear(); renderMedia(); } }, label))),
+    h("div", { class: "toolbar" }, search, sort, h("button", { class: "btn small", type: "button", onclick: () => { visible().forEach((a) => selectedAssets.add(a.id)); drawGrid(); } }, "Select all"),
+      f === "trash" && S.trash.length ? h("button", { class: "btn small danger", type: "button", onclick: emptyTrash }, "Empty Trash") : null),
+    h("div", { class: "bulkbar", id: "media-bulk", hidden: true }));
+  drawGrid();
+  if (!S.trash.length) loadTrash().then(() => { if (S.trash.length && store.get("tab") === "media") renderMediaChipsOnly(); });
 }
-function tile(a) {
-  const state = a.rejected ? h("span", { class: "badge bad" }, "Hidden") : a.needs_review ? h("span", { class: "badge warn" }, a.pillar ? "Add description" : "Needs pillar") : a.usable ? h("span", { class: "badge ok" }, "Ready") : h("span", { class: "badge warn" }, "Approve view");
+function renderMediaChipsOnly() { const chip = [...document.querySelectorAll("#media-filters .chips button")].at(-1); if (chip) chip.textContent = `Trash (${S.trash.length})`; }
+function visible() {
+  const f = S.mediaFilter, q = S.query.trim().toLowerCase();
+  let list = f === "trash" ? S.trash : S.assets.filter((a) => f === "all" || (f === "review" ? a.needs_review : f === "generated" ? a.origin === "generated" : f === "vlm" ? a.pillar_source === "vlm" : a.pillar === f));
+  if (q) list = list.filter((a) => [a.id, a.note_en, a.note_ar, a.vlm_reason, pname(a.pillar)].join(" ").toLowerCase().includes(q));
+  const by = { newest: (a, b) => b.created_at.localeCompare(a.created_at), oldest: (a, b) => a.created_at.localeCompare(b.created_at), pillar: (a, b) => pname(a.pillar).localeCompare(pname(b.pillar)), confidence: (a, b) => (a.model_confidence ?? 0) - (b.model_confidence ?? 0) }[S.sort];
+  return [...list].sort(by);
+}
+function drawGrid() {
+  const shown = visible();
+  const trash = S.mediaFilter === "trash";
+  const bar = $("#media-bulk");
+  if (bar) {
+    bar.hidden = !selectedAssets.size;
+    const ids = [...selectedAssets];
+    const pillar = h("select", { "aria-label": "Set pillar", onchange: (e) => e.target.value && mediaAction("pillar", ids, { pillar: e.target.value }) }, h("option", { value: "", text: "Set pillar…" }), ...S.summary.pillars.map((p) => h("option", { value: p.id, text: p.name })));
+    bar.replaceChildren(h("b", { text: `${selectedAssets.size} selected` }),
+      ...(trash ? [h("button", { class: "btn small primary", type: "button", onclick: () => mediaAction("restore", ids) }, "Restore"), h("button", { class: "btn small danger", type: "button", onclick: () => emptyTrash(ids) }, "Delete forever")]
+        : [h("button", { class: "btn small danger", type: "button", onclick: () => mediaAction("delete", ids) }, "Move to Trash"), pillar,
+          h("button", { class: "btn small", type: "button", onclick: () => mediaAction("hide", ids) }, "Hide"), h("button", { class: "btn small", type: "button", onclick: () => mediaAction("show", ids) }, "Show"),
+          h("button", { class: "btn small", type: "button", onclick: () => mediaAction("approve", ids) }, "Approve AI shots")]),
+      h("button", { class: "btn small", type: "button", onclick: () => { selectedAssets.clear(); drawGrid(); } }, "Clear"));
+  }
+  $("#library").replaceChildren(...(shown.length ? shown.map((a) => tile(a, trash)) : [h("div", { class: "card empty", style: "grid-column: 1 / -1" }, trash ? "Trash is empty." : S.assets.length ? "Nothing matches." : "No photos yet. Use “+ Add photos”.")]));
+}
+function tile(a, trash = false) {
+  const state = trash ? h("span", { class: "badge bad" }, "In Trash") : a.rejected ? h("span", { class: "badge bad" }, "Hidden") : a.needs_review ? h("span", { class: "badge warn" }, "Needs pillar") : a.usable ? h("span", { class: "badge ok" }, "Ready") : h("span", { class: "badge warn" }, "Approve shot");
   const by = a.pillar_source ? `by ${SOURCE[a.pillar_source]}${a.pillar_source === "d3" ? " · " + Math.round(100 * a.model_confidence) + "%" : ""}` : "";
-  return h("button", { class: "tile", type: "button", onclick: () => assetDrawer(a) },
+  const picked = selectedAssets.has(a.id);
+  const toggle = (e) => { e.stopPropagation(); picked ? selectedAssets.delete(a.id) : selectedAssets.add(a.id); drawGrid(); };
+  return h("button", { class: "tile", type: "button", "aria-pressed": String(picked), onclick: (e) => (selectedAssets.size || e.shiftKey || e.metaKey || e.ctrlKey ? toggle(e) : assetDrawer(a, trash)) },
     h("img", { src: a.thumb, alt: a.note_en || "Resort photo", loading: "lazy" }),
-    h("div", { class: "corner" }, a.origin === "generated" ? h("span", { class: "badge" }, "AI view") : null, a.low_res ? h("span", { class: "badge" }, "Low-res") : null, a.view_score !== null && a.view_score !== undefined && !a.view_ok ? h("span", { class: "badge" }, "Check place") : null),
+    h("span", { class: "check", role: "checkbox", "aria-checked": String(picked), "aria-label": "Select", tabindex: 0, onclick: toggle, onkeydown: (e) => (e.key === " " || e.key === "Enter") && toggle(e), text: picked ? "✓" : "" }),
+    h("div", { class: "corner" }, a.origin === "generated" ? h("span", { class: "badge" }, "AI shot") : null, a.low_res ? h("span", { class: "badge" }, "Low-res") : null, a.view_score !== null && a.view_score !== undefined && !a.view_ok ? h("span", { class: "badge" }, "Check place") : null),
     h("div", { class: "cap" }, h("b", { text: a.pillar ? pname(a.pillar) : "No pillar yet" }), h("div", { class: "row spread" }, state, h("span", { class: "muted", text: by }))));
 }
-function assetDrawer(a) {
+async function emptyTrash(ids) {
+  const n = ids && ids.length ? ids.length : S.trash.length;
+  if (!window.confirm(`Delete ${n} photo${n === 1 ? "" : "s"} forever? This cannot be undone. Photos used in a generated week are kept.`)) return;
+  try { const r = await api("/api/trash/empty", { method: "POST", body: JSON.stringify(ids && ids.length ? { ids } : {}) }); toast(`${r.removed} deleted forever${r.kept_in_use.length ? `, ${r.kept_in_use.length} kept (used in a week)` : ""}`); selectedAssets.clear(); await refresh(); await loadTrash(); renderMedia(); }
+  catch (e) { toast(e.message); }
+}
+function assetDrawer(a, trash = false) {
   const s = S.summary;
   const pillar = h("select", { "aria-label": "Pillar" }, h("option", { value: "", text: "Choose pillar…" }), ...s.pillars.map((p) => h("option", { value: p.id, selected: a.pillar === p.id, text: p.name })));
-  const en = h("textarea", { "aria-label": "English description", maxlength: 600, placeholder: "e.g. Infinity pool facing the sea at sunset" }); en.value = a.note_en;
-  const ar = h("textarea", { "aria-label": "Arabic description", maxlength: 600, dir: "rtl", lang: "ar", placeholder: "مثال: مسبح لا متناهي يطل على البحر عند الغروب" }); ar.value = a.note_ar;
+  const en = h("textarea", { "aria-label": "English description", maxlength: 600, placeholder: "Optional: the writer sees the photo itself" }); en.value = a.note_en;
+  const ar = h("textarea", { "aria-label": "Arabic description", maxlength: 600, dir: "rtl", lang: "ar", placeholder: "اختياري" }); ar.value = a.note_ar;
   const save = async (extra = {}) => {
     const body = { note_en: en.value, note_ar: ar.value, ...extra };
     if (pillar.value && pillar.value !== a.owner_pillar) body.owner_pillar = pillar.value;
     try { await api("/api/assets/" + a.id, { method: "PATCH", body: JSON.stringify(body) }); toast("Saved"); closeDrawer(); await refresh(); renderMedia(); }
     catch (e) { toast(e.message); }
   };
+  const busy = async (btn, label, fn) => { btn.disabled = true; const old = btn.textContent; btn.textContent = label; try { await fn(); } catch (e) { toast(e.message); } finally { btn.disabled = false; btn.textContent = old; } };
   const why = [];
   if (a.model_pillar) why.push(h("div", { class: "muted" }, `d3-flash: ${pname(a.model_pillar)} (${Math.round(100 * (a.model_confidence || 0))}% top probability)`));
   if (a.vlm_pillar || a.vlm_reason) why.push(h("div", { class: "muted" }, `VLM judge: ${a.vlm_pillar ? pname(a.vlm_pillar) : "no answer"}${a.vlm_reason ? " — “" + a.vlm_reason + "”" : ""}`));
   if (a.people !== null && a.people !== undefined) why.push(h("div", { class: "muted" }, `People visible: ${a.people > 0.5 ? "yes" : "no"} (${Math.round(100 * a.people)}%)`));
+  const actions = h("div", { class: "row", style: "margin: 10px 0" },
+    h("a", { class: "btn small", href: `/media/assets/${a.id}?download=1`, style: "text-decoration: none" }, "Download"),
+    !trash && s.engine && a.origin === "owner" ? h("button", { class: "btn small", type: "button", onclick: (e) => busy(e.currentTarget, "Sorting…", async () => { await api(`/api/assets/${a.id}/reclassify`, { method: "POST" }); toast("Sorted again"); closeDrawer(); await refresh(); renderMedia(); }) }, "Sort again") : null,
+    !trash && a.origin === "generated" && s.variants_enabled ? h("button", { class: "btn small", type: "button", onclick: (e) => busy(e.currentTarget, "Creating… (about 40 s)", async () => { await api(`/api/assets/${a.id}/another`, { method: "POST" }); toast("New attempt added next to the old one"); closeDrawer(); S.mediaFilter = "generated"; await refresh(); renderMedia(); }) }, "Try another shot") : null,
+    trash ? h("button", { class: "btn small primary", type: "button", onclick: () => mediaAction("restore", [a.id]) }, "Restore") : h("button", { class: "btn small danger", type: "button", onclick: () => mediaAction("delete", [a.id]) }, "Move to Trash"));
   const extra = [];
-  if (a.origin === "generated") {
+  if (a.origin === "generated" && !trash) {
     const fid = a.fidelity || {};
-    extra.push(h("div", { class: "card", style: "margin: 12px 0; padding: 12px" }, h("b", { text: `AI camera view · ${a.preset || ""}` }), h("div", { class: "muted", text: `Same place ${pct(fid.same_place, 0)} · photoreal ${pct(fid.photoreal, 0)} (d3-flash)` }),
+    extra.push(h("div", { class: "card", style: "margin: 12px 0; padding: 12px" }, h("b", { text: `AI shot · ${a.preset || ""}` }), h("div", { class: "muted", text: `Same place ${pct(fid.same_place, 0)} · photoreal ${pct(fid.photoreal, 0)} (d3-flash)${fid.near_copy ? " · near-copy of its source" : ""}` }),
       a.view_score !== null && a.view_score !== undefined && !a.view_ok ? h("div", { class: "flags" }, h("div", { text: "Likely changed the place or looks fake: compare with the original closely." })) : null,
-      h("button", { class: "btn " + (a.approved ? "" : "primary"), type: "button", style: "margin-top: 8px", onclick: () => save({ approved: !a.approved }) }, a.approved ? "Unapprove view" : "Approve view")));
-  } else if (s.variants_enabled) {
+      h("button", { class: "btn " + (a.approved ? "" : "primary"), type: "button", style: "margin-top: 8px", onclick: () => mediaAction(a.approved ? "unapprove" : "approve", [a.id]) }, a.approved ? "Unapprove shot" : "Approve shot")));
+  } else if (s.variants_enabled && !trash) {
     const preset = h("select", { "aria-label": "Camera direction" }, ...s.presets.map((p) => h("option", { value: p.id, text: p.label })));
     const go = h("button", { class: "btn", type: "button" }, "Create view");
-    go.addEventListener("click", async () => {
-      go.disabled = true; go.textContent = "Creating… (about 40 s)";
-      try { await api(`/api/assets/${a.id}/variants`, { method: "POST", body: JSON.stringify({ preset: preset.value }) }); toast("New AI view added. Review it under “AI camera views”."); closeDrawer(); S.mediaFilter = "generated"; await refresh(); renderMedia(); }
-      catch (e) { toast(e.message); go.disabled = false; go.textContent = "Create view"; }
-    });
+    go.addEventListener("click", () => busy(go, "Creating… (about 40 s)", async () => { await api(`/api/assets/${a.id}/variants`, { method: "POST", body: JSON.stringify({ preset: preset.value }) }); toast("New AI view added under “AI shots”."); closeDrawer(); S.mediaFilter = "generated"; await refresh(); renderMedia(); }));
     extra.push(h("div", { class: "card", style: "margin: 12px 0; padding: 12px" }, h("b", { text: "New camera view" }), h("p", { class: "muted", text: "Re-shoot this photo from another angle with AI. The place must stay the same; you approve each view." }), h("div", { class: "row" }, preset, go)));
   }
-  openDrawer(drawerHead(a.origin === "generated" ? "AI camera view" : "Photo"),
+  openDrawer(drawerHead(trash ? "In Trash" : a.origin === "generated" ? "AI shot" : "Photo"),
     h("div", { class: "media" }, h("img", { src: a.full, alt: a.note_en || "Resort photo", style: "height: auto; width: 100%; max-height: 340px; object-fit: contain; background: var(--bg)" })),
     h("p", { class: "muted", text: `${a.width}×${a.height} px${a.low_res ? " · smaller than 1080 px: posts will be upscaled" : ""} · added by ${a.added_by}` }),
-    ...why,
-    h("label", { class: "field", style: "margin-top: 12px" }, h("span", { text: "Pillar" }), pillar),
-    h("label", { class: "field" }, h("span", { text: "What is in the photo? (English)" }), en),
-    h("label", { class: "field" }, h("span", { text: "ما الذي في الصورة؟ (Arabic)" }), ar),
-    h("div", { class: "row" }, h("button", { class: "btn primary", type: "button", onclick: () => save() }, "Save"), h("button", { class: "btn danger", type: "button", onclick: () => save({ rejected: !a.rejected }) }, a.rejected ? "Restore" : "Hide photo")),
+    actions, ...why,
+    trash ? null : h("label", { class: "field", style: "margin-top: 12px" }, h("span", { text: "Pillar" }), pillar),
+    trash ? null : h("label", { class: "field" }, h("span", { text: "Description (English, optional)" }), en),
+    trash ? null : h("label", { class: "field" }, h("span", { text: "الوصف (اختياري)" }), ar),
+    trash ? null : h("div", { class: "row" }, h("button", { class: "btn primary", type: "button", onclick: () => save() }, "Save"), h("button", { class: "btn", type: "button", onclick: () => mediaAction(a.rejected ? "show" : "hide", [a.id]) }, a.rejected ? "Show photo" : "Hide from planning")),
     ...extra);
 }
 function uploadDrawer() {
@@ -590,12 +733,11 @@ function uploadDrawer() {
   ["dragover", "dragenter"].forEach((t) => drop.addEventListener(t, (e) => { e.preventDefault(); drop.classList.add("over"); }));
   ["dragleave", "drop"].forEach((t) => drop.addEventListener(t, () => drop.classList.remove("over")));
   drop.addEventListener("drop", (e) => { e.preventDefault(); files.files = e.dataTransfer.files; picked.textContent = `${files.files.length} selected`; });
-  const rights = h("input", { type: "checkbox" });
   const go = h("button", { class: "btn primary", type: "button" }, "Upload");
   go.addEventListener("click", async () => {
     const actor = store.get("actor");
     if (!files.files.length) return toast("Choose at least one photo");
-    if (!rights.checked) return toast("Please confirm you own the photos");
+    if (auto.checked && !S.summary.generate) return toast("Autopilot is not enabled in this studio");
     if (!actor) return toast("Add your name in Settings first");
     go.disabled = true;
     let ok = 0;
@@ -605,14 +747,100 @@ function uploadDrawer() {
       try { await api("/api/assets", { method: "POST", body: JSON.stringify({ name: file.name, data_base64: data, rights_confirmed: true, added_by: actor }) }); ok++; }
       catch (e) { toast(`${file.name}: ${e.message}`); }
     }
-    toast(`${ok} photo(s) added. Click “Sort into pillars” next.`); closeDrawer(); S.mediaFilter = "all"; await refresh(); renderMedia();
+    await refresh();
+    if (auto.checked && ok) {
+      const body = h("div");
+      openDrawer(drawerHead("Autopilot"), body);
+      await startJob("autopilot", "", body);
+      return;
+    }
+    toast(`${ok} photo(s) added. Click “Sort into pillars” next.`); closeDrawer(); S.mediaFilter = "all"; renderMedia();
   });
-  openDrawer(drawerHead("Add photos"), drop, picked, h("label", { class: "row muted", style: "margin: 8px 0 14px" }, rights, "I own these photos and everyone shown agreed to appear."), go);
+  const auto = h("input", { type: "checkbox" });
+  openDrawer(drawerHead("Add photos"), drop, picked,
+    S.summary.generate ? h("label", { class: "row muted", style: "margin: 0 0 14px; flex-wrap: nowrap; align-items: flex-start" }, auto, h("span", { text: "Autopilot: then prepare next week automatically. I reviewed config/brand.yaml and freeze it." })) : null,
+    go);
 }
 async function classify(btn) {
-  btn.disabled = true; btn.textContent = "Sorting… (a few seconds per photo)";
-  try { const r = await api("/api/classify", { method: "POST" }); toast(`${r.classified} sorted by d3${r.judged ? `, ${r.judged} checked by the VLM judge` : ""}${r.failed.length ? `, ${r.failed.length} failed` : ""}`); await refresh(); renderMedia(); }
+  btn.disabled = true; btn.textContent = "Sorting and describing… (about 5 s per photo)";
+  try { const r = await api("/api/classify", { method: "POST" }); toast(`${r.classified} sorted by d3${r.judged ? `, ${r.judged} checked by the VLM judge` : ""}${r.described ? `, ${r.described} described by the VLM` : ""}${r.failed.length ? `, ${r.failed.length} failed` : ""}`); await refresh(); renderMedia(); }
   catch (e) { toast(e.message); } finally { btn.disabled = false; btn.textContent = "Sort into pillars"; }
+}
+
+const STEP_ICON = { waiting: "○", running: "◐", done: "✓", failed: "✕", skipped: "–" };
+const LOOK = { sort: ["media", "all", "See the sorted photos"], plan: ["planner", null, "See the plan"], shots: ["media", "generated", "Review the new shots"] };
+function jobView(job) {
+  return h("div", { class: "todo" }, ...job.steps.map((st) => {
+    const tone = st.state === "done" ? "green" : st.state === "failed" ? "red" : st.state === "skipped" ? "ink-3" : "blue";
+    return h("div", { class: "row", style: "padding: 8px 4px; flex-wrap: nowrap; align-items: flex-start" },
+      h("span", { style: `width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; flex: none; font-weight: 700; color: var(--${tone}); background: var(--${tone === "ink-3" ? "hover" : tone + "-soft"})`, text: STEP_ICON[st.state] }),
+      h("span", {}, h("b", { text: st.name, style: "display: block; font-size: 14px" }), h("span", { class: "muted", text: [st.detail, st.seconds !== null ? `${st.seconds}s` : ""].filter(Boolean).join(" · ") })));
+  }));
+}
+let jobTimer;
+function jobFooter(job, body) {
+  if (job.state === "done") return h("div", { style: "margin-top: 12px" }, h("p", { text: `${job.posts} posts are ready for your approval.` }), h("button", { class: "btn primary", type: "button", onclick: async () => { closeDrawer(); await refresh(); const run = S.runs.find((r) => r.db.startsWith(job.output)); if (run) { S.runKey = run.key; store.set("run", run.key); } S.contentTab = "pending"; show("content"); } }, "Review posts"));
+  if (job.state === "failed" || job.state === "cancelled") return h("div", {}, h("div", { class: "flags" }, h("div", { text: job.error || "It stopped. Details: outputs/studio/jobs/latest.log" })),
+    h("p", { class: "muted", text: "Start it again to continue: finished posts and shots are kept." }), h("button", { class: "btn primary", type: "button", onclick: () => { closeDrawer(); generateDrawer(true); } }, "Start again"));
+  if (job.state === "paused") {
+    const [tab, filter, label] = LOOK[job.paused_after] || [];
+    return h("div", { style: "margin-top: 12px" }, h("p", { text: "Paused so you can check this step. Change anything you like, then continue." }),
+      h("div", { class: "row" }, tab ? h("button", { class: "btn", type: "button", onclick: async () => { closeDrawer(); await refresh(); if (filter) S.mediaFilter = filter; show(tab); } }, label) : null,
+        h("button", { class: "btn primary", type: "button", onclick: async (e) => { e.currentTarget.disabled = true; try { await api("/api/generate/continue", { method: "POST" }); pollJob(body); } catch (err) { toast(err.message); } } }, "Continue")));
+  }
+  return h("div", {}, h("p", { class: "muted", text: job.mode === "autopilot" ? "Autopilot is running. You can close this panel; it keeps going." : "Running this step…" }),
+    h("button", { class: "btn danger", type: "button", onclick: async (e) => { e.currentTarget.disabled = true; try { await api("/api/generate/cancel", { method: "POST" }); toast("Stopping after the current step…"); } catch (err) { toast(err.message); } } }, "Stop"));
+}
+async function pollJob(body) {
+  clearTimeout(jobTimer);
+  try {
+    const now = await api("/api/generate");
+    if (now.job) body.replaceChildren(h("p", { class: "muted", text: `${now.job.mode === "autopilot" ? "Autopilot" : "Step by step"} · ${now.job.run_id}` }), jobView(now.job), jobFooter(now.job, body));
+    if (now.job && now.job.state === "running") jobTimer = setTimeout(() => pollJob(body), 2000); else await refresh();
+  } catch (e) { jobTimer = setTimeout(() => pollJob(body), 4000); }
+}
+function modeCard(id, title, text, current, onpick) {
+  return h("button", { type: "button", class: "card", style: `text-align: left; cursor: pointer; padding: 12px; outline: 2px solid ${current === id ? "var(--blue)" : "transparent"}`, onclick: () => onpick(id) }, h("b", { text: title, style: "display: block; margin-bottom: 4px" }), h("span", { class: "muted", text }));
+}
+async function startJob(mode, weekValue, body, again = false) {
+  const actor = store.get("actor");
+  if (!actor) { toast("Add your name in Settings first"); return false; }
+  try { await api("/api/generate", { method: "POST", body: JSON.stringify({ actor, week_start: weekValue, freeze_confirmed: true, mode, again }) }); pollJob(body); return true; }
+  catch (e) { toast(e.message); return false; }
+}
+async function generateDrawer(resume = false) {
+  let info;
+  try { info = await api("/api/generate"); } catch (e) { toast(e.message); return; }
+  const body = h("div");
+  openDrawer(drawerHead("Prepare a week"), body);
+  if (!info.enabled) { body.append(h("p", { class: "muted", text: "Start the studio with `make studio` to enable this." })); return; }
+  if (info.job && ["running", "paused"].includes(info.job.state) && !resume) { pollJob(body); return; }
+  let mode = store.get("mode", "autopilot");
+  const modes = h("div", { class: "grid", style: "grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px" });
+  const drawModes = () => modes.replaceChildren(
+    modeCard("autopilot", "Autopilot", "Runs everything: sorts photos, plans, creates missing shots, writes EN/AR posts. You approve at the end.", mode, (m) => { mode = m; store.set("mode", m); drawModes(); }),
+    modeCard("guided", "Step by step", "Pauses after each stage so you can check photos, the plan and new shots before it continues.", mode, (m) => { mode = m; store.set("mode", m); drawModes(); }));
+  drawModes();
+  const week = h("input", { type: "date", value: info.next_week, "aria-label": "Week starting" });
+  const confirm = h("input", { type: "checkbox" });
+  const again = h("input", { type: "checkbox" });
+  const go = h("button", { class: "btn primary", type: "button" }, "Start");
+  go.addEventListener("click", async () => {
+    if (!confirm.checked) return toast("Tick the brand confirmation first");
+    go.disabled = true;
+    if (!(await startJob(mode, week.value, body, again.checked))) go.disabled = false;
+  });
+  const exists = S.runs.some((r) => r.run_id === `week-${info.next_week}`);
+  const m = S.summary.cadence;
+  body.append(modes,
+    h("div", { class: "kpis" }, kpi("Posts", m.posts_per_week), kpi("Reels", m.reels_per_week), kpi("Carousels", m.carousels_per_week), kpi("Photos", m.photos_per_week)),
+    h("label", { class: "field" }, h("span", { text: "Week starting (Monday)" }), week),
+    h("label", { class: "row", style: "margin: 4px 0 12px; flex-wrap: nowrap; align-items: flex-start" }, confirm, h("span", { class: "muted", text: `I reviewed config/brand.yaml (pillars, voice, facts) and freeze it for this week as ${store.get("actor") || "—"}.` })),
+    h("label", { class: "row", style: "margin: 0 0 12px; flex-wrap: nowrap; align-items: flex-start" }, again, h("span", { class: "muted", text: "Make a fresh version of this week (keeps the existing one). Leave unticked to continue or reuse what is already done." })),
+    h("p", { class: "muted", text: "No photo is used twice in a week. Where a post lacks photos of its pillar, FLUX makes a new shot from your photos (marked as AI). Reels are rendered as photo tours." }),
+    go);
+  if (exists) again.checked = false;
+  if (info.job) body.append(h("p", { class: "muted", text: `Last run: ${info.job.run_id} · ${info.job.state}` }));
 }
 
 function renderSettings() {
@@ -622,10 +850,27 @@ function renderSettings() {
   const row = (ok, title, sub) => h("div", { class: "row", style: "padding: 10px 0; border-bottom: 1px solid var(--line-soft); flex-wrap: nowrap" }, h("span", { class: "badge " + (ok ? "ok" : "warn"), text: ok ? "On" : "Off" }), h("span", {}, h("b", { text: title, style: "display: block; font-size: 14px" }), h("span", { class: "muted", text: sub })));
   $("#connections").replaceChildren(
     row(!!s.engine, "Pillar classifier · d3-flash", !s.engine ? "Start the dashboard with --engine d3" : s.engine_synthetic ? "Offline test fixtures only" : g.labelled ? `Agrees with you on ${pct(g.accuracy, 0)} of ${g.labelled} labels · κ ${(g.kappa ?? 0).toFixed(2)}` : "Correct a few pillars to measure how often it is right"),
-    row(!!s.judge, "VLM judge · Qwen3.5-4B", !s.judge ? "Start with --judge vlm" : v.labelled ? `Checks photos d3 is unsure about · agrees on ${pct(v.accuracy, 0)} of ${v.labelled} labels` : "Checks photos d3 is unsure about"),
+    row(!!s.judge, "VLM judge · Qwen3.5-9B", !s.judge ? "Start with --judge vlm" : v.labelled ? `Checks photos d3 is unsure about · agrees on ${pct(v.accuracy, 0)} of ${v.labelled} labels` : "Checks photos d3 is unsure about"),
     row(s.variants_enabled, "Camera views · FLUX.2-klein-4B", s.variants_enabled ? "Create views from any photo in Media" : "Start with --views gpu"),
     row(s.instagram.configured, "Instagram", s.instagram.configured ? `Token found · mode ${s.instagram.mode}` : "Add INSTAGRAM_ACCESS_TOKEN and INSTAGRAM_USER_ID to .env"),
   );
+  renderLessons();
+  renderActivity();
+}
+async function renderLessons() {
+  let f;
+  try { f = await api("/api/feedback"); } catch (e) { return; }
+  const forget = async (id, all = false) => { try { await api("/api/feedback/forget", { method: "POST", body: JSON.stringify(all ? { restore_all: true } : { id }) }); toast(all ? "All notes are back" : "Forgotten: the writer won't see this note"); renderLessons(); } catch (e) { toast(e.message); } };
+  const rows = f.lessons.map((x) => h("div", {}, h("span", { class: "badge " + (x.kind === "rejected" ? "bad" : "ok"), text: x.kind === "rejected" ? "Avoid" : x.language === "ar" ? "Prefer · AR" : "Prefer · EN" }),
+    h("span", { style: "flex: 1", dir: x.language === "ar" ? "auto" : null }, h("span", { text: x.text }), x.example ? h("small", { class: "muted", style: "display: block", text: `on: ${x.example}` }) : null),
+    h("button", { class: "btn small", type: "button", onclick: () => forget(x.id) }, "Forget")));
+  $("#lessons").replaceChildren(...(rows.length ? rows : [h("p", { class: "muted", text: "Nothing yet. Reject a post with a reason, or edit a caption before approving." })]),
+    ...[f.forgotten ? h("div", {}, h("span", { class: "muted", style: "flex: 1", text: `${f.forgotten} forgotten note${f.forgotten === 1 ? "" : "s"}` }), h("button", { class: "btn small", type: "button", onclick: () => forget(null, true) }, "Bring them back")) : null].filter(Boolean));
+}
+async function renderActivity() {
+  let rows = [];
+  try { rows = await api("/api/activity"); } catch (e) { return; }
+  $("#activity").replaceChildren(...(rows.length ? rows.map((r) => h("div", {}, h("time", { text: new Date(r.at).toLocaleString() }), h("span", { style: "flex: 1", text: `${r.summary}${r.undone ? " (undone)" : ""}` }), h("span", { class: "muted", text: r.actor }), r.undoable ? h("button", { class: "btn small", type: "button", onclick: () => undo(r.sequence) }, "Undo") : null)) : [h("p", { class: "muted", text: "Nothing yet." })]));
 }
 $("#save-settings").addEventListener("click", async () => {
   store.set("actor", $("#actor").value.trim());

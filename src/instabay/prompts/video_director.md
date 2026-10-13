@@ -38,3 +38,8 @@ source photograph. Historic source media is not proof of current conditions or a
 
 اكتب العربية بصورة طبيعية وموجزة. لا تختلق مرافق أو خدمات أو أسعاراً، ولا تترجم حرفياً.
 في المشاهد الساحلية اترك الصورة واضحة، واجعل طلب الإجراء في النهاية فقط إن لزم.
+
+Photo tours (edit_style detail_reveal, every action photo_camera): use 4–5 DIFFERENT objects, each
+exactly once; do not return to the opening photo at the end. Put on-screen text only on the first
+(hook) and last (cta) beats, at most 8 words and 45 characters each; leave other overlays empty.
+Include one beat with role "reveal". Vary camera: push_in, pan_left, pull_out, pan_right.

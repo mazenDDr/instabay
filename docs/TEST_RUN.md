@@ -20,7 +20,7 @@ cp config/insta-bay-brand.example.yaml config/brand.yaml
 ## 2. Start the image models and the dashboard
 
 ```sh
-make vision-up      # gpu-box: d3-flash, Qwen3.5-4B judge, FLUX.2-klein views; opens a tunnel
+make vision-up      # gpu-box: d3-flash, Qwen3.5-9B judge + writer, FLUX.2-klein; opens a tunnel
 make studio         # http://127.0.0.1:8780 (shows runs under outputs/studio/)
 ```
 
@@ -34,57 +34,48 @@ reloads a model (4–15 s). The first request after a switch is slower.
 
 ## 3. In the dashboard
 
-1. **Settings**: enter your name. It is stored with every approval.
-2. **Media → + Add photos**: drop the resort photos and confirm you own them.
-3. **Media → Sort into pillars**: d3-flash labels each photo (about 3 s each). When d3's top
-   pillar is under 50%, the Qwen3.5-4B judge looks at the photo and picks one with a short reason.
-   The tile shows *by d3 · 76%* or *by VLM*.
-4. Open each photo:
-   - fix the pillar if it is wrong; your corrections measure both models in **Settings**;
-   - add a one-line English and Arabic description of what is visible; the captions are
-     built only from these.
-5. Optional: **Create view** on a photo for an AI camera angle (about 40 s). Approve only views
-   that still show the real place. Views scored under 80% are marked *Check place*.
-6. **Home**: set posts per week, reels and carousels, then **Save mix**.
-7. **Planner**: check the week. Each day shows the photos the planner suggests.
+1. **Settings**: enter your name. It is stored with every freeze and approval.
+2. **Home**: set posts per week, reels and carousels, then **Save mix**.
+3. Choose a mode:
+   - **Autopilot**: open **Media → + Add photos**, drop the photos, tick *Autopilot* and
+     **Upload**. Everything runs: sorting into pillars, planning, new AI shots where a pillar
+     is short, then writing the English and Arabic posts. It stops at your approval.
+   - **Step by step**: upload photos, then click **Prepare week** (top right) → *Step by step*.
+     It pauses after sorting, after planning and after the new shots. Look at Media or Planner,
+     fix pillars and approve the new shots you like, then click **Continue**.
+4. **Content**: approve or reject each post. Posts with review notes need a reason.
 
-Photos under 1080 px (for example 545×545 downloads) work for testing but are upscaled and
-flagged. Upload the original files before going live.
+How it decides:
 
-## 4. Generate a week (terminal)
+- The **writer** (Qwen3.5-9B) sees the photos themselves. Descriptions are optional. If you write
+  one, it is used as a fact; otherwise the writer notes what it sees, in English and Arabic.
+- **No photo is used twice in a week**, and a post never shows the same spot twice (a photo and
+  any AI shot made from it count as one spot).
+- When a post lacks photos of its pillar, **FLUX.2-klein makes a new shot** from one or two of
+  your photos of that pillar, using only what is in them. d3-flash scores each shot for
+  *same place* and *photoreal*. Autopilot keeps shots that score at least 80% on both. Every
+  post that uses one carries the AI disclosure in English and Arabic.
+- Reels are written as concepts; rendering them as video is a separate step for now.
 
-The caption model needs the GPU, so stop the image models first:
+Photos under 1080 px (for example 545×545 downloads) are upscaled and flagged. Upload the original
+files before going live.
 
-```sh
-make vision-down
-.tools/bin/uv run instabay brand-freeze --brand config/brand.yaml \
-  --db outputs/studio/test-run/posts.sqlite --actor "YOUR NAME"
-```
+### Everyday actions
 
-Start the caption service and its tunnel as in
-[PRODUCTION_GENERATION.md §2](PRODUCTION_GENERATION.md#2-start-the-private-caption-service).
-Then run:
+- **Media**: click a photo's circle (or Shift/⌘-click) to select several, then use **Move to
+  Trash**, **Set pillar**, **Hide** or **Approve AI shots**. Search with `/`.
+- **Undo**: every library change shows an **Undo** button. ⌘Z / Ctrl+Z also works, and
+  Settings → Activity lists everything with an Undo per entry.
+- **Trash**: restore photos, or **Delete forever** (photos used in a week are kept).
+- **Photo drawer**: Download, Sort again, Try another shot (AI shots), Move to Trash.
+- **Content**: edit the English and Arabic captions before approving, **Undo decision**,
+  select several posts to approve, reject or undo them together, Copy and Download, and
+  **Grid preview** to see the week as your Instagram profile.
+- **Prepare week**: **Stop** a running week, start it again (finished work is kept), or tick
+  *fresh version* to keep the old week and make a new one. **Remove week** moves a week to
+  `data/backup-runs/`.
 
-```sh
-INSTABAY_LLM_ENABLED=1 .tools/bin/uv run instabay generate \
-  --brand config/brand.yaml --assets data/workspace --draft-only \
-  --model 'Qwen/Qwen3-8B:nf4@b968826d9c46dd6066d109eabc6255188de91218' \
-  --run-id test-w1 --week-start 2026-10-19 \
-  --output outputs/studio/test-run --confirm-generation
-```
-
-`--draft-only` makes the photo and carousel posts plus reel concepts. Finished reels first need
-`instabay animate-photos --scenes data/workspace/export/objects.yaml` (about 7 minutes per photo
-on gpu-box).
-
-## 5. Approve
-
-Open **Content** in the dashboard and pick the run `test-w1`. Click a post to see both captions,
-the media and the review notes, then **Approve** or **Reject**. Posts with review notes need a
-reason. Each decision is stored against that exact content. If the caption changes, the
-approval no longer applies.
-
-## 6. Try Insights before Instagram (simulated)
+## 4. Try Insights before Instagram (simulated)
 
 Real Insights need published Instagram posts. To see the screens working now, run the offline
 simulator. It uses canned captions; the numbers come from an audience simulator and are labeled
@@ -104,7 +95,7 @@ The cycle stops each week for you:
 After three weeks, **Insights** shows reach by week, engagement by format and pillar, and the
 top posts.
 
-## 7. Stop
+## 5. Stop
 
 ```sh
 make vision-down     # frees the GPU and closes the tunnel

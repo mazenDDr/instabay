@@ -5,6 +5,16 @@ from typing import Protocol
 from pydantic import BaseModel, ConfigDict, Field, JsonValue
 
 
+class ImageInput(BaseModel):
+    """FR-04: a photo the multimodal writer sees; bytes are bound by hash in the cache key."""
+
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    id: str = Field(pattern=r"^[A-Za-z0-9][A-Za-z0-9_-]*$")
+    uri: str = Field(min_length=1)
+    sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+
+
 class CompletionRequest(BaseModel):
     """NFR-03: exact prompt bytes, inputs and schema determine the cache key."""
 
@@ -20,6 +30,7 @@ class CompletionRequest(BaseModel):
     temperature: float = Field(default=0, ge=0, le=2)
     max_output_tokens: int = Field(default=512, gt=0)
     validation_feedback: str | None = None
+    images: list[ImageInput] = Field(default_factory=list, max_length=6, exclude_if=lambda v: not v)
 
 
 class Completion(BaseModel):

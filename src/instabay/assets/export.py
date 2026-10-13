@@ -13,13 +13,21 @@ from instabay.video.shotlist import FileRef
 PROPERTY_KEY = "property"
 
 
-def resort_object(asset: Asset, property_name: str) -> ResortObject:
+SCENIC_MIN = (1080, 1920)
+
+
+def scenic_ready(asset: Asset) -> bool:
+    """FR-06: Wan motion needs a full-resolution 9:16 scene; smaller photos get camera moves."""
+    return asset.width >= SCENIC_MIN[0] and asset.height >= SCENIC_MIN[1]
+
+
+def resort_object(asset: Asset, property_name: str, scenic: bool = True) -> ResortObject:
     """FR-08: owner rights confirmation is the approval; generated views stay reference-only."""
     generated = asset.origin == "generated"
     return ResortObject(
         id=asset.id,
-        label=asset.note_en[:60],
-        observed=asset.note_en,
+        label=(asset.note_en if asset.described else f"Photo {asset.id}")[:60],
+        observed=asset.note_en if asset.described else "",
         photo=FileRef(uri=asset.file, sha256=asset.sha256),
         crop=CropBox(x=0, y=0, width=asset.width, height=asset.height),
         approved_by=asset.added_by,
@@ -37,7 +45,7 @@ def resort_object(asset: Asset, property_name: str) -> ResortObject:
         reference_only=False,
         source="synthetic" if generated else "photo",
         approval_scope="owner_approved_view" if generated else "crop",
-        allowed_actions=("photo_camera", "scenic_motion"),
+        allowed_actions=("photo_camera", "scenic_motion") if scenic else ("photo_camera",),
         property_name=property_name,
     )
 
@@ -45,15 +53,16 @@ def resort_object(asset: Asset, property_name: str) -> ResortObject:
 def export_library(
     library: AssetLibrary, brand: BrandConstitution, output: Path
 ) -> tuple[ContentEvidence, ObjectCatalog]:
-    """FR-04: only usable, described photos; every pillar gets brand-derived guidance."""
+    """FR-04: every usable photo; owner descriptions become facts, the writer sees the rest."""
     property_name = str(library.setting(PROPERTY_KEY) or "Insta Bay")
-    chosen = [a for a in library.all() if a.usable and a.described]
+    chosen = [a for a in library.all() if a.usable]
     if not chosen:
-        raise ValueError("No usable photos: add a pillar and an EN/AR description first")
+        raise ValueError("No usable photos: sort them into pillars first")
+    scenic = all(scenic_ready(a) for a in chosen)
     catalog = ObjectCatalog(
         resort=property_name,
-        objects=[resort_object(a, property_name) for a in chosen],
-        edit_style="scenic",
+        objects=[resort_object(a, property_name, scenic) for a in chosen],
+        edit_style="scenic" if scenic else "detail_reveal",
     )
     output = output.resolve()
     output.mkdir(parents=True, exist_ok=True)
@@ -75,6 +84,7 @@ def export_library(
                 caption_ar=a.note_ar,
             )
             for a in chosen
+            if a.described
         ],
         pillar_guidance={
             p.id: (

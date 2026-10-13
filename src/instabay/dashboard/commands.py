@@ -21,6 +21,7 @@ from instabay.assets.variants import (
     HTTPViewBackend,
     StubViewBackend,
     ViewBackend,
+    make_shot,
     make_view,
 )
 
@@ -39,6 +40,9 @@ def register_dashboard_commands(app: typer.Typer) -> None:
         views: Annotated[str, typer.Option(help="none, stub or gpu")] = "none",
         confirm_gpu: Annotated[bool, typer.Option()] = False,
         judge: Annotated[str, typer.Option(help="none or vlm")] = "none",
+        generate: Annotated[
+            bool, typer.Option(help="Enable the Generate week button (gpu-box caption model)")
+        ] = False,
     ) -> None:
         """FR-02, FR-04: photos, weekly mix, plan and results at http://127.0.0.1:PORT."""
         import uvicorn
@@ -70,6 +74,63 @@ def register_dashboard_commands(app: typer.Typer) -> None:
                 judge=decider,
             )
 
+        pipeline = None
+        if generate:
+            import os
+
+            from instabay.adapters.native_llm import NativeLLMClient
+            from instabay.dashboard.jobs import WRITER_MODEL, Pipeline, SSHVisionService
+
+            if os.environ.get("INSTABAY_LLM_ENABLED") != "1":
+                raise typer.BadParameter("--generate needs INSTABAY_LLM_ENABLED=1")
+            pipeline = Pipeline(
+                root=Path.cwd().resolve(),
+                runs=runs.resolve(),
+                workspace=workspace.resolve(),
+                brand=load_brand(brand),
+                service=SSHVisionService(),
+                engine=decider,
+                judge=pillar_judge(judge, vision_origin, confirm_external),
+                views=backend,
+                view_revision=VIEW_REVISION,
+                client_factory=lambda origin: NativeLLMClient(
+                    origin, WRITER_MODEL, confirm_external=True
+                ),
+            )
+
+        def retry(library: AssetLibrary, old: Asset) -> Asset:
+            """FR-06: same sources and direction, next seed; the old attempt is kept."""
+            assert backend is not None and old.recipe is not None
+            seed = int(str(old.recipe.get("seed", 0))) + 1
+            parents = [library.get(str(i)) for i in old.recipe.get("parents") or [old.parent_id]]  # type: ignore[union-attr]
+            preset = str(old.recipe.get("preset", ""))
+            if old.recipe.get("kind") == "new-shot-v1":
+                _, pillar, variant = [*preset.split(":"), "", "", "0"][:3]
+                return make_shot(
+                    library,
+                    parents,
+                    pillar or str(old.pillar),
+                    int(variant or 0),
+                    seed,
+                    backend=backend,
+                    revision=VIEW_REVISION,
+                    judge=decider,
+                )
+            return make_view(
+                library,
+                parents[0],
+                preset,
+                seed,
+                backend=backend,
+                revision=VIEW_REVISION,
+                judge=decider,
+            )
+
+        gpu_ready = None
+        if engine == "d3" or views == "gpu" or judge == "vlm":
+            from instabay.dashboard.jobs import SSHVisionService
+
+            gpu_ready = SSHVisionService().ensure
         application = create_app(
             workspace=workspace,
             brand=load_brand(brand),
@@ -77,7 +138,10 @@ def register_dashboard_commands(app: typer.Typer) -> None:
             engine=decider,
             judge=pillar_judge(judge, vision_origin, confirm_external),
             variants=render if backend else None,
+            shots=retry if backend else None,
             presets={k: v[0] for k, v in PRESETS.items()},
+            pipeline=pipeline,
+            gpu_ready=gpu_ready,
         )
         typer.echo(f"Dashboard: http://127.0.0.1:{port}  (loopback only; Ctrl+C to stop)")
         uvicorn.run(application, host="127.0.0.1", port=port, log_level="warning")

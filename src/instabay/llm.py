@@ -14,7 +14,7 @@ from pydantic import BaseModel, ConfigDict, Field, JsonValue, TypeAdapter, Valid
 
 from instabay.adapters.call_store import CallRecord, CallStore
 from instabay.adapters.fake_llm import FakeLLMMissingFixture
-from instabay.adapters.llm import Completion, CompletionRequest, LLMClient
+from instabay.adapters.llm import Completion, CompletionRequest, ImageInput, LLMClient
 
 
 class LLMOutputError(ValueError):
@@ -81,6 +81,8 @@ class LLMService:
         model: str = "fake-fixture-v1",
         temperature: float = 0,
         max_output_tokens: int = 512,
+        images: list[ImageInput] | None = None,
+        attempts: int = 2,
     ) -> Output:
         """NFR-03: validate JSON, retry once, cache by all generation-affecting inputs."""
         if not re.fullmatch(r"[a-z][a-z0-9_]*", template_name):
@@ -98,6 +100,7 @@ class LLMService:
             ),
             temperature=temperature,
             max_output_tokens=self.token_overrides.get(template_name, max_output_tokens),
+            images=images or [],
         )
         cache_key = hashlib.sha256(
             json.dumps(request.model_dump(mode="json"), sort_keys=True, ensure_ascii=False).encode()
@@ -112,7 +115,7 @@ class LLMService:
                 self._log(request, cache_key, "cached", attempt=0, latency_ms=0)
                 return result
 
-        for attempt in (1, 2):
+        for attempt in range(1, attempts + 1):
             with self._usage_lock:
                 self._check_budget(before_call=True)
                 self.usage.calls += 1
@@ -151,8 +154,20 @@ class LLMService:
                 )
                 self._check_budget(before_call=False)
                 # Validation errors may contain inputs or tokens. Send only paths and error codes.
+                # Our own rule messages (value_error) are fixed strings and safe to return; field
+                # errors stay as path + type only. A bare "value_error" left the director unable
+                # to fix an 8-word overlay on retry (2026-10-13).
                 feedback = json.dumps(
-                    [{"loc": item["loc"], "type": item["type"]} for item in error.errors()]
+                    [
+                        {"loc": item["loc"], "type": item["type"]}
+                        | (
+                            {"message": str(item["msg"]).removeprefix("Value error, ")[:200]}
+                            if item["type"] == "value_error"
+                            else {}
+                        )
+                        for item in error.errors()
+                    ],
+                    ensure_ascii=False,
                 )
                 request = request.model_copy(update={"validation_feedback": feedback})
             else:
@@ -167,7 +182,7 @@ class LLMService:
                 self._check_budget(before_call=False)
                 self.store.put_cached(cache_key, result.model_dump_json())
                 return result
-        raise LLMOutputError("LLM output failed schema validation on both attempts")
+        raise LLMOutputError(f"LLM output failed schema validation on all {attempts} attempts")
 
     def _check_budget(self, *, before_call: bool) -> None:
         calls_exceeded = (

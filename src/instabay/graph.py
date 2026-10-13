@@ -21,8 +21,9 @@ from instabay.agents.brief_writer import BriefWriter
 from instabay.agents.common import prompt_hashes
 from instabay.agents.judge import Judge, write_bilingual
 from instabay.agents.video_director import VideoDirector
-from instabay.agents.visual_brief import VisualBriefWriter
+from instabay.agents.visual_brief import VisualBriefWriter, scene_images
 from instabay.content.evidence import ContentEvidence, EvidenceCopyContext
+from instabay.content.feedback import OwnerFeedback
 from instabay.content.photos import PhotoRecipe, PhotoStudio
 from instabay.content.quality import quality_report
 from instabay.core.hashtags import select_hashtags
@@ -113,6 +114,8 @@ class WeekRunner:
         frozen_brand_hash: str | None = None,
         cadence: Cadence | None = None,
         asset_pools: Callable[[list[Slot]], dict[str, list[str]]] | None = None,
+        multimodal: bool = False,
+        feedback: OwnerFeedback | None = None,
     ) -> None:
         self._stack = ExitStack()
         self.repository = Repository(db)
@@ -142,6 +145,8 @@ class WeekRunner:
         self.brand_input = brand_input
         self.preferences = preferences
         self.cadence, self.asset_pools = cadence, asset_pools
+        self.multimodal = multimodal
+        self.feedback = feedback
         self.decision_engine, self.calibration = decision_engine, calibration
         self.allow_synthetic_decisions = allow_synthetic_decisions
         self.video_studio, self.approved_stills = video_studio, approved_stills or []
@@ -243,6 +248,8 @@ class WeekRunner:
                         previous_angles,
                         used_photo_scenes,
                         pools.get(slot.id),
+                        see_images=self.multimodal,
+                        feedback=self.feedback,
                     )
                     brief = selection.brief
                     context = EvidenceCopyContext(
@@ -250,9 +257,7 @@ class WeekRunner:
                         property_name=self.content_evidence.property_name,
                         geography=self.content_evidence.geography,
                         source_date_note=self.content_evidence.source_date_note,
-                        facts=[
-                            f for f in self.content_evidence.facts if f.id in selection.fact_ids
-                        ],
+                        facts=selection.facts(self.content_evidence),
                         reference_only=self.content_evidence.reference_only,
                     )
                     if slot.arm.format != "reel":
@@ -279,6 +284,10 @@ class WeekRunner:
                     visual_context=context,
                     previous_openings_en=[p.en.caption.split("\n", 1)[0] for p in earlier],
                     previous_openings_ar=[p.ar.caption.split("\n", 1)[0] for p in earlier],
+                    images=scene_images(self.content_catalog, list(context.selection.media_ids))
+                    if self.multimodal and context and self.content_catalog
+                    else None,
+                    feedback=self.feedback,
                 )
                 post = Post(
                     id=slot.id,
@@ -356,7 +365,7 @@ class WeekRunner:
                         update={"objects": [catalog.get(i) for i in context.selection.media_ids]}
                     )
                 board = VideoDirector(self.service).direct(
-                    slot.id, post.brief, catalog, previous_scene_orders
+                    slot.id, post.brief, catalog, previous_scene_orders, see_images=self.multimodal
                 )
                 previous_scene_orders.append([b.object_id for b in board.plan.beats])
                 recipe = editorial_recipe(
@@ -472,7 +481,11 @@ class WeekRunner:
         for post_id in state["post_ids"]:
             post = self.repository.post(post_id)
             decision = self.repository.latest_approval(post_id)
-            if decision is None or decision.content_hash != post.content_hash:
+            if (
+                decision is None
+                or decision.decision == "REVOKED"
+                or decision.content_hash != post.content_hash
+            ):
                 raise ApprovalPendingError("Some posts still need current stored human decisions")
         return {"status": "checked"}
 
@@ -549,7 +562,11 @@ class WeekRunner:
         for post_id in current.post_ids:
             post = self.repository.post(post_id)
             decision = self.repository.latest_approval(post_id)
-            if decision is None or decision.content_hash != post.content_hash:
+            if (
+                decision is None
+                or decision.decision == "REVOKED"
+                or decision.content_hash != post.content_hash
+            ):
                 raise ApprovalPendingError("Stored human decisions are still pending")
         with tracing_context(enabled=False):
             if current.status == "in_progress":

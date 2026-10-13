@@ -16,7 +16,7 @@ from pydantic import Field
 from instabay.core.schemas import Boundary
 from instabay.decisions.vision import image_digest
 
-VLM_MODEL = "Qwen/Qwen3.5-4B"
+VLM_MODEL = "Qwen/Qwen3.5-9B"
 
 
 class Verdict(Boundary):
