@@ -183,3 +183,11 @@ def test_bookend_repeats_become_unused_photos_or_move_the_cta() -> None:
     assert [b.object_id for b in moved.beats] == ["a", "b", "c"]
     assert moved.beats[-1].role == beats[-1].role and moved.beats[-1].overlay == beats[-1].overlay
     assert any(b.role == "reveal" for b in moved.beats)
+
+
+def test_reel_credit_is_one_short_line() -> None:
+    from instabay.video.direction_commands import shorten
+
+    assert shorten("Photos: Owner", 100) == "Photos: Owner"
+    long = shorten("Photos: " + " / ".join(f"author {i}" for i in range(30)), 100)
+    assert len(long) == 100 and long.endswith("…")

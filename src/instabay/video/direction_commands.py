@@ -44,8 +44,13 @@ def editorial_recipe(
         workflow={"uri": board_file.relative_to(root).as_posix(), "sha256": digest(board_file)},
     )
     used = [o for o in board.catalog.objects if o.id in {b.object_id for b in board.plan.beats}]
-    authors = " / ".join(dict.fromkeys(o.author for o in used))
-    licenses = " / ".join(dict.fromkeys(o.license_id for o in used))
+    # AI shots carry the model in their author field; the credit names photographers only.
+    authors = " / ".join(dict.fromkeys(o.author for o in used if o.source == "photo")) or "owner"
+    licenses = " / ".join(
+        dict.fromkeys(o.license_id for o in used if o.license_id != "ai-generated-from-owner-photo")
+    )
+    if any(o.source == "synthetic" for o in used):
+        licenses = f"{licenses} + AI shots" if licenses else "AI shots"
     data["post"].update(
         style="editorial",
         language=language,
@@ -60,9 +65,14 @@ def editorial_recipe(
             "uri": "assets/fonts/Manrope.ttf",
             "sha256": digest(root / "assets/fonts/Manrope.ttf"),
         },
-        credit=f"Photos: {authors}\n{licenses} - cropped and animated",
+        credit=shorten(f"Photos: {authors}\n{licenses} - cropped and animated", 100),
     )
     return RenderRecipe.model_validate(data)
+
+
+def shorten(text: str, limit: int) -> str:
+    """FR-06: the on-video credit is one short line; long author lists are cut, not fatal."""
+    return text if len(text) <= limit else text[: limit - 1].rstrip() + "…"
 
 
 def register_direction_commands(app: typer.Typer) -> None:
