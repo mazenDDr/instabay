@@ -55,6 +55,43 @@ class GraphInsightBatch(Boundary):
         return sum(values[name] for name in required - {"reach"}) / values["reach"]
 
 
+def parse_metrics(body: dict[str, object], requested: list[str]) -> list[GraphMetric]:
+    """FR-11: lifetime totals only; absent values stay absent, malformed payloads are errors."""
+    data = body.get("data")
+    if not isinstance(data, list):
+        raise GraphProtocolError("Insights data is not a list")
+    metrics: list[GraphMetric] = []
+    seen: set[str] = set()
+    for item in data:
+        if not isinstance(item, dict) or item.get("name") not in requested:
+            raise GraphProtocolError("Unsupported insight metric")
+        name = str(item["name"])
+        if item.get("period", "lifetime") != "lifetime":
+            raise GraphProtocolError("Only lifetime insight observations are supported")
+        if name in seen:
+            raise GraphProtocolError("Duplicate insight metric")
+        seen.add(name)
+        total, values = item.get("total_value"), item.get("values")
+        value: object = None
+        if isinstance(total, dict):
+            value = total.get("value")
+        elif isinstance(values, list) and len(values) == 1 and isinstance(values[0], dict):
+            value = values[0].get("value")
+        elif values == []:
+            continue
+        elif values is not None:
+            raise GraphProtocolError("Unsupported insight value series")
+        if value is None:
+            continue
+        if isinstance(value, bool) or not isinstance(value, (int, float)):
+            raise GraphProtocolError("Insights metric is not numeric")
+        try:
+            metrics.append(GraphMetric.model_validate({"name": name, "value": value}))
+        except ValueError:
+            raise GraphProtocolError("Insights metric has an invalid value") from None
+    return metrics
+
+
 class GraphInsightSource(Protocol):
     """NFR-05: live ingestion is distinct from the simulator's exclusive bounded counts."""
 
@@ -105,38 +142,7 @@ class GraphInsights:
                 f"/{receipt.media_id}/insights",
                 {"metric": ",".join(requested)},
             )
-            data = body.get("data")
-            if not isinstance(data, list):
-                raise GraphProtocolError("Insights data is not a list")
-            metrics: list[GraphMetric] = []
-            seen: set[str] = set()
-            for item in data:
-                if not isinstance(item, dict) or item.get("name") not in requested:
-                    raise GraphProtocolError("Unsupported insight metric")
-                name = str(item["name"])
-                if item.get("period", "lifetime") != "lifetime":
-                    raise GraphProtocolError("Only lifetime insight observations are supported")
-                if name in seen:
-                    raise GraphProtocolError("Duplicate insight metric")
-                seen.add(name)
-                total, values = item.get("total_value"), item.get("values")
-                value: object = None
-                if isinstance(total, dict):
-                    value = total.get("value")
-                elif isinstance(values, list) and len(values) == 1 and isinstance(values[0], dict):
-                    value = values[0].get("value")
-                elif values == []:
-                    continue
-                elif values is not None:
-                    raise GraphProtocolError("Unsupported insight value series")
-                if value is None:
-                    continue
-                if isinstance(value, bool) or not isinstance(value, (int, float)):
-                    raise GraphProtocolError("Insights metric is not numeric")
-                try:
-                    metrics.append(GraphMetric.model_validate({"name": name, "value": value}))
-                except ValueError:
-                    raise GraphProtocolError("Insights metric has an invalid value") from None
+            metrics = parse_metrics(body, requested)
             received = {m.name for m in metrics}
             metrics.sort(key=lambda metric: requested.index(metric.name))
             batch = GraphInsightBatch(

@@ -6,6 +6,7 @@ from typing import Annotated
 import typer
 import yaml
 
+from instabay.adapters.graph_account import ACCOUNT_DB, AccountStore, analyze, fetch_account
 from instabay.adapters.graph_http import HttpxGraphTransport, HttpxMediaVerifier
 from instabay.adapters.graph_insights import GraphInsights
 from instabay.adapters.graph_models import (
@@ -13,6 +14,7 @@ from instabay.adapters.graph_models import (
     GraphConfig,
     GraphCredentials,
     GraphRateLimitError,
+    LiveConfigurationError,
 )
 from instabay.adapters.graph_publisher import GraphPublisher
 from instabay.repository import Repository
@@ -40,6 +42,48 @@ def register_graph_commands(app: typer.Typer) -> None:
     ) -> None:
         """HUMAN: ingest a published parent's real counts without bandit learning."""
         _run(post_id, db, config, confirm_live, insights=True)
+
+    @app.command("graph-check")
+    def check(
+        config: Annotated[Path, typer.Option()] = Path("config/instagram.example.yaml"),
+        out: Annotated[Path, typer.Option()] = ACCOUNT_DB,
+        limit: Annotated[int, typer.Option(min=1, max=100)] = 25,
+        confirm_live: Annotated[bool, typer.Option()] = False,
+    ) -> None:
+        """HUMAN: read-only. Check the token and read your recent posts with their insights."""
+        transport: HttpxGraphTransport | None = None
+        try:
+            settings = GraphConfig.model_validate(yaml.safe_load(config.read_text()))
+            credentials = GraphCredentials.from_env()
+            transport = HttpxGraphTransport(settings, credentials, confirm_live=confirm_live)
+            snapshot = fetch_account(transport, settings, credentials.user_id, limit=limit)
+        except GraphAPIError as error:
+            typer.echo(
+                f"Instagram check stopped: {type(error).__name__}; code={error.code}, "
+                f"subcode={error.subcode}. Code 190 means the token is invalid or expired.",
+                err=True,
+            )
+            raise typer.Exit(2) from None
+        except (ValueError, KeyError, PermissionError, ConnectionError, OSError) as error:
+            typer.echo(f"Instagram check stopped: {type(error).__name__}: {_safe(error)}", err=True)
+            raise typer.Exit(2) from None
+        finally:
+            if transport is not None:
+                transport.close()
+        AccountStore(out).save(snapshot)
+        summary = analyze(snapshot)
+        typer.echo(
+            f"Connected to @{snapshot.username} ({snapshot.account_type or 'account'}): "
+            f"{snapshot.followers if snapshot.followers is not None else '?'} followers, "
+            f"{snapshot.media_count if snapshot.media_count is not None else '?'} posts."
+        )
+        typer.echo(
+            f"Read {summary['posts']} recent posts; {summary['with_insights']} have insights. "
+            f"Saved to {out}. Open Insights in the studio to see them."
+        )
+        for media in snapshot.media:
+            if media.insights_error:
+                typer.echo(f"  no insights for {media.id}: {media.insights_error}")
 
 
 def _run(post_id: str, db: Path, config_path: Path, confirm_live: bool, *, insights: bool) -> None:
@@ -96,3 +140,10 @@ def _run(post_id: str, db: Path, config_path: Path, confirm_live: bool, *, insig
         if transport is not None:
             transport.close()
         repository.close()
+
+
+def _safe(error: Exception) -> str:
+    """NFR-04: only our own configuration messages are echoed; never provider bodies."""
+    if isinstance(error, LiveConfigurationError):
+        return str(error)
+    return "see docs/INSTAGRAM.md"

@@ -19,6 +19,7 @@ from fastapi.responses import FileResponse, HTMLResponse, Response
 from PIL import Image, ImageOps
 from pydantic import Field, JsonValue
 
+from instabay.adapters.graph_account import ACCOUNT_DB, AccountStore, view
 from instabay.assets.classify import agreement, classify_assets
 from instabay.assets.export import PROPERTY_KEY
 from instabay.assets.judge import PillarJudge
@@ -187,6 +188,7 @@ def create_app(
 
     @app.get("/api/summary")
     def summary() -> dict[str, JsonValue]:
+        account = AccountStore(root / ACCOUNT_DB).latest()
         with library() as lib:
             assets = lib.all()
             cadence = load_cadence(lib, brand)
@@ -225,6 +227,8 @@ def create_app(
                 "configured": bool(os.environ.get("INSTAGRAM_ACCESS_TOKEN"))
                 and bool(os.environ.get("INSTAGRAM_USER_ID")),
                 "mode": os.environ.get("INSTABAY_MODE", "dry_run"),
+                "username": account.username if account else None,
+                "checked_at": account.observed_at.isoformat() if account else None,
             },
             "low_res": sum(min(a.width, a.height) < 1080 for a in assets if a.origin == "owner"),
             "presets": [{"id": k, "label": v} for k, v in (presets or {}).items()],
@@ -385,6 +389,12 @@ def create_app(
             return pipeline.resume().model_dump(mode="json")
         except ValueError as error:
             raise HTTPException(409, str(error)) from None
+
+    @app.get("/api/instagram")
+    def instagram() -> dict[str, JsonValue]:
+        """FR-11: the latest read-only account snapshot from `instabay graph-check`."""
+        snapshot = AccountStore(root / ACCOUNT_DB).latest()
+        return {"connected": False} if snapshot is None else {"connected": True, **view(snapshot)}
 
     @app.get("/api/runs")
     def list_runs() -> list[dict[str, JsonValue]]:

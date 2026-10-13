@@ -245,6 +245,7 @@ td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
       </section>
 
       <section id="insights" hidden>
+        <div class="card" id="ig-account" style="margin-bottom: 16px"></div>
         <div class="banner" id="sim-banner" hidden><b>Simulated data.</b><span>These numbers come from the offline audience simulator, not Instagram. Real reach, likes and saves appear here after you connect Instagram and publish.</span></div>
         <div class="kpis" id="insight-kpis"></div>
         <div class="grid cols-2">
@@ -361,7 +362,7 @@ async function refresh() {
   const s = S.summary;
   $("#property").textContent = s.property;
   $("#avatar").textContent = s.property.split(/\s+/).map((w) => w[0]).join("").slice(0, 2).toUpperCase();
-  $("#ig-state").textContent = s.instagram.configured ? `Instagram · ${s.instagram.mode === "live" ? "live" : "connected, dry run"}` : "Instagram · not connected";
+  $("#ig-state").textContent = s.instagram.username ? `@${s.instagram.username} · read-only` : s.instagram.configured ? `Instagram · ${s.instagram.mode === "live" ? "live" : "connected, dry run"}` : "Instagram · not connected";
   $("#count-approve").textContent = pending().length || "";
   $("#count-review").textContent = s.assets.needs_review || "";
   if (!S.mix) S.mix = { ...s.cadence };
@@ -389,7 +390,7 @@ function renderHome() {
   if (views) todo.push(["AI", "", `${views} AI camera views to review`, "Approve only views that still show the real place", () => { S.mediaFilter = "generated"; show("media"); }]);
   const short = s.pillars.filter((p) => p.photos < 2);
   if (short.length) todo.push(["!", "warn", `${short.length} pillars have fewer than 2 ready photos`, short.map((p) => p.name).join(", "), () => show("media")]);
-  if (!s.instagram.configured) todo.push(["IG", "warn", "Instagram is not connected", "Add INSTAGRAM_ACCESS_TOKEN and INSTAGRAM_USER_ID to .env", () => show("settings")]);
+  if (!s.instagram.configured && !s.instagram.username) todo.push(["IG", "warn", "Instagram is not connected", "Add INSTAGRAM_ACCESS_TOKEN and INSTAGRAM_USER_ID to .env", () => show("settings")]);
   $("#todo").replaceChildren(...(todo.length ? todo.map(([ic, cls, title, sub, go]) => h("button", { type: "button", onclick: go }, h("span", { class: "ico " + cls, text: ic }), h("span", {}, h("b", { text: title }), h("span", { text: sub })))) : [h("p", { class: "muted", text: "Nothing waiting. Generate next week from the terminal." })]));
   const top = Math.max(3, ...s.pillars.map((p) => p.photos));
   $("#pillar-bars").replaceChildren(...s.pillars.map((p) => h("div", { class: "bar-row", title: p.description }, h("span", { text: p.name }), h("div", { class: "track" }, h("i", { style: `width:${(100 * p.photos) / top}%` })), h("b", { class: p.photos < 2 ? "down" : "", text: p.photos }))));
@@ -550,7 +551,39 @@ async function renderPlanner() {
   }));
 }
 
+async function renderAccount() {
+  const el = $("#ig-account");
+  try { S.instagram = await api("/api/instagram"); } catch (e) { S.instagram = { connected: false }; }
+  const a = S.instagram;
+  if (!a.connected) {
+    el.replaceChildren(h("h2", { text: "Your Instagram account" }), h("p", { class: "sub", text: "Not read yet. Put INSTAGRAM_ACCESS_TOKEN and INSTAGRAM_USER_ID in .env, then run make instagram-check in the terminal. It only reads: nothing is posted." }));
+    return;
+  }
+  const n = a.analysis, metric = (m, k) => (m.metrics.find((x) => x.name === k) || {}).value;
+  const reach = a.media.map((m) => metric(m, "reach")).filter((v) => v !== undefined).sort((x, y) => x - y);
+  const rates = a.media.map((m) => m.engagement_rate).filter((v) => v !== null).sort((x, y) => x - y);
+  const mid = (v) => v.length ? (v.length % 2 ? v[(v.length - 1) / 2] : (v[v.length / 2 - 1] + v[v.length / 2]) / 2) : null;
+  const bars = (rows, label, fmt, color) => rows.length ? rows.map((r) => [`${label(r.key)} (${r.posts})`, r.median, fmt(r.median), color(r.key)]) : null;
+  const block = (title, sub, rows) => h("div", {}, h("h3", { text: title, style: "margin: 14px 0 2px; font-size: 14px" }), h("p", { class: "muted", text: sub, style: "margin: 0 0 8px; font-size: 12px" }), rows ? (() => { const d = h("div", { class: "bars" }); barList(d, rows); return d; })() : h("p", { class: "muted", text: "Not enough posts with insights yet." }));
+  el.replaceChildren(
+    h("div", { class: "row", style: "justify-content: space-between" }, h("h2", { text: `@${a.username}` }, h("span", { class: "badge ok", text: "Real · read-only", style: "margin-left: 8px" })), h("span", { class: "muted", text: `Read ${new Date(a.observed_at).toLocaleString()} · refresh with make instagram-check` })),
+    h("div", { class: "kpis", style: "margin-top: 10px" }, kpi("Followers", fmtN(a.followers)), kpi("Posts on account", fmtN(a.media_count)), kpi("Posts read", `${n.posts}`, { cls: "flat", text: `${n.with_insights} with insights` }), kpi("Median reach", fmtN(mid(reach))), kpi("Median eng. rate", pct(mid(rates)))),
+    h("div", { class: "grid cols-2" },
+      block("Engagement rate by format", "Median per post · (number of posts)", bars(n.engagement_by_format, (k) => FORMAT[k] || k, pct, (k) => `var(--${k}, var(--blue))`)),
+      block("Reach by format", "Median per post · (number of posts)", bars(n.reach_by_format, (k) => FORMAT[k] || k, fmtN, (k) => `var(--${k}, var(--blue))`)),
+      block("Engagement rate by day", "Cairo time · median · few posts per day means a weak signal", bars(n.engagement_by_day, (k) => k, pct, () => "var(--blue)")),
+      block("Engagement rate by time of day", "Cairo time · median", bars(n.engagement_by_time, (k) => k, pct, () => "var(--blue)"))),
+    h("h3", { text: "Recent posts", style: "margin: 18px 0 8px; font-size: 14px" }),
+    h("div", { class: "scroll" }, h("table", {}, h("thead", {}, h("tr", {}, ...["Posted", "Type", "Caption", "Reach", "Views", "Likes", "Saves", "Eng. rate"].map((t, i) => h("th", { class: i > 2 ? "num" : "", text: t })))),
+      h("tbody", {}, ...a.media.map((m) => h("tr", { onclick: () => m.permalink && window.open(m.permalink, "_blank", "noopener") },
+        h("td", { text: new Date(m.posted_at).toLocaleDateString(undefined, { day: "numeric", month: "short", year: "2-digit" }) }),
+        h("td", {}, h("span", { class: "badge " + m.format, text: FORMAT[m.format] || m.format })),
+        h("td", {}, h("p", { text: m.caption || "—", style: "margin: 0; max-width: 320px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap" })),
+        ...(m.insights_error ? [h("td", { class: "num muted", colspan: 5, text: "insights not available for this post" })] : ["reach", "views", "likes", "saved"].map((k) => h("td", { class: "num", text: fmtN(metric(m, k)) })).concat([h("td", { class: "num", text: pct(m.engagement_rate) })]))))))),
+  );
+}
 function renderInsights() {
+  renderAccount();
   const posts = S.runs.flatMap((r) => r.posts.map((p) => ({ ...p, week: r.week_start, runKey: r.key }))).filter((p) => p.metrics && p.metrics.reach);
   const sim = posts.some((p) => !/graph|instagram/i.test(p.metric_source || ""));
   $("#sim-banner").hidden = !posts.length || !sim;
@@ -852,7 +885,7 @@ function renderSettings() {
     row(!!s.engine, "Pillar classifier · d3-flash", !s.engine ? "Start the dashboard with --engine d3" : s.engine_synthetic ? "Offline test fixtures only" : g.labelled ? `Agrees with you on ${pct(g.accuracy, 0)} of ${g.labelled} labels · κ ${(g.kappa ?? 0).toFixed(2)}` : "Correct a few pillars to measure how often it is right"),
     row(!!s.judge, "VLM judge · Qwen3.5-9B", !s.judge ? "Start with --judge vlm" : v.labelled ? `Checks photos d3 is unsure about · agrees on ${pct(v.accuracy, 0)} of ${v.labelled} labels` : "Checks photos d3 is unsure about"),
     row(s.variants_enabled, "Camera views · FLUX.2-klein-4B", s.variants_enabled ? "Create views from any photo in Media" : "Start with --views gpu"),
-    row(s.instagram.configured, "Instagram", s.instagram.configured ? `Token found · mode ${s.instagram.mode}` : "Add INSTAGRAM_ACCESS_TOKEN and INSTAGRAM_USER_ID to .env"),
+    row(s.instagram.configured || !!s.instagram.username, "Instagram", s.instagram.username ? `@${s.instagram.username} · last read ${new Date(s.instagram.checked_at).toLocaleString()} · refresh with make instagram-check` : s.instagram.configured ? `Token found · mode ${s.instagram.mode}` : "Add INSTAGRAM_ACCESS_TOKEN and INSTAGRAM_USER_ID to .env, then run make instagram-check"),
   );
   renderLessons();
   renderActivity();

@@ -3,7 +3,7 @@ export UV_CACHE_DIR := $(CURDIR)/.uv-cache
 export UV_PYTHON_INSTALL_DIR := $(CURDIR)/.uv-python
 export PRE_COMMIT_HOME := $(CURDIR)/.pre-commit-cache
 
-.PHONY: setup lint test check smoke demo bench record render golden verify-clone vision-up vision-down studio
+.PHONY: setup lint test check smoke demo bench record render golden verify-clone vision-up vision-down studio instagram-check
 
 setup:
 	$(UV) sync --frozen
@@ -44,6 +44,7 @@ verify-clone:
 
 # HUMAN: owner studio on gpu-box (docs/TEST_RUN.md). One large model is resident at a time.
 REMOTE ?= /home/mazen/instabay-native
+IG_CONFIG ?= config/instagram.example.yaml
 BRAND ?= config/brand.yaml
 WORKSPACE ?= data/workspace
 RUNS ?= outputs/studio
@@ -58,6 +59,11 @@ vision-down:
 	-ssh gpu-box 'tmux kill-session -t instabay-vision'
 	-pkill -f "18790:127.0.0.1:8790"
 	-lsof -ti tcp:18790 -sTCP:LISTEN | xargs kill 2>/dev/null
+
+# HUMAN: needs INSTAGRAM_ACCESS_TOKEN and INSTAGRAM_USER_ID in .env. GET requests only; nothing is posted.
+instagram-check:
+	INSTABAY_MODE=live $(UV) run --env-file .env --offline --no-sync instabay graph-check \
+	  --config "$(IG_CONFIG)" --confirm-live
 
 studio:
 	mkdir -p "$(RUNS)"
