@@ -170,3 +170,22 @@ def test_new_shot_uses_several_owner_photos_and_counts_as_their_spot(library):
     assert family(shot) == {a.id, b.id}
     with pytest.raises(ValueError, match="real photos"):
         make_shot(library, [shot], "spa", 0, 7, backend=StubViewBackend(), revision="r")
+
+
+def test_owner_approved_ai_shot_can_be_a_reel_keyframe_but_not_other_synthetic():
+    from instabay.video.shotlist import Keyframe
+
+    base = dict(
+        uri="outputs/k.jpg",
+        sha256="a" * 64,
+        source="synthetic",
+        scene="mood",
+        approved_by="owner",
+        approval_id="x",
+        faces_checked=True,
+        attribution="AI view",
+        reference_only=False,
+    )
+    assert Keyframe(**base, approval_scope="owner_approved_view").source == "synthetic"
+    with pytest.raises(ValueError, match="reference-only"):
+        Keyframe(**base)
