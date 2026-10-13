@@ -50,7 +50,9 @@ class Upload(Boundary):
     data_base64: str = Field(max_length=34_000_000)
     note_en: str = Field(default="", max_length=600)
     note_ar: str = Field(default="", max_length=600)
-    rights_confirmed: bool
+    # Owner decision (2026-10-13): photos are always the owner's own, with consent; the studio
+    # no longer asks. The library still records the confirmation with each photo.
+    rights_confirmed: bool = True
     added_by: str = Field(min_length=1, max_length=80)
 
 

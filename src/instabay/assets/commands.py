@@ -67,7 +67,7 @@ def register_asset_commands(app: typer.Typer) -> None:
     def add(
         photos: list[Path],
         added_by: Annotated[str, typer.Option("--by")],
-        rights_confirmed: Annotated[bool, typer.Option()] = False,
+        rights_confirmed: Annotated[bool, typer.Option()] = True,
         note_en: Annotated[str, typer.Option()] = "",
         note_ar: Annotated[str, typer.Option()] = "",
         workspace: Workspace = WORKSPACE,

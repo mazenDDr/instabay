@@ -733,13 +733,11 @@ function uploadDrawer() {
   ["dragover", "dragenter"].forEach((t) => drop.addEventListener(t, (e) => { e.preventDefault(); drop.classList.add("over"); }));
   ["dragleave", "drop"].forEach((t) => drop.addEventListener(t, () => drop.classList.remove("over")));
   drop.addEventListener("drop", (e) => { e.preventDefault(); files.files = e.dataTransfer.files; picked.textContent = `${files.files.length} selected`; });
-  const rights = h("input", { type: "checkbox" });
   const go = h("button", { class: "btn primary", type: "button" }, "Upload");
   go.addEventListener("click", async () => {
     const actor = store.get("actor");
     if (!files.files.length) return toast("Choose at least one photo");
     if (auto.checked && !S.summary.generate) return toast("Autopilot is not enabled in this studio");
-    if (!rights.checked) return toast("Please confirm you own the photos");
     if (!actor) return toast("Add your name in Settings first");
     go.disabled = true;
     let ok = 0;
@@ -760,7 +758,6 @@ function uploadDrawer() {
   });
   const auto = h("input", { type: "checkbox" });
   openDrawer(drawerHead("Add photos"), drop, picked,
-    h("label", { class: "row muted", style: "margin: 8px 0 8px" }, rights, "I own these photos and everyone shown agreed to appear."),
     S.summary.generate ? h("label", { class: "row muted", style: "margin: 0 0 14px; flex-wrap: nowrap; align-items: flex-start" }, auto, h("span", { text: "Autopilot: then prepare next week automatically. I reviewed config/brand.yaml and freeze it." })) : null,
     go);
 }
